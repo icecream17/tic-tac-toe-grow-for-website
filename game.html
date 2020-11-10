@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang = 'en-us'>
+
+<head>
+   <meta charset = "UTF-8">
+   <title>Tic Tac Toe Grow</title>
+   <script defer src = 'game.js'></script>
+   <link rel = 'stylesheet' href = 'style.css'>
+</head>
+
+<body>
+   <div id = 'container'>
+      <aside>
+         <h1>Tic tac toe grow!</h1>
+         <!-- Make this section a flexbox or grid -->
+         <section id = "mapControls">
+            <h2>Map controls</h2>
+            <button type = "button" class = "mapControl">up</button>
+            <button type = "button" class = "mapControl">down</button>
+            <button type = "button" class = "mapControl">left</button>
+            <button type = "button" class = "mapControl">right</button>
+         </section>
+         <section id = "gameData" name = "gameData">
+            <h2>Game data</h2>
+            <fieldset aria-labelledby = "numPlayers">
+               <label id = "numPlayers" aria-labelledby = "varNumPlayers">
+                  <var id = "varNumPlayers" aria-label = "Number of players">
+                     Number of players:
+                  </var>
+               </label>
+               <select aria-labelledby = "numPlayers">
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+               </select>
+            </fieldset>
+            <fieldset aria-labelledby = "numHumans">
+               <label id = "numHumans" aria-labelledby = "varNumHumans">
+                  <var id = "varNumHumans" aria-label = "Number of people">
+                     Number of human players:
+                  </var>
+               </label>
+               <select aria-labelledby = "numHumans">
+                  <option>0</option>
+                  <option selected>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+               </select>
+            </fieldset>
+            <fieldset>
+               <label id = "whoPlays1" aria-labelledby = "varPlayer1">
+                  <var id = "varPlayer1" aria-label = "Player 1">
+                     Player #1:
+                  </var>
+               </label>
+               <select aria-labelledby = "whoPlays1">
+                  <optgroup label = "Humans">
+                     <option>person 1</option>
+                  </optgroup>
+                  <optgroup label = "Bots">
+                     <option>random_move</option>
+                  </optgroup>
+               </select>
+            </fieldset>
+         </section>
+      </aside>
+   </div>
+   <aside>
+      <h1>About</h1>
+      <p>To play, simply click on an empty square (a button)</p>
+      <p>You win if you get 7 in a row, or a checkmark.</p>
+      <p>A checkmark is defined as a region of squares that:</p>
+      <ul>
+         <li>are all <em>diagonally</em> adjacent to each other</li>
+         <li>form a right angle, where
+            <ol>
+               <li>both sides share a square
+               <li>one side is 2 squares long</li>
+               <li>the other side is 4 squares long</li>
+            </ol>
+         </li>
+      </ul>
+      <details>
+         <summary>Example checkmarks:</summary>
+         <p class = "monospace">____X<br>___X_<br>X_X__<br>_X___</p>
+         <p class = "monospace">_X__<br>X____<br>_X__<br>__X_<br>___X</p>
+         <p class = "monospace">
+            X_______<br>_X______<br>__X_____<br>___X___X<br>____X_X_<br>_____X__
+         </p>
+         <p>
+            The last one has sides that have more than 2 or 4 squares long, <br>
+            but that just makes it more awesome, <br>
+            and the rest of the "checkmark" will turn green anyways.
+         </p>
+      </details>
+      <p>
+         If the length is (7 times the width) or more, or vice versa,
+         it's a draw.
+      </p>
+   </aside>
+</body>
+</html>
