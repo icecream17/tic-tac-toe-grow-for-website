@@ -554,14 +554,11 @@ const bot_mechanics = {
 
 let numHumans = 0; // Number of players represented by people
 let numPlayers = 0;
-let numBots = 0; // Number of players represented by bots
+let numPlayerBots = 0;
 
-let humans = [];
 let people = [];
 let bots = [];
-let humanPlayers = [];
-let botPlayers = [];
-let players = [];
+let players = []; // Contains {type, index} based on dropdowns
 
 for (let key of Object.keys(bot_mechanics)) {
    let newBot = new Bot(key, bot_mechanics[key]);
@@ -569,75 +566,48 @@ for (let key of Object.keys(bot_mechanics)) {
    bots[key] = newBot;
 }
 
-players.prototype.push = function (...args) {
-   Array.prototype.push.apply(this, args);
-   for (let [index, player] of Object.entries(args)) {
-      if (player.type === 'bot') {
-         botPlayers.push(player);
-         numBots++;
-      } else {
-         humanPlayers.push(player);
-         numHumans++;
-      }
-      numPlayers++;
-   }
-}
-
-players.prototype.add = function () {
-
-};
-
-humanPlayers.prototype.add = function (human) {
-   players.push(human);
-};
 
 
 
 
-/* TODO List:
+/* 
+HTML:
 
-error  'gameHistory' is assigned a value but never used  no-unused-vars
-   Add more bots
-      Create more bots
-   Add a way to change the {Game data}
-   Add a way to run games with only bots
-   Add a way to run games with only humans
-Add a tournament system
+<dropdown> = <select>
+<dropdown>:Values = <dropdown>.options.map(option => option.value)
+<dropdown>:Default = <option selected>.value
 
-Note: index is [y][x] order...
+<input>:Default = <input placeholder>
 
-List of strategies
-   random   DONE
-   copy~
-   self_play
-   spiral (8 ways)
-   firstOnDiagonal1
-   last~
-   first~2
-   last~2
-   huddle
-   swarm
-   avoidSelf
-   avoidOpp
-   avoidAll
-   lastBackwards~
-   orthgonalToOpponent
-   diagonalToOpponent
-   orthogonalToSelf
-   diagonalToSelf
-   middleIndex   DONE
-   closeToCenter
-   middleAlpha
-   middleRot13
-   randomStrat
-   pi
-   e
-   phi1&2
-   squareboard
-   EvenAlphaIndex
-   OddAlphaIndex
-   knight
-   (biggest, average, smallest) ~ when (xor, or, and, left/right shift)
-   previous number
+Number of players: <dropdown> -> onchange addOrDeletePlayers()
+   <dropdown>
+ - Default: 2
+ - Values: 2, 3, 4
+Number of people: <dropdown> -> onchange addOrDeletePeople()
+   <dropdown>
+ - Default: 1
+ - Values: 0, 1, 2, 3, 4
+Person #n: <input> <button.x> <button.add> -> onchange changeName(), onclick deletePerson(), onclick addPerson()
+   <input>
+ - Default: Person n
+ - Values: [Any]
+Player #1: <dropdown> <button.x> <button.add> -> onchange changePlayer(), onclick deletePlayer(), onclick addPlayer()
+   <dropdown>
+ - Layout:
+   = <select>
+   =   <optgroup label="Humans">
+   =      with n, from 0 to [Number of people], an <option> with a value of [Person #n]
+   =   </optgroup>
+   =   <optgroup label="Bots">
+   =      for each bot, an <option> with a value of bot.name
+ - Default:
+   If parent.indexOf(this) < Number of people,
+       <Person>[parent.indexOf(this)].name
+   Else
+       <Bot>[parent.indexOf(this) - (Number of people)].name
+
+
+
+
 
 */
