@@ -88,9 +88,10 @@ class Game {
       let moveFinish = this.checkGameEnd(x, y);
       if (moveFinish !== false) {
          // TODO: Put something better than alert, for bots. Like a notice
-         if (moveFinish[0] === "draw") {alert("draw! \n" + moveFinish[1]);}
+         if (moveFinish[0] === "draw") {alert(`*gasp*! Draw!\n${moveFinish[1]}`);}
          else {
             // moveFinish[0] === "win"
+            alert("WINNNN")
             for (let cell of moveFinish[1].concat(this.board[y][x])) {
                cell.win = true;
             }
@@ -391,7 +392,7 @@ class Game {
    }
 
    doBotMove() {
-      getCurrentBot().play();
+      players[this.toMove].player.play()
    }
 
    getMoves() {
@@ -405,13 +406,6 @@ class Game {
       }
       return moves;
    }
-}
-
-
-function getPlayerName(index) {
-   return (
-      document.getElementById(`whoPlays${index + 1}`).nextElementSibling.value
-   );
 }
 
 function getSquare(x, y) {
@@ -505,37 +499,19 @@ class Bot extends Player {
    }
 }
 
-function addNameField() {
-   let humanNamesField = document.createElement('fieldset');
-   humanNamesField.id = `human-${numHumans}`;
-   humanNamesField.label = document.createElement('label');
-   humanNamesField.label.id = `human-label-${numHumans}`;
-   humanNamesField.label.innerText = "(#1) name:";
-   humanNamesField.appendChild(humanNamesField.label);
-   humanNamesField.label.setAttribute(
-      "aria-label", `Name for person ${numHumans}`
-   );
-   humanNamesField.setAttribute(
-      "aria-labelledby", `human-label-${numHumans}`
-   );
+class PlayerReference {
+   constructor (type, index) {
+      this.type = type;
+      this.index = index;
+   }
 
-   let input = document.createElement('input');
-   input.id = `human-name-${numHumans}`
-   input.setAttribute('placeholder', `person ${numHumans}`);
-   input.setAttribute("aria-labelledby", `human-label-${numHumans}`);
-   humanNamesField.appendChild(input);
-
-   let fieldDelete = document.createElement('button');
-   fieldDelete.className = 'delete';
-   fieldDelete.innerText = 'delete';
-
-   let fieldAdd = document.createElement('button');
-   fieldAdd.className = 'delete';
-   fieldAdd.innerText = 'delete';
-
-   // TODO: fieldDelete.onclick
-   humanNamesField.appendChild(fieldDelete);
-   gameDataElement.appendChild(humanNamesField);
+   get player() {
+      if (this.type === "human") {
+         return people[this.index];
+      } else {
+         return bots[this.index];
+      }
+   }
 }
 
 const bot_mechanics = {
@@ -552,13 +528,13 @@ const bot_mechanics = {
 };
 
 
-let numHumans = 0; // Number of players represented by people
-let numPlayers = 0;
-let numPlayerBots = 0;
+let numBots = 1; // Number of players represented by people or bots
+let numPeople = 1;
+let numPlayers = 2;
 
-let people = [];
+let people = [new Human("Person 1")];
 let bots = [];
-let players = []; // Contains {type, index} based on dropdowns
+let players; // Contains (type, index) based on dropdowns
 
 for (let key of Object.keys(bot_mechanics)) {
    let newBot = new Bot(key, bot_mechanics[key]);
@@ -566,46 +542,176 @@ for (let key of Object.keys(bot_mechanics)) {
    bots[key] = newBot;
 }
 
+players = [
+   new PlayerReference("human", 0),
+   new PlayerReference("bot", 0)
+]
+
+
 
 
 
 
 /* 
-HTML:
+Types: human, bot
+
+{x} = expression, including variable calls, can be converted to string
+
+<name> = represents an element, <name></name> in HTML usually
+<name>.attribute = JavaScript property of Element or Node child
+<name x={y}> = HTML attribute x of element is y
+<name.className> = <name class={className}>
+<name#ID> = <name id={ID}>
 
 <dropdown> = <select>
-<dropdown>:Values = <dropdown>.options.map(option => option.value)
-<dropdown>:Default = <option selected>.value
+<dropdown>.values = <dropdown>.options.map(option => option.value)
+<dropdown>.default = <dropdown>.selectedOptions[0].value
 
-<input>:Default = <input placeholder>
+<input>.default = value
+   means
+<input placeholder={value}>
 
-Number of players: <dropdown> -> onchange addOrDeletePlayers()
+x: <y> -> z1 z2
+   means
+<label> containing <var> containing x, followed by a <y> where <y>.z1 = z2
+
+x: <y> -> z1 z2 -> zN, zM  [etc.]
+   means
+x: <y> -> z1 z2, but also each <y> zN = zM
+
+zN: zM = zN zM
+
+Layout:
+= <x>
+=   <y b=c>
+= {etc, more lines}
+
+   means
+innerHTML: <x> <y b=c> {etc, more lines}
+
+________
+Number of players: 
+   <dropdown> 
+      -> onchange addOrDeletePlayers()
+      -> default 2
+      -> values 2, 3, 4
+
+Number of people:
    <dropdown>
- - Default: 2
- - Values: 2, 3, 4
-Number of people: <dropdown> -> onchange addOrDeletePeople()
-   <dropdown>
- - Default: 1
- - Values: 0, 1, 2, 3, 4
-Person #n: <input> <button.x> <button.add> -> onchange changeName(), onclick deletePerson(), onclick addPerson()
+      -> onchange addOrDeletePeople()
+      -> default 1
+      -> values 0, 1, 2, 3, 4
+
+Person #{n}:
    <input>
- - Default: Person n
- - Values: [Any]
-Player #1: <dropdown> <button.x> <button.add> -> onchange changePlayer(), onclick deletePlayer(), onclick addPlayer()
-   <dropdown>
- - Layout:
-   = <select>
-   =   <optgroup label="Humans">
-   =      with n, from 0 to [Number of people], an <option> with a value of [Person #n]
-   =   </optgroup>
-   =   <optgroup label="Bots">
-   =      for each bot, an <option> with a value of bot.name
- - Default:
-   If parent.indexOf(this) < Number of people,
-       <Person>[parent.indexOf(this)].name
-   Else
-       <Bot>[parent.indexOf(this) - (Number of people)].name
+      -> onchange changeName()
+      -> default: Person {n}
+      -> values: Any
+   <button.x>
+      -> onclick deletePerson()
+   <button.add>
+      -> onclick addPerson()
 
+Player #{n}:
+   <dropdown>
+      -> onchange changePlayer()
+      -> default {
+         Where index = this.parentElement.indexof(this)
+            If index < numPeople
+               person[index].name
+            Else
+               bot[index - numPeople].name
+      }
+      Layout
+      = <select aria-labelledby={ID of label whose value is Player #{n}}>
+      =   <optgroup label="Humans">
+      =      {with n, from 0 to {Number of people}, an <option> where <option>.value = person #{n}}
+      =   </optgroup>
+      =   <optgroup label="Bots">
+      =      {for each {bot}, an <option> with a value of {bot.name}}
+      =   </optgroup>
+      = </select>
+   <button.x>
+      -> onclick deletePlayer()
+   <button.add>
+      -> onclick addPlayer()
+
+_________
+Correct = corresponding = figure the correct value out
+
+All of the following are async functions.
+addOrDeletePlayers()
+   If value went lower, deletePlayers(diff), else addPlayers(diff)
+
+addOrDeletePeople()
+   If value went lower, deletePeople(diff), else addPeoplel(diff)
+
+changeName()
+   person[correct_index].name = this.value
+   for each (dropdown of Player labels), correct_option.value = this.value
+
+deletePerson()
+   if (numPlayers === 0 || numPeople === 0) throw
+
+   numPeople--
+   numPlayers--
+   people.splice_away(correct_person)
+   for each (person whose index > the index of correct_person) in people
+      for each time person is in players
+         player_reference.index--
+   for each (Player_dropdown)
+      delete correct_option, and if correct_option is selected,
+         correct_next_option.setAttribute: selected
+   delete correct_person
+   this.remove()  <delete this, as an element>
+
+addPerson()
+   if (numPlayers === 4 || numPeople === 4) throw
+
+   numPeople++
+   numPlayers++
+   make this.nextElementSibling = 
+      (see Person #{n} above)
+   
+   people.splice_in(this.nextElementSibling.value)
+   players.push(playerReference("human"), splice_in_index)
+   for each (person whose index > splice_in_index) in people
+      for each time person is in players
+         player_reference.index++
+   for each (Player_dropdown)
+      add option in <optgroup label="Humans"> in correct_index
+
+changePlayer()
+   this.setAttribute: selected
+   correct_next_option.removeAttribute: selected
+
+   type = this.parentElement.value // <optgroup>.value
+   if (type === bot)
+      bot[correct_index].value = this.value
+   else
+      player[correct_index].value = this.value
+
+   for each Player_dropdown, correct_option.value = this.value
+
+deletePlayer()
+   if (numPlayers === 0) throw
+   if (players[players.length - 1].type === "Human" ? numPeople : numBots === 0) throw
+
+   numPlayers--
+   players.pop().type === "Human" ? numPeople : numBots === 0
+   
+   this.remove()
+
+
+addPlayer()
+   if (numPlayers === 4) throw
+   ugh
+
+deletePlayers(n)
+   for (; n; n--) await(lastPlayer.x.click)
+
+addPlayers(n)
+   for (; n; n--) await(lastPlayer.add.click)
 
 
 

@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang = 'en-us'>
+<html lang = "en-us">
 
 <head>
    <meta charset = "UTF-8">
    <title>Tic Tac Toe Grow</title>
-   <script defer src = 'game.js'></script>
-   <link rel = 'stylesheet' href = 'style.css'>
+   <script defer src = "game.js"></script>
+   <link rel = "stylesheet" href = "style.css">
 </head>
 
 <body>
-   <div id = 'container'>
+   <div id = "container">
       <aside>
          <h1>Tic tac toe grow!</h1>
          <!-- Make this section a flexbox or grid -->
@@ -22,46 +22,54 @@
          </section>
          <section id = "gameData" name = "gameData">
             <h2>Game data</h2>
-            <fieldset aria-labelledby = "numPlayers">
-               <label id = "numPlayers" aria-labelledby = "varNumPlayers">
-                  <var id = "varNumPlayers" aria-label = "Number of players">
+            <fieldset id = "countField">
+               <label id = "playerAmountLabel" aria-labelledby = "varPlayerAmount">
+                  <var id = "varPlayerAmount" aria-label = "Number of players">
                      Number of players:
                   </var>
+                  <select>
+                     <option>2</option>
+                     <option>3</option>
+                     <option>4</option>
+                  </select>
                </label>
-               <select aria-labelledby = "numPlayers">
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-               </select>
-            </fieldset>
-            <fieldset aria-labelledby = "numHumans">
-               <label id = "numHumans" aria-labelledby = "varNumHumans">
-                  <var id = "varNumHumans" aria-label = "Number of people">
-                     Number of human players:
+               <br>
+               <label id = "personCountLabel" aria-labelledby = "varPersonCount">
+                  <var id = "varPersonCount" aria-label = "Number of people">
+                     Number of people playing:
                   </var>
+                  <select>
+                     <option>0</option>
+                     <option selected>1</option>
+                     <option>2</option>
+                     <option>3</option>
+                     <option>4</option>
+                  </select>
                </label>
-               <select aria-labelledby = "numHumans">
-                  <option>0</option>
-                  <option selected>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-               </select>
             </fieldset>
-            <fieldset>
+            <fieldset id = "namesField">
+               <label id = "usernameLabel1" aria-labelledby = "varUsername1">
+                  <var id = "varUsername1" aria-label = "Username #1">
+                     Username #1:
+                  </var>
+                  <input type = "text" placeholder = "Person 1"></input>
+               </label>
+            </fieldset>
+            <fieldset id = "choosePlayerField">
                <label id = "whoPlays1" aria-labelledby = "varPlayer1">
                   <var id = "varPlayer1" aria-label = "Player 1">
                      Player #1:
                   </var>
+                  <select aria-labelledby = "whoPlays1">
+                     <optgroup label = "Humans">
+                        <option>Person 1</option>
+                     </optgroup>
+                     <optgroup label = "Bots">
+                        <option>random_move</option>
+                        <option>middle_index</option>
+                     </optgroup>
+                  </select>
                </label>
-               <select aria-labelledby = "whoPlays1">
-                  <optgroup label = "Humans">
-                     <option>person 1</option>
-                  </optgroup>
-                  <optgroup label = "Bots">
-                     <option>random_move</option>
-                  </optgroup>
-               </select>
             </fieldset>
          </section>
       </aside>
