@@ -76,7 +76,31 @@
    </div>
    <aside>
       <h1>About</h1>
+      <h2>How to play</h2>
       <p>To play, simply click on an empty square (a button)</p>
+      <p>The board grows 1 square horizontally and vertically<br>
+         when you play on the edge.</p>
+      <details>
+         <summary>Examples:</summary>
+         <p>It's quite hard to visually show using text,<br>
+            I recommend just trying these out above.</p>
+         <p>I decided not to use text</p>
+         <button>X</button><button>&nbsp;</button><button>&nbsp;</button><br>
+         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
+         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
+         <br>
+         <button>&nbsp;</button><br>
+         <button>&nbsp;</button><button>X</button><button>&nbsp;</button><button>&nbsp;</button><br>
+         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
+         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
+      </details>
+      <p>Hence the name, tic tac toe grow.</p>
+      <p>If the board grows too big, you can use the mapControl buttons on the right</p>
+      <p>For example, the "up" button moves the whole board up.</p>
+      <p>This can actually be quite unintuitive,<br>
+         since when you click on "up", you move the board up,<br>
+         but you (e.g. your mouse) moves down in comparison.<br>
+         It's kinda like scrolling.</p>
       <p>You win if you get 7 in a row, or a checkmark.</p>
       <p>A checkmark is defined as a region of squares that:</p>
       <ul>
@@ -102,10 +126,57 @@
             and the rest of the "checkmark" will turn green anyways.
          </p>
       </details>
+      <h3>Another note</h3>
       <p>
-         If the length is (7 times the width) or more, or vice versa,
+         If the length is (7 times the width), or vice versa,
          it's a draw.
       </p>
+      <details>
+         <summary>Technicallly</summary>
+         <p>What? No way, the length was 6 times the width,<br>
+            but then skipped to 8 times?</p>
+         <p>You shouldn't be able to do that.<br>
+            If you do, it's a bug so tell me</p>
+         <p>Still a draw though.</p>
+      <h2>More details</h2>
+      <p>The game will tell you if it's a win or a draw,<br>
+         so you don't have to worry about that</p>
+      <p>You can see the width and height in the game info,<br>
+         where, eventually (not done yet), you can also...</p>
+      <ul>
+         <li>See the height of the board</li>
+         <li>See the width of the board</li>
+         <li>Add to the total number of people</li>
+         <li>Also delete some people</li>
+         <li>And also name the people</li>
+         <li>My code doesn't really care about the names</li>
+         <li>And you can also change whose turn it is</li>
+         <li>Wow! Just have a bot play</li>
+         <li>Or even multiple bots</li>
+         <li>Or even the same bot, but multiple times</li>
+         <li>Or even the same person multiple times</li>
+         <li>Or a different person multiple times</li>
+         <li>And you can add a player (different from "person")</li>
+         <li>Or delete players</li>
+         <li>You can even have humans and bots at the same time</li>
+         <li>You can admire the amount of bots there are</li>
+         <li>AND MORE</li>
+         <li>Free limit: Only 4 players max</li>
+         <li>Free limit: Only 2 players... min</li>
+         <li>You can breathe easily. It's really easy to breathe.</li>
+         <li>Did I mention: Names can be the same?</li>
+         <li>Imagine... holding the down arrow key on a dropdown =O</li>
+         <li>You can click the words "Player 1" instead of the box!</li>
+         <li>You can change the number of players directly</li>
+         <li>Or just one by one I guess</li>
+         <li>And same thing for the number of humans!</li>
+         <li>That's right, changing the number of humans directly</li>
+         <li>Or just one by one</li>
+         <li>There's so much you could theoretically do</li>
+         <li>Imagine... the possibilities XDDDD</li>
+         <li>BWAHAHAHAHA sorry I really had fun making this</li>
+      </ul>
+      <p>By default, it's 1 player against a bot named "random_move"</p>
    </aside>
 </body>
 </html>
