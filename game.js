@@ -548,22 +548,68 @@ players = [
 ]
 
 async function addOrDeletePlayers() {
-
+   if (this.value < numPlayers) {
+      await deletePlayers(numPlayers - this.value)
+   } else if (this.value > numPlayers) {
+      await addPlayers(this.value - numPlayers)
+   } else {
+      throw Error('It "changed" to the same value')
+   }
 }
 
 async function addOrDeletePeople() {
-   
+   if (this.value < numPeople) {
+      await deletePeople(numPeople - this.value)
+   } else if (this.value > numPeople) {
+      await addPeople(this.value - numPeople)
+   } else {
+      throw Error('It "changed" to the same value')
+   }
 }
 
 async function changeName() {
-
+   let index = this.parentElement.innerText[10]
+   let name = this.value.length ? this.value : this.placeholder
+   person[index].name = name;
+   for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
+      dropdown.firstElementChild.firstElementChild.text = name;
+   }
 }
 
 async function deletePerson() {
+   if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing")
+   numPeople--
+   numPlayers--
 
+   let index = this.parentElement.innerText[8]
+   people.splice(index, 1)
+   for (let i = index + 1; i < people.length; i++) {
+      for (let player of players) {
+         if (player.index === i + 1 && player.type === "human") {player.index === i}
+      }
+   }
+
+   for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
+      // delete correct_option, and if correct_option is selected,
+      //    correct_option.nextElementSibling.setAttribute: selected
+   }
+
+   // Do I really want to delete?
+   // Maybe even have 4 players all the time, but just hidden
+   
+   // delete correct_person
+   this.remove()  <delete this, as an element>
 }
 
 async function addPerson() {
+
+}
+
+async function addPeople() {
+
+}
+
+async function deletePeople() {
 
 }
 
