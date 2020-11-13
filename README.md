@@ -16,16 +16,9 @@ with two sides having 2 and 4 squares respectively,
 where all squares are played by the same player,  
 and the two sides share a square.
 
-Example:
-```
-O wins!
- ___   
-_XOX__
- __O_X_
-  _XO_O_
-   __OX_
-     __
-```
+Examples:
+![Lots of moves have been played, O has won with a sideways checkmark.](https://user-images.githubusercontent.com/58114641/99096744-448ab900-259c-11eb-89b2-2d57672b40f9.png)
+![Easy 7 in a row win. All moves by X are in the 7 in a row.](https://user-images.githubusercontent.com/58114641/99097026-a21f0580-259c-11eb-9955-e3f7d6663132.png)
 
 There's a more detailed explanation if you scroll down: https://icecream17.github.io/Stuff/Tic%20Tac%20Toe%20Grow/game.html
 
