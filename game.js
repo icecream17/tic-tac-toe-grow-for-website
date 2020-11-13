@@ -547,9 +547,45 @@ players = [
    new PlayerReference("bot", 0)
 ]
 
+async function addOrDeletePlayers() {
 
+}
 
+async function addOrDeletePeople() {
+   
+}
 
+async function changeName() {
+
+}
+
+async function deletePerson() {
+
+}
+
+async function addPerson() {
+
+}
+
+async function changePlayer() {
+
+}
+
+async function addPlayer() {
+
+}
+
+async function deletePlayer() {
+
+}
+
+async function addPlayers() {
+
+}
+
+async function deletePlayers() {
+
+}
 
 
 /* 
