@@ -12,10 +12,12 @@ Todo
    [ ] Add and delete people
    [ ] Add and delete bots
 [ ] Add more bots
+[ ] Reset button
 [ ] Create a tournament to rank the bots
    [ ] Game history
 [ ] Settings
    [ ] Green/red mode
+[ ] Highlight every square that has been played last by a player
 
 List of strategies
 [x] random   DONE
