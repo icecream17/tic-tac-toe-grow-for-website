@@ -78,21 +78,22 @@
       <h1>About</h1>
       <h2>How to play</h2>
       <p>To play, simply click on an empty square (a button)</p>
-      <p>The board grows 1 square horizontally and vertically<br>
-         when you play on the edge.</p>
+      <p>Every square where a move is played,<br>
+         all squares 1 step vertically or horizontally away<br>
+         become part of the board (if they aren't already).</p>
       <details>
          <summary>Examples:</summary>
-         <p>It's quite hard to visually show using text,<br>
-            I recommend just trying these out above.</p>
-         <p>I decided not to use text</p>
-         <button>X</button><button>&nbsp;</button><button>&nbsp;</button><br>
-         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
-         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
-         <br>
-         <button>&nbsp;</button><br>
-         <button>&nbsp;</button><button>X</button><button>&nbsp;</button><button>&nbsp;</button><br>
-         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
-         <button>&nbsp;</button><button>&nbsp;</button><button>&nbsp;</button><br>
+         <p>I recommend just trying these out above.</p>
+         <p class = "monospace">
+            <br>&nbsp;X__<br>&nbsp;___<br>&nbsp;___<br>
+            <br>&nbsp;_<br>_X__<br>&nbsp;___<br>&nbsp;___<br>
+            <br>
+            <br>&nbsp;_<br>_XO_<br>&nbsp;___<br>&nbsp;___<br>
+            <br>&nbsp;__<br>_XO_<br>&nbsp;___<br>&nbsp;___<br>
+            <br>
+            <br>&nbsp;_<br>_XO_<br>&nbsp;X__<br>&nbsp;___<br>
+            <br>&nbsp;__<br>_XO_<br>_X__<br>&nbsp;___<br>
+         </p>
       </details>
       <p>Hence the name, tic tac toe grow.</p>
       <p>If the board grows too big, you can use the mapControl buttons on the right</p>
@@ -138,6 +139,7 @@
          <p>You shouldn't be able to do that.<br>
             If you do, it's a bug so tell me</p>
          <p>Still a draw though.</p>
+      </details>
       <h2>More details</h2>
       <p>The game will tell you if it's a win or a draw,<br>
          so you don't have to worry about that</p>
