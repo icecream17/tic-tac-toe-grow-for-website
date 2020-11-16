@@ -31,8 +31,12 @@ jobs:
         run: html-validator --file=game.html --verbose
       
       - name: Setup eslint
+        run: npm install eslint -g
+        
+      - name: Setup babel eslint plugin
         run: |
-          npm install eslint -g
+          npm install @babel/core @babel/cli @babel/preset-env -g
+          npm install @babel/polyfill -g
           npm install @babel/eslint-plugin -g
         
       - name: Check js
