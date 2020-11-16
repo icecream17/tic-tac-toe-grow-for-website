@@ -30,8 +30,8 @@ jobs:
       - name: Check html
         run: html-validator --file=game.html --verbose
         
-      - name: Install eslint
-        run: yarn add eslint --dev
+      - name: Install babel eslint
+        run: yarn add eslint @babel/core @babel/eslint-parser --dev
       
       - name: Check js
         run: yarn run eslint game.js --color --debug
