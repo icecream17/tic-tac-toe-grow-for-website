@@ -23,15 +23,15 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.15'
-          
-      - name: Install modules
-        run: yarn
     
       - name: Install HTMLValidator
         run: npm install html-validator-cli -g
         
       - name: Check html
         run: html-validator --file=game.html --verbose
+        
+      - name: Install eslint
+        run: yarn add eslint --dev
       
       - name: Check js
         run: eslint game.js --color --debug
