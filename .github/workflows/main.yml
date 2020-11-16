@@ -37,7 +37,7 @@ jobs:
         run: |
           npm install @babel/core @babel/cli @babel/preset-env -g
           npm install @babel/polyfill -g
-          npm install @babel/eslint-plugin -g
+          npm install @babel/eslint-parser @babel/eslint-plugin -g
         
       - name: Check js
         run: npx eslint game.js --color --debug
