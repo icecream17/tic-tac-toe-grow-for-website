@@ -37,7 +37,9 @@ jobs:
         run: |
           npm install @babel/core @babel/cli @babel/preset-env -g
           npm install @babel/polyfill -g
-          
+      
+      - run: npm update -g
+      
       - name: Setup babel eslint plugin
         run: npm install @babel/eslint-parser @babel/eslint-plugin -g
         
