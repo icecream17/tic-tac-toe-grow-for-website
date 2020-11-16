@@ -23,6 +23,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.15'
+          
+      - name: Install modules
+        run: yarn
     
       - name: Install HTMLValidator
         run: npm install html-validator-cli -g
