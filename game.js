@@ -88,11 +88,11 @@ class Game {
       let moveFinish = this.checkGameEnd(x, y);
       if (moveFinish !== false) {
          // TODO: Put something better than alert, for bots. Like a notice
-         if (moveFinish[0] === "draw") {alert(`*gasp*! Draw!\n${moveFinish[1]}`);}
+         if (moveFinish[0] === "draw") alert(`*gasp*! Draw!\n${moveFinish[1]}`);
          else {
             // moveFinish[0] === "win"
             alert("WINNNN")
-            for (let cell of moveFinish[1].concat(this.board[y][x])) {
+            for (let cell of moveFinish[1].flat().concat(this.board[y][x])) {
                cell.win = true;
             }
          }
@@ -218,6 +218,7 @@ class Game {
    }
 
    checkWin(x, y) {
+      let wins = [];
       let playerValue = this.board[y][x].value
       let orthogonal = [[], [], [], []];
       let diagonal = [[], [], [], []];
@@ -283,7 +284,7 @@ class Game {
       ]
 
       if (sevenChecks.find(check => Boolean(check))) {
-         return sevenChecks.find(check => Boolean(check));
+         wins.push(sevenChecks.find(check => Boolean(check)));
       }
 
       let markChecks = [
@@ -294,7 +295,7 @@ class Game {
       ]
 
       if (markChecks.find(check => Boolean(check))) {
-         return markChecks.find(check => Boolean(check));
+         wins.push(markChecks.find(check => Boolean(check)));
       }
 
 
@@ -383,12 +384,11 @@ class Game {
 
       for (let check of additionalChecks) {
          if (check.every(square => square?.value === playerValue)) {
-            return check;
+            wins.push(check);
          }
       }
 
-
-      return false;
+      return wins.length ? wins : false; // If there is a win return wins
    }
 
    doBotMove() {
@@ -545,7 +545,11 @@ for (let key of Object.keys(bot_mechanics)) {
 players = [
    new PlayerReference("human", 0),
    new PlayerReference("bot", 0)
-]
+];
+
+for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
+   dropdown.onchange = event => changePlayer.call(event.target.selectedOptions[0]);
+}
 
 async function addOrDeletePlayers() {
    if (this.value < numPlayers) {
@@ -598,40 +602,36 @@ async function deletePerson() {
    // Maybe even have 4 players all the time, but just hidden
    
    // delete correct_person
-   this.remove()  <delete this, as an element>
+   this.remove()  // <delete this, as an element>
 }
 
-async function addPerson() {
+async function addPerson() {}
 
-}
+async function addPeople() {}
 
-async function addPeople() {
-
-}
-
-async function deletePeople() {
-
-}
+async function deletePeople() {}
 
 async function changePlayer() {
+   this.selected = true;
 
+   let type = this.parentElement.label;  // <optgroup> label
+   let correctIndex = Array.prototype.indexOf.call(
+      this.parentElement.children, this
+   );
+   
+   if (type === "bot") bots[correctIndex].value = this.text;
+   else people[correctIndex].value = this.text;
+   
+   players[this.index] = new PlayerReference(type, this.index);
 }
 
-async function addPlayer() {
+async function addPlayer() {}
 
-}
+async function deletePlayer() {}
 
-async function deletePlayer() {
+async function addPlayers() {}
 
-}
-
-async function addPlayers() {
-
-}
-
-async function deletePlayers() {
-
-}
+async function deletePlayers() {}
 
 
 /* 
