@@ -31,4 +31,4 @@ jobs:
         run: npm install html-validator-cli -g
         
       - name: Check html
-        run: html-validator "game.html" --islocal --verbose
+        run: html-validator --file="game.html" --verbose
