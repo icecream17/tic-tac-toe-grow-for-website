@@ -31,7 +31,9 @@ jobs:
         run: html-validator --file=game.html --verbose
       
       - name: Setup eslint
-        run: npm install eslint
+        run: |
+           npm install eslint --save-dev
+           npm install @babel/eslint-plugin --save-dev
         
       - name: Check js
         run: npx eslint game.js
