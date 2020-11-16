@@ -1,9 +1,5 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the main branch
 on:
   push:
     branches: [ main ]
@@ -25,16 +21,14 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Check HTML
-        uses: Cyb3r-Jak3/html5validator-action@v0.4.3
+        
+      - uses: actions/setup-node@v1
         with:
-          root: ./
-          css: true
-          
-      - uses: actions/upload-artifact@v2
-        with:
-          name: log
-          path: log.log
+          node-version: '14.15'
+    
+      - name: Install HTMLValidator
+        run: npm install html-validator-cli -g
+        
+      - name: Check html
+        run: html-validator "game.html" --islocal --verbose
