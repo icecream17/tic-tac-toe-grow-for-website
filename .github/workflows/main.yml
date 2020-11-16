@@ -33,11 +33,13 @@ jobs:
       - name: Setup eslint
         run: npm install eslint -g
         
-      - name: Setup babel eslint plugin
+      - name: Setup babel
         run: |
           npm install @babel/core @babel/cli @babel/preset-env -g
           npm install @babel/polyfill -g
-          npm install @babel/eslint-parser @babel/eslint-plugin -g
+          
+      - name: Setup babel eslint plugin
+        run: npm install @babel/eslint-parser @babel/eslint-plugin -g
         
       - name: Check js
         run: npx eslint game.js --color --debug
