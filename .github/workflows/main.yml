@@ -30,17 +30,8 @@ jobs:
       - name: Check html
         run: html-validator --file=game.html --verbose
       
-      - name: Setup eslint
-        run: npm install eslint -g
-        
-      - name: Setup babel
-        run: npm install @babel/core @babel/cli @babel/preset-env --save-dev
-      
-      - name: Setup babel eslint plugin
-        run: npm install @babel/eslint-parser @babel/eslint-plugin -g
-        
       - name: Check js
-        run: npx eslint game.js --color --debug
+        run: eslint game.js --color --debug
       
       - name: HTML Preview
         id: html_preview
