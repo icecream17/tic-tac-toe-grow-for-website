@@ -34,7 +34,7 @@ jobs:
         run: yarn add eslint --dev
       
       - name: Check js
-        run: eslint game.js --color --debug
+        run: yarn run eslint game.js --color --debug
       
       - name: HTML Preview
         id: html_preview
