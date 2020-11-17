@@ -531,61 +531,34 @@ players = [
 
 for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
    dropdown.onchange = event => changePlayer.call(event.target.selectedOptions[0]);
+      
+// These async functions are really fast
+// They might not even need to be async functions,
+// But it's nice and I might need them for tournaments.
+      
+// I feel weird about putting "disabled", though it's just a regular term describing HTML elements.
+// It was better than "deleted".
+// "Removed" is inaccurate, since the <select>s and the <input> are still there.
 
-async function addOrDeletePlayers() {
+// Order: Big to small, Change first
+
+async function EnableOrDisablePlayers() {
    if (this.value < numPlayers)
-      await deletePlayers(numPlayers - this.value);
+      return (await disablePlayers(numPlayers - this.value));
    else if (this.value > numPlayers)
-      await addPlayers(this.value - numPlayers);
+      return (await addPlayers(this.value - numPlayers));
    else
       throw Error('It "changed" to the same value');
 }
 
-async function addOrDeletePeople() {
+async function EnableOrDisablePeople() {
    if (this.value < numPeople)
-      await deletePeople(numPeople - this.value);
+      return (await disablePeople(numPeople - this.value));
    else if (this.value > numPeople)
-      await addPeople(this.value - numPeople);
+      return (await enablePeople(this.value - numPeople));
    else
       throw Error('It "changed" to the same value');
 }
-
-async function changeName() {
-   let correctIndex = this.parentElement.innerText[10];
-   let name = this.value.length ? this.value : this.placeholder;
-   people[correctIndex].name = name;
-   for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
-      dropdown.firstElementChild.firstElementChild.text = name;
-}
-
-async function deletePerson() {
-   if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing");
-   numPeople--;
-   numPlayers--;
-
-   let index = this.parentElement.innerText[8];
-   people.splice(index, 1);
-   for (let i = index + 1; i < people.length; i++)
-      for (let player of players)
-         if (player.index === i + 1 && player.type === "human") player.index = i;
-
-   for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
-      // delete correct_option, and if correct_option is selected,
-      //    correct_option.nextElementSibling.setAttribute: selected
-   }
-
-   // Do I really want to delete?
-   // Maybe even have 4 players all the time, but just hidden
-   
-   // delete correct_person
-   this.remove();  // <delete this, as an element>
-}
-
-async function addPerson() {}
-
-async function addPeople() {}
-
-async function deletePeople() {}
 
 async function changePlayer() {
    this.selected = true;
@@ -601,13 +574,51 @@ async function changePlayer() {
    players[this.index] = new PlayerReference(type, this.index);
 }
 
+async function changeName() {
+   let correctIndex = this.parentElement.innerText[10];
+   let name = this.value.length ? this.value : this.placeholder;
+   people[correctIndex].name = name;
+   for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
+      await dropdown.firstElementChild.firstElementChild.text = name;
+   resolve(`Done: Changed name to ${name}`);
+}
+
+async function enablePerson() {}
+      
+async function disablePerson() {
+   if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing");
+   numPeople--;
+   numPlayers--;
+
+   let correctIndex = this.parentElement.innerText[8];
+   people.splice(correctIndex, 1);
+   for (let i = correctIndex + 1; i < people.length; i++)
+      for (let player of players)
+         if (player.index === i + 1 && player.type === "human") player.index = i;
+
+   for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
+      await dropdown.disabled = true;
+   }
+
+   // Do I really want to delete?
+   // Maybe even have 4 players all the time, but just hidden
+   
+   // delete correct_person
+   this.remove();  // <delete this, as an element>
+   resolve(`Done: Person at index ${correctIndex} disabled.`)
+}
+
+async function enablePeople() {}
+
+async function disablePeople() {}
+
 async function addPlayer() {}
 
-async function deletePlayer() {}
+async function disablePlayer() {}
 
 async function addPlayers() {}
 
-async function deletePlayers() {}
+async function disablePlayers() {}
 
 
 /* 
@@ -693,7 +704,24 @@ Player #{n}:
       -> onclick deletePlayer()
    <button.add>
       -> onclick addPlayer()
+________
+Is disabled: All of the elements are disabled
 
+{Number of players} -> L
+{Number of people} -> N
+{Person #1}
+{Person #2}
+{Person #3}
+{Person #4}
+{Player #1}
+{Player #2}
+{Player #3}
+{Player #4}
+
+If X in {Player #X} > L,
+ {Player #X} is disabled
+If X in {Person #X} > N,
+ {Person #X} is disabled
 _________
 Correct = corresponding = figure the correct value out
 
