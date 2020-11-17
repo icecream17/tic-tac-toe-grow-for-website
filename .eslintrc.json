@@ -74,7 +74,7 @@
       "no-lone-blocks": "warn",
          
       "no-loop-func": "warn",
-      "no-magic-numbers": "warn",
+      "no-magic-numbers": "off",
       "no-multi-spaces": "warn",
       
       "no-new": "warn",
