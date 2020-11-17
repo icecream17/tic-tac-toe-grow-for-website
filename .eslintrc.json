@@ -58,8 +58,8 @@
       
       "no-constructor-return": "warn",
       
-      "no-else-return": "warn",
-      "no-empty-function": "warn",
+      "no-else-return": "off",
+      "no-empty-function": "off",
       
       "no-eval": "error",
       "no-extra-bind": "warn",
