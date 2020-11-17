@@ -81,16 +81,16 @@ class Game {
       y = newXY.y;
 
       let moveFinish = this.checkGameEnd(x, y);
-      if (moveFinish !== false) {
-         // TODO: Put something better than alert, for bots. Like a notice
-         if (moveFinish[0] === "draw") alert(`*gasp*! Draw!\n${moveFinish[1]}`);
+      if (moveFinish !== false)
+         if (moveFinish[0] === "draw") 
+            notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
+         else if (moveFinish[0] !== "win")
+            throw Error("Invalid moveFinish");
          else {
-            // moveFinish[0] === "win"
-            alert("WINNNN")
+            notice("WINNNN", moveFinish);
             for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
                cell.win = true;
          }
-      }
 
       this.updateVisual();
 
@@ -141,12 +141,11 @@ class Game {
 
       this.board[y][x] = new Cell("xo/<"[this.toMove], x, y);
 
-      for (let y = 0; y < this.board.length; y++) {
-         for (let x = 0; x < this.board.width; x++) {
-            this.board[y][x].y = y;
-            this.board[y][x].x = x;
+      for (let y2 = 0; y2 < this.board.length; y2++)
+         for (let x2 = 0; x2 < this.board.width; x2++) {
+            this.board[y2][x2].y = y2;
+            this.board[y2][x2].x = x2;
          }
-      }
 
       return this.board[y][x];
    }
@@ -165,7 +164,7 @@ class Game {
                this.visual.offset.x + x,
                this.visual.offset.y + y
             );
-            if (element === null) continue
+            if (element === null) continue;
             if (this.board[y][x].value !== '') {
                element.className = 'board';
 
@@ -192,20 +191,20 @@ class Game {
    }
 
    checkGameEnd(x, y) {
-      let win = this.checkWin(x, y)
+      let win = this.checkWin(x, y);
       if (win) return ["win", win];
 
-      if (this.board.width > 7 * this.board.height) {
-         return ["draw", "width is 7 times the height"]
-      } else if (this.board.height > 7 * this.board.width) {
-         return ["draw", "height is 7 times the width"]
-      }
-      return false;
+      if (this.board.width > 7 * this.board.height)
+         return ["draw", "width is 7 times the height"];
+      else if (this.board.height > 7 * this.board.width)
+         return ["draw", "height is 7 times the width"];
+      else
+         return false;
    }
 
    checkWin(x, y) {
       let wins = [];
-      let playerValue = this.board[y][x].value
+      let playerValue = this.board[y][x].value;
       let orthogonal = [[], [], [], []];
       let diagonal = [[], [], [], []];
       for (let i = 0; i < 4; i++) {
@@ -247,19 +246,20 @@ class Game {
 
       // good good good n good good good
       function sevenNArow (oneDirection, oppositeDirection) {
-         if (oneDirection.length + oppositeDirection.length >= 6) {
+         if (oneDirection.length + oppositeDirection.length >= 6)
             return oneDirection.concat(...oppositeDirection);
-         }
-         return false;
+         else
+            return false;
       }
 
       function checkMark (side1, side2) {
-         if (side1.length >= 3 && side2.length >= 1 ||
+         if (
+            side1.length >= 3 && side2.length >= 1 ||
             side2.length >= 3 && side1.length >= 1
-         ) {
+         ) 
             return side1.concat(...side2);
-         }
-         return false;
+         else
+            return false;
       }
 
       let sevenChecks = [
@@ -267,22 +267,20 @@ class Game {
          sevenNArow(orthogonal[2], orthogonal[3]),
          sevenNArow(diagonal[0], diagonal[3]),
          sevenNArow(diagonal[1], diagonal[2])
-      ]
+      ];
 
-      if (sevenChecks.find(check => Boolean(check))) {
+      if (sevenChecks.find(check => Boolean(check)))
          wins.push(sevenChecks.find(check => Boolean(check)));
-      }
 
       let markChecks = [
          checkMark(diagonal[0], diagonal[1]),
          checkMark(diagonal[0], diagonal[2]),
          checkMark(diagonal[3], diagonal[1]),
          checkMark(diagonal[3], diagonal[2]),
-      ]
+      ];
 
-      if (markChecks.find(check => Boolean(check))) {
+      if (markChecks.find(check => Boolean(check)))
          wins.push(markChecks.find(check => Boolean(check)));
-      }
 
 
       // This breaks the parsing
@@ -376,7 +374,7 @@ class Game {
    }
 
    doBotMove() {
-      players[this.toMove].player.play()
+      players[this.toMove].player.play();
    }
 
    getMoves() {
@@ -402,6 +400,10 @@ function handleClick(x, y) {
       currentGame.board[y][x].value === ' '
    )
       currentGame.play(x, y);
+}
+      
+function notice(...args) {
+   // do something
 }
 
 const player_assets = [
@@ -475,7 +477,8 @@ class Human extends Player {
 class Bot extends Player {
    constructor (name, mechanics) {
       super("bot", name);
-      this.play = mechanics.bind(currentGame)
+      this.mechanics = mechanics;
+      this.play = mechanics.bind(currentGame);  
    }
 }
 
@@ -486,11 +489,10 @@ class PlayerReference {
    }
 
    get player() {
-      if (this.type === "human") {
+      if (this.type === "human")
          return people[this.index];
-      } else {
+      else
          return bots[this.index];
-      }
    }
 }
 
@@ -518,7 +520,7 @@ let players; // Contains (type, index) based on dropdowns
 
 for (let key of Object.keys(bot_mechanics)) {
    let newBot = new Bot(key, bot_mechanics[key]);
-   bots.push(newBot)
+   bots.push(newBot);
    bots[key] = newBot;
 }
 
@@ -527,51 +529,45 @@ players = [
    new PlayerReference("bot", 0)
 ];
 
-for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
+for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
    dropdown.onchange = event => changePlayer.call(event.target.selectedOptions[0]);
-}
 
 async function addOrDeletePlayers() {
-   if (this.value < numPlayers) {
-      await deletePlayers(numPlayers - this.value)
-   } else if (this.value > numPlayers) {
-      await addPlayers(this.value - numPlayers)
-   } else {
-      throw Error('It "changed" to the same value')
-   }
+   if (this.value < numPlayers)
+      await deletePlayers(numPlayers - this.value);
+   else if (this.value > numPlayers)
+      await addPlayers(this.value - numPlayers);
+   else
+      throw Error('It "changed" to the same value');
 }
 
 async function addOrDeletePeople() {
-   if (this.value < numPeople) {
-      await deletePeople(numPeople - this.value)
-   } else if (this.value > numPeople) {
-      await addPeople(this.value - numPeople)
-   } else {
-      throw Error('It "changed" to the same value')
-   }
+   if (this.value < numPeople)
+      await deletePeople(numPeople - this.value);
+   else if (this.value > numPeople)
+      await addPeople(this.value - numPeople);
+   else
+      throw Error('It "changed" to the same value');
 }
 
 async function changeName() {
-   let index = this.parentElement.innerText[10]
-   let name = this.value.length ? this.value : this.placeholder
-   people[index].name = name;
-   for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
+   let correctIndex = this.parentElement.innerText[10];
+   let name = this.value.length ? this.value : this.placeholder;
+   people[correctIndex].name = name;
+   for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
       dropdown.firstElementChild.firstElementChild.text = name;
-   }
 }
 
 async function deletePerson() {
-   if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing")
-   numPeople--
-   numPlayers--
+   if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing");
+   numPeople--;
+   numPlayers--;
 
-   let index = this.parentElement.innerText[8]
-   people.splice(index, 1)
-   for (let i = index + 1; i < people.length; i++) {
-      for (let player of players) {
-         if (player.index === i + 1 && player.type === "human") {player.index === i}
-      }
-   }
+   let index = this.parentElement.innerText[8];
+   people.splice(index, 1);
+   for (let i = index + 1; i < people.length; i++)
+      for (let player of players)
+         if (player.index === i + 1 && player.type === "human") player.index = i;
 
    for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
       // delete correct_option, and if correct_option is selected,
@@ -582,7 +578,7 @@ async function deletePerson() {
    // Maybe even have 4 players all the time, but just hidden
    
    // delete correct_person
-   this.remove()  // <delete this, as an element>
+   this.remove();  // <delete this, as an element>
 }
 
 async function addPerson() {}
