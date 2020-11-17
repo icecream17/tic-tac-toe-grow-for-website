@@ -5,7 +5,7 @@
       "ecmaVersion": 2021,
       "sourceType": "script"
    },
-   "env": {"browser": true},
+   "env": { "browser": true },
    "extends": "eslint:recommended",
    "reportUnusedDisableDirectives": false,
    "rules": {
@@ -19,7 +19,7 @@
       "@babel/no-invalid-this": "off",
       "@babel/no-unused-expressions": "warn",
       "@babel/object-curly-spacing": "off",
-      "@babel/semi": ["warn", "always", {"omitLastInOneLineBlock": true}],
+      "@babel/semi": ["warn", "always", { "omitLastInOneLineBlock": true }],
          
       "no-unused-vars": "warn",
       
@@ -105,10 +105,79 @@
       "prefer-regex-literals": "error",
       "require-await": "warn",
       "require-unicode-regexp": "error",
-      "wrap-iife": ["warn", "inside", {"functionPrototypeMethods": true}],
+      "wrap-iife": ["warn", "inside", { "functionPrototypeMethods": true }],
       
       "strict": ["error", "global"],
       "no-label-var": "error",
-      "no-shadow": "warn"
+      "no-shadow": "warn",
+         
+         
+       
+      "array-bracket-newline": ["warn", "consistent"],
+      "array-bracket-spacing": ["warn", "never"],
+      "array-element-newline": "off",
+      "block-spacing": ["warn", "never"],
+      "brace-style": ["warn", "1tbs", { "allowSingleLine": true }],
+      "camelcase": "warn",
+      
+      "comma-spacing": "warn",
+      
+      "computed-property-spacing": "warn",
+      
+      "eol-last": ["warn", "always"],
+      "func-call-spacing": ["warn", "never"],
+      
+      "function-call-argument-newline": ["warn", "consistent"],
+      "function-paren-newline": ["warn", "multiline"],
+      
+      "id-length": ["warn", {
+         "min": 3,
+         "max": 42,
+         "excpetions": ["i", "j", "x", "y", "vx", "vy", "x2", "y2"]
+      }],
+      "implicit-arrow-linebreak": ["warn", "beside"],
+      "indent": ["warn", 3],
+      "key-spacing": "warn",
+      "keyword-spacing": "warn",
+      
+      "lines-between-class-members": "warn",
+      "max-depth": "warn",
+      "max-len": ["warn", {
+         "code": 80,
+         "tabWidth": 1000,
+         
+         "ignoreUrls": true,
+         
+      }],
+         
+      "max-nested-callbacks": ["warn", { "max": 3 }],
+      "max-params": "warn",
+      "max-statements": ["warn", 25],
+      "max-statements-per-line": ["warn", 3],
+      "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }],
+      "no-array-constructor": "warn",
+      "no-lonely-if": "warn",
+      "no-mixed-operators": "off",
+      "no-negated-condition": "warn",
+      "no-restricted-syntax": [
+         "warn",
+         {
+            "selector": "WithStatement",
+            "message": "WithStatement: Noooo... (this is a warning)"
+         },
+         {
+            "selector": "CallExpression[callee.name='setTimeout'][arguments.length!=2]",
+            "message": "setTimeout needs 2 arguments"
+         }
+      ],
+      "no-tabs": "error",
+      "no-trailing-spaces": ["warn", {
+         "skipBlankLines": "true",
+         "ignoreComments": "true"
+      }],
+      "no-unneeded-ternary": "warn",
+      "no-whitespace-before-property": "error",
+      "nonblock-statement-body-position": ["off", "any"],
+      "object-curly-newline": "warn",
    }
 }
