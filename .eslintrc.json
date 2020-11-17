@@ -7,6 +7,7 @@
    },
    "env": {"browser": true},
    "extends": "eslint:recommended",
+   "reportUnusedDisableDirectives": false,
    "rules": {
       "new-cap": "off",
       "no-invalid-this": "off",
@@ -15,7 +16,7 @@
       "semi": "off",
       
       "@babel/new-cap": "warn",
-      "@babel/no-invalid-this": "warn",
+      "@babel/no-invalid-this": "off",
       "@babel/no-unused-expressions": "warn",
       "@babel/object-curly-spacing": "off",
       "@babel/semi": ["warn", "always", {"omitLastInOneLineBlock": true}],
