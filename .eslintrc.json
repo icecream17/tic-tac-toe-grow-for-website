@@ -19,6 +19,8 @@
       "@babel/no-unused-expressions": "warn",
       "@babel/object-curly-spacing": "off",
       "@babel/semi": ["warn", "always", {"omitLastInOneLineBlock": true}],
+         
+      "no-unused-vars": "warn",
       
       "no-await-in-loop": "warn",
       "no-extra-parens": ["warn", "all", {
