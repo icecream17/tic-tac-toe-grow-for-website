@@ -34,7 +34,7 @@ jobs:
         run: yarn add eslint @babel/core @babel/eslint-parser @babel/eslint-plugin --dev
       
       - name: Check js
-        run: yarn run eslint game.js --color --print-config game.js
+        run: yarn run eslint game.js --color
       
       - name: HTML Preview
         id: html_preview
