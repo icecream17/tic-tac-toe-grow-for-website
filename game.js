@@ -53,35 +53,30 @@ class Game {
       // second row is 1, 0
       // third row, seventh column is 3, 7
 
-      for (let y = 0; y < this.board.length; y++) {
-         for (let x = 0; x < this.board.width; x++) {
-            if (this.board[y][x].value !== '') {
+      for (let y = 0; y < this.board.length; y++)
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value !== '')
                getSquare(
                   this.visual.offset.x + x,
                   this.visual.offset.y + y
                ).className = 'board';
-            }
-         }
-      }
    }
 
    play(x, y) {
       this.update(x, y);
 
       // toMove is updated now
-      if (players[this.toMove].type === "bot") {
+      if (players[this.toMove].type === "bot")
          this.doBotMove();
-      }
    }
 
    update(x, y) {
       console.log('move: ', x, y);
 
-      if (this.board[y][x].value !== ' ') {
+      if (this.board[y][x].value !== ' ')
          throw Error("AAA WHAT!????");
-      }
 
-      let newXY = this.updateBoard(x, y)
+      let newXY = this.updateBoard(x, y);
       x = newXY.x;
       y = newXY.y;
 
@@ -92,9 +87,8 @@ class Game {
          else {
             // moveFinish[0] === "win"
             alert("WINNNN")
-            for (let cell of moveFinish[1].flat().concat(this.board[y][x])) {
+            for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
                cell.win = true;
-            }
          }
       }
 
@@ -111,43 +105,39 @@ class Game {
 
       if (y === 0) {
          this.board.unshift([]);
-         for (let i = 0; i < this.board.width; i++) {
+         for (let i = 0; i < this.board.width; i++)
             this.board[0].push(
                new Cell(i === x ? ' ' : '', i, 0)
             );
-         }
          this.board.height++; y++;
       } else if (y === this.board.height - 1) {
          this.board.push([]);
          this.board.height++;
-         for (let i = 0; i < this.board.width; i++) {
+         for (let i = 0; i < this.board.width; i++)
             this.board[this.board.height - 1].push(
                new Cell(i === x ? ' ' : '', i, this.board.height - 1)
             );
-         }
       }
 
       if (x === 0) {
-         for (let i = 0; i < this.board.length; i++) {
+         for (let i = 0; i < this.board.length; i++)
             this.board[i].unshift(
                new Cell(i === y ? ' ' : '', i, 0)
             );
-         }
          this.board.width++; x++;
       } else if (x === this.board.width - 1) {
-         for (let i = 0; i < this.board.length; i++) {
+         for (let i = 0; i < this.board.length; i++)
             this.board[i].push(
                new Cell(i === y ? ' ' : '', i, this.board.width)
             );
-         }
          this.board.width++;
       }
 
 
-      if (this.board[y - 1][x].value === '') {this.setCell(x, y - 1, ' ');}
-      if (this.board[y + 1][x].value === '') {this.setCell(x, y + 1, ' ');}
-      if (this.board[y][x - 1].value === '') {this.setCell(x - 1, y, ' ');}
-      if (this.board[y][x + 1].value === '') {this.setCell(x + 1, y, ' ');}
+      if (this.board[y - 1][x].value === '') this.setCell(x, y - 1, ' ');
+      if (this.board[y + 1][x].value === '') this.setCell(x, y + 1, ' ');
+      if (this.board[y][x - 1].value === '') this.setCell(x - 1, y, ' ');
+      if (this.board[y][x + 1].value === '') this.setCell(x + 1, y, ' ');
 
       this.board[y][x] = new Cell("xo/<"[this.toMove], x, y);
 
@@ -163,51 +153,47 @@ class Game {
 
    // Same as visualStart really
    updateVisual() {
-      for (let y = 0; y < 20; y++) {
+      for (let y = 0; y < 20; y++)
          for (let x = 0; x < 20; x++) {
             getSquare(x, y).className = '';
             getSquare(x, y).style.background = '';
          }
-      }
 
-      for (let y = 0; y < this.board.height; y++) {
+      for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++) {
             let element = getSquare(
                this.visual.offset.x + x,
                this.visual.offset.y + y
             );
-            if (element === null) {continue}
+            if (element === null) continue
             if (this.board[y][x].value !== '') {
                element.className = 'board';
 
                if (this.board[y][x].value !== ' ') {
                   let whichAsset = "xo/<".indexOf(this.board[y][x].value);
 
-                  if (whichAsset === -1) {
+                  if (whichAsset === -1)
                      element.style.background = "red";
-                  } else {
+                  else
                      element.style.background = (
                         `url("${player_assets[whichAsset]}")`
                      );
-                  }
 
-                  if (this.board[y][x].win) {
+                  if (this.board[y][x].win)
                      element.classList.add("win");
-                  }
-               } else {
+               } else
                   element.style.background = '';
-               }
             } else {
                element.className = '';
                element.style.background = '';
             }
          }
-      }
+      
    }
 
    checkGameEnd(x, y) {
       let win = this.checkWin(x, y)
-      if (win) {return ["win", win]}
+      if (win) return ["win", win];
 
       if (this.board.width > 7 * this.board.height) {
          return ["draw", "width is 7 times the height"]
@@ -244,7 +230,7 @@ class Game {
                x + (orthogonalStep.vx * j)
             ];
 
-            if (square?.value !== playerValue) {break;}
+            if (square?.value !== playerValue) break;
             orthogonal[i].push(square);
          }
          for (let j = 1; j < 7; j++) {
@@ -254,7 +240,7 @@ class Game {
                x + (diagonalStep.vx * j)
             ];
 
-            if (square?.value !== playerValue) {break;}
+            if (square?.value !== playerValue) break;
             diagonal[i].push(square);
          }
       }
@@ -382,11 +368,9 @@ class Game {
          [diagonal[3][0], moreSquares[19], moreSquares[1], moreSquares[9]]
       ];
 
-      for (let check of additionalChecks) {
-         if (check.every(square => square?.value === playerValue)) {
+      for (let check of additionalChecks)
+         if (check.every(square => square?.value === playerValue))
             wins.push(check);
-         }
-      }
 
       return wins.length ? wins : false; // If there is a win return wins
    }
@@ -397,13 +381,10 @@ class Game {
 
    getMoves() {
       let moves = [];
-      for (let y = 0; y < this.board.height; y++) {
-         for (let x = 0; x < this.board.width; x++) {
-            if (this.board[y][x].value === ' ') {
+      for (let y = 0; y < this.board.height; y++)
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value === ' ')
                moves.push(new Position(x, y));
-            }
-         }
-      }
       return moves;
    }
 }
@@ -419,9 +400,8 @@ function handleClick(x, y) {
    if (
       players[currentGame.toMove].type === "human" &&
       currentGame.board[y][x].value === ' '
-   ) {
+   )
       currentGame.play(x, y);
-   }
 }
 
 const player_assets = [
@@ -574,7 +554,7 @@ async function addOrDeletePeople() {
 async function changeName() {
    let index = this.parentElement.innerText[10]
    let name = this.value.length ? this.value : this.placeholder
-   person[index].name = name;
+   people[index].name = name;
    for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
       dropdown.firstElementChild.firstElementChild.text = name;
    }
