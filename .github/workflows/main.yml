@@ -40,4 +40,4 @@ jobs:
         id: html_preview
         uses: pavi2410/html-preview-action@v2
         with:
-          html file: game.html
+          html_file: game.html
