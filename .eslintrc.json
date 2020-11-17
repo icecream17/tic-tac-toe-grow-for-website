@@ -6,7 +6,7 @@
       "sourceType": "script"
    },
    "env": {"browser": true},
-   "extends": "eslint:recommended"
+   "extends": "eslint:recommended",
    "rules": {
       "new-cap": "off",
       "no-invalid-this": "off",
@@ -106,6 +106,6 @@
       
       "strict": ["error", "global"],
       "no-label-var": "error",
-      "no-shadow": "warn",
+      "no-shadow": "warn"
    }
 }
