@@ -29,16 +29,69 @@ class Cell extends Position {
    constructor (value, x, y) {
       super(x, y);
       this.value = value;
-      this.win = false;
+      this.win = false; // Idea: setter errors when value is '' or ' '
+   }
+}
+
+class Move extends Position {
+   constructor (x, y, game = currentGame) {
+      super(x, y);
+      this.game = game;
+      this.index = game.moveHistory.length; // Assumes Move isn't in History yet.
+      this.gameState = new GameState(game);
+   }
+      
+   getCorrespondingPosition () {
+      let correctPosition = new Position(this.x, this.y);
+      for (
+         let index = this.gameState.moveHistory.length;
+         index < this.game.moveHistory.length;
+         index++
+      ) {
+         let nextMove = this.game.moveHistory[index];
+         if (nextMove.x === 0) correctPosition.x++;
+         if (nextMove.y === 0) correctPosition.y++;
+      }
+      return correctPosition;
+   }
+}
+
+class GameState {
+   constructor (game = currentGame) {
+      this.game = game;
+
+      this.turn = game.turn;
+      this.toMove = game.toMove;
+      this.result = game.result;
+      this.board = [];
+      this.board.width = game.board.width;
+      this.board.height = game.board.height;
+
+      for (let y = 0; y < game.board.length; y++) {
+         this.board.push([]);
+         for (let x = 0; x < game.board.width; x++) {
+            let cell = new Cell (game.board[y][x].value, y, x);
+            cell.win = game.board[y][x].win;
+            this.board.push(cell);
+         }
+      }
+      
+      this.moveHistory = game.moveHistory.slice();
+   }
+      
+   getMoves () {
+      let moves = [];
+      for (let y = 0; y < this.board.height; y++)
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value === ' ')
+               moves.push(new Position(x, y));
+      return moves;
    }
 }
 
 class Game {
    constructor () {
       // const - silently ignores any changes so watch out
-      Object.defineProperty(this, "MAX_LENGTH", {value: 511});
-      Object.defineProperty(this, "MAX_TURNS", {value: 292});
-
       this.turn = 1;
       this.toMove = 0; // index in array
       this.result = null;
@@ -53,8 +106,19 @@ class Game {
       this.visual = [];
       this.visual.offset = new Position(0, 0);
       this.visualStart();
-   }
 
+      this.moveHistory = [];
+   }
+   
+   // These static methods must be gotten from the class Game
+   // i.e.: Game.MAX_LENGTH instead of this.MAX_LENGTH
+   
+   // TODO: Add a way to change this.
+   static set MAX_LENGTH (value) {throw TypeError("Assignment to constant property {MAX_LENGTH}");}
+   static set MAX_TURNS (value) {throw TypeError("Assignment to constant property {MAX_TURNS}");}
+   static get MAX_LENGTH () {return 511;}
+   static get MAX_TURNS () {return 292;}
+   
    setCell (x, y, value) {
       this.board[y][x] = new Cell(value, x, y);
    }
@@ -103,6 +167,7 @@ class Game {
             throw Error("Invalid moveFinish");
 
       this.updateVisual();
+      this.moveHistory.push(new Move(newXY.x, newXY.y, this));
 
       this.toMove = (this.toMove + 1) % players.length;
       console.log("update:", x, y, moveFinish);
@@ -543,6 +608,25 @@ const bot_mechanics = {
       let moves = this.getMoves();
       let chosen = moves[Math.round(moves.length / 2)]; // Not perfectly uniform
       this.play(chosen.x, chosen.y);
+   },
+   copy () {
+      let moves = this.getMoves();
+      let lastMove = this.moveHistory?.[this.moveHistory.length - 1];
+      
+      if (lastMove === undefined) {
+         bot_mechanics.random_move.apply(this);
+      } else if (lastMove.gameState.moveHistory.length === 1) {
+         // Amazing shortcut
+         this.play(lastMove.x + 1, lastMove.y);
+      } else {
+         let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
+         let indexOfLastMove = secondLastMove.gameState.getMoves().find(
+            position => position.x === lastMove.x && position.y === lastMove.y
+         );
+         if (indexOfLastMove === undefined) throw TypeError("Last move was not an option...?");
+         let chosen = moves[indexOfLastMove];
+         this.play(chosen.x, chosen.y);
+      }
    }
 };
 
