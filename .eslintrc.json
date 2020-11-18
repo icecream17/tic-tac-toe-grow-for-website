@@ -304,7 +304,7 @@
          }
       ],
       "spaced-comment": "warn",
-      "switch-color-spacing": "warn",
+      "switch-colon-spacing": "warn",
       "template-tag-spacing": "warn",
 
       "arrow-body-style": [
