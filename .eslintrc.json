@@ -334,6 +334,28 @@
          "warn",
          "as-needed"
       ],
-      "arrow-spacing": "warn"
+      "arrow-spacing": "warn",
+      "no-useless-computed-key": [
+         "warn",
+         {
+            "enforceForClassMembers": true
+         }
+      ],
+      "no-useless-constructor": "warn",
+      "object-shorthand": "warn",
+      "prefer-arrow-callback": [
+         "warn",
+         {
+            "allowNamedFunctions": true
+         }
+      ],
+      "prefer-const": "warn",
+      "prefer-numeric-literals": "warn",
+      "prefer-rest-params": "warn",
+      "prefer-spread": "warn",
+      "prefer-template": "warn",
+      "rest-spread-spacing": "warn",
+      "symbol-description": "warn",
+      "template-curly-spacing": "warn"
    }
 }
