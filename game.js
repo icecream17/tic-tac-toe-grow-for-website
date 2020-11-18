@@ -1,5 +1,16 @@
 "use strict";
 
+class BotIsDisabledError extends Error {
+   constructor (bot) {
+      super(`${bot.name} is disabled and cannot play.`);
+
+      Error.captureStackTrace?.(this, BotIsDisabledError);
+
+      this.name = this.constructor.name; // For ease of maintenance
+      this.bot = bot;
+   }
+}
+
 class Position {
    constructor (x, y) {
       this.x = x;
@@ -23,7 +34,7 @@ class Cell extends Position {
 }
 
 class Game {
-   constructor() {
+   constructor () {
       // const - silently ignores any changes so watch out
       Object.defineProperty(this, "MAX_LENGTH", {value: 511});
       Object.defineProperty(this, "MAX_TURNS", {value: 292});
@@ -44,11 +55,11 @@ class Game {
       this.visualStart();
    }
 
-   setCell(x, y, value) {
+   setCell (x, y, value) {
       this.board[y][x] = new Cell(value, x, y);
    }
 
-   visualStart() {
+   visualStart () {
       // the top-left of the board is 0, 0
       // second row is 1, 0
       // third row, seventh column is 3, 7
@@ -56,13 +67,13 @@ class Game {
       for (let y = 0; y < this.board.length; y++)
          for (let x = 0; x < this.board.width; x++)
             if (this.board[y][x].value !== '')
-               getSquare(
+               ELEMENTS.getSquare(
                   this.visual.offset.x + x,
                   this.visual.offset.y + y
                ).className = 'board';
    }
 
-   play(x, y) {
+   play (x, y) {
       this.update(x, y);
 
       // toMove is updated now
@@ -70,7 +81,7 @@ class Game {
          this.doBotMove();
    }
 
-   update(x, y) {
+   update (x, y) {
       console.log('move: ', x, y);
 
       if (this.board[y][x].value !== ' ')
@@ -82,15 +93,14 @@ class Game {
 
       let moveFinish = this.checkGameEnd(x, y);
       if (moveFinish !== false)
-         if (moveFinish[0] === "draw") 
-            notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
-         else if (moveFinish[0] !== "win")
-            throw Error("Invalid moveFinish");
-         else {
+         if (moveFinish[0] === "win") {
             notice("WINNNN", moveFinish);
             for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
                cell.win = true;
-         }
+         } else if (moveFinish[0] === "draw")
+            notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
+         else 
+            throw Error("Invalid moveFinish");
 
       this.updateVisual();
 
@@ -98,7 +108,7 @@ class Game {
       console.log("update:", x, y, moveFinish);
    }
 
-   updateBoard(x, y) {
+   updateBoard (x, y) {
       // Possible bug in the future, the else ifs assume that the
       // first cell is not the same as the last cell, which would be untrue if
       // the width or height was 1
@@ -151,46 +161,48 @@ class Game {
    }
 
    // Same as visualStart really
-   updateVisual() {
+   updateVisual () {
       for (let y = 0; y < 20; y++)
          for (let x = 0; x < 20; x++) {
-            getSquare(x, y).className = '';
-            getSquare(x, y).style.background = '';
+            ELEMENTS.getSquare(x, y).className = '';
+            ELEMENTS.getSquare(x, y).style.background = '';
          }
 
+      // Maybe there should be a better name for "element"
       for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++) {
-            let element = getSquare(
+            let element = ELEMENTS.getSquare(
                this.visual.offset.x + x,
                this.visual.offset.y + y
             );
             if (element === null) continue;
-            if (this.board[y][x].value !== '') {
-               element.className = 'board';
-
-               if (this.board[y][x].value !== ' ') {
-                  let whichAsset = "xo/<".indexOf(this.board[y][x].value);
-
-                  if (whichAsset === -1)
-                     element.style.background = "red";
-                  else
-                     element.style.background = (
-                        `url("${player_assets[whichAsset]}")`
-                     );
-
-                  if (this.board[y][x].win)
-                     element.classList.add("win");
-               } else
-                  element.style.background = '';
-            } else {
+            
+            let cellValue = this.board[y][x].value;
+            if (cellValue === '') {
                element.className = '';
                element.style.background = '';
+            } else if (cellValue === ' ') {
+               element.className = 'board';
+               element.style.background = '';
+            } else {
+               element.className = 'board';
+               
+               let whichAsset = "xo/<".indexOf(this.board[y][x].value);
+               if (whichAsset === -1)
+                  element.style.background = "red";
+               else
+                  element.style.background = (
+                     `url("${player_assets[whichAsset]}")`
+                  );
+
+               if (this.board[y][x].win)
+                  element.classList.add("win");
             }
          }
-      
+      // Outer for doesn't need brackets
    }
 
-   checkGameEnd(x, y) {
+   checkGameEnd (x, y) {
       let win = this.checkWin(x, y);
       if (win) return ["win", win];
 
@@ -202,7 +214,7 @@ class Game {
          return false;
    }
 
-   checkWin(x, y) {
+   checkWin (x, y) {
       let wins = [];
       let playerValue = this.board[y][x].value;
       let orthogonal = [[], [], [], []];
@@ -256,7 +268,7 @@ class Game {
          if (
             side1.length >= 3 && side2.length >= 1 ||
             side2.length >= 3 && side1.length >= 1
-         ) 
+         )
             return side1.concat(...side2);
          else
             return false;
@@ -373,11 +385,11 @@ class Game {
       return wins.length ? wins : false; // If there is a win return wins
    }
 
-   doBotMove() {
+   doBotMove () {
       players[this.toMove].player.play();
    }
 
-   getMoves() {
+   getMoves () {
       let moves = [];
       for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++)
@@ -387,22 +399,18 @@ class Game {
    }
 }
 
-function getSquare(x, y) {
-   return document.getElementById(x + '-' + y);
-}
-
-function handleClick(x, y) {
+function handleClick (x, y) {
    console.log("Click!", x, y);
    x -= currentGame.visual.offset.x;
    y -= currentGame.visual.offset.y;
    if (
-      players[currentGame.toMove].type === "human" &&
-      currentGame.board[y][x].value === ' '
+      players[currentGame.toMove].type === "human"
+      && currentGame.board[y][x].value === ' '
    )
       currentGame.play(x, y);
 }
       
-function notice(...args) {
+function notice (...args) {
    // do something
 }
 
@@ -413,45 +421,56 @@ const player_assets = [
    "player_assets/square.png"
 ];
 
-const container = document.getElementById('container');
-const infoElement = document.querySelector('#container aside');
-const gameDataElement = document.getElementById('gameData');
-
-let shifts = document.querySelectorAll('#mapControls button');
-let squares = []; // element
+const ELEMENTS = {
+   container: document.getElementById('container'),
+   infoElement: document.querySelector('#container aside'),
+   gameDataElement: document.getElementById('gameData'),
+   shifts: document.querySelectorAll('#mapControls button'),
+   squares: [],
+   
+   getSquare: function (x, y) {
+      return document.getElementById(x + '-' + y);
+   },
+   getPlayerSelects: function () {
+      return document.querySelectorAll("#choosePlayerField label select");
+   },
+   getEnabledPlayerSelects: function () {
+      return document.querySelectorAll("#choosePlayerField label select:enabled")  
+   }
+};
 
 let gameHistory = [];
 
 // up down left right
-shifts[0].onclick = () => {
+ELEMENTS.shifts[0].onclick = () => {
    currentGame.visual.offset.y--;
    currentGame.updateVisual();
 };
-shifts[1].onclick = () => {
+ELEMENTS.shifts[1].onclick = () => {
    currentGame.visual.offset.y++;
    currentGame.updateVisual();
 };
-shifts[2].onclick = () => {
+ELEMENTS.shifts[2].onclick = () => {
    currentGame.visual.offset.x--;
    currentGame.updateVisual();
 };
-shifts[3].onclick = () => {
+ELEMENTS.shifts[3].onclick = () => {
    currentGame.visual.offset.x++;
    currentGame.updateVisual();
 };
 
 for (let x = 0; x < 20; x++) {
-   squares[x] = [];
+   ELEMENTS.squares[x] = [];
    for (let y = 0; y < 20; y++) {
       let element = document.createElement('button');
-      squares[x].push(element);
+      ELEMENTS.squares[x].push(element);
 
       element.id = x + '-' + y;
       element.setAttribute("aria-label", `Square at ${x}-${y}`);
       element.style.gridColumn = x + 1;
       element.style.gridRow = y + 1;
       element.onclick = handleClick.bind(element, x, y);
-      container.appendChild(element);
+      ELEMENTS.container.appendChild(element);
    }
 }
 
@@ -462,47 +481,65 @@ let currentGame = new Game();
 
 
 class Player {
-   constructor (type, name) {
+   constructor (type, name, disabled) {
       this.type = type;
       this.name = name;
+      this.disabled = disabled;
    }
 }
 
 class Human extends Player {
-   constructor (name) {
-      super("human", name);
+   constructor (name, disabled = true) {
+      super("human", name, disabled);
    }
 }
 
 class Bot extends Player {
-   constructor (name, mechanics) {
-      super("bot", name);
+   constructor (name, mechanics, disabled = false) {
+      super("bot", name, disabled);
       this.mechanics = mechanics;
-      this.play = mechanics.bind(currentGame);  
+   }
+   
+   play (...params) {
+      if (this.disabled) throw BotIsDisabledError(this);
+      return mechanics.apply(currentGame);  
    }
 }
 
 class PlayerReference {
    constructor (type, index) {
+      if (type === "human" && humans.length <= index) 
+         throw ReferenceError(`Person at index ${index} doesn't exist`);
+      else if (type === "bot" && bots.length <= index)
+         throw ReferenceError(`Bot at index ${index} doesn't exist`);
+      
       this.type = type;
       this.index = index;
    }
 
-   get player() {
+   get player () {
       if (this.type === "human")
          return people[this.index];
       else
          return bots[this.index];
    }
+   
+   set disabled (isDisabled) {
+      this.player.disabled = isDisabled; 
+   }
+   
+   get disabled () {
+      return this.player.disabled;  
+   }
 }
 
 const bot_mechanics = {
-   random_move() {
+   random_move () {
       let moves = this.getMoves();
       let chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    },
-   middle_index() {
+   middle_index () {
       let moves = this.getMoves();
       let chosen = moves[Math.round(moves.length / 2)]; // Not perfectly uniform
       this.play(chosen.x, chosen.y);
@@ -529,8 +566,8 @@ players = [
    new PlayerReference("bot", 0)
 ];
 
-for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
-   dropdown.onchange = event => changePlayer.call(event.target.selectedOptions[0]);
+for (let select of ELEMENTS.getEnabledPlayerSelects())
+   select.onchange = event => changePlayer.bind(event.target.selectedOptions[0]);
       
 // These async functions are really fast
 // They might not even need to be async functions,
@@ -541,6 +578,19 @@ for (let dropdown of document.querySelectorAll("#choosePlayerField label select"
 // "Removed" is inaccurate, since the <select>s and the <input> are still there.
 
 // Order: None clear
+/* EnableOrDisablePlayers
+ * EnableOrDisablePeople
+ * changePlayer
+ * changeName
+ * enablePerson
+ * disablePerson
+ * enablePeople
+ * disablePeople
+ * enablePlayer
+ * disablePlayer
+ * enablePlayers
+ * disablePlayers
+ */
 
 async function EnableOrDisablePlayers() {
    if (this.value < numPlayers)
@@ -578,8 +628,8 @@ async function changeName() {
    let correctIndex = this.parentElement.innerText[10];
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
-   for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
-      dropdown.firstElementChild.firstElementChild.text = name;
+   for (let select of ELEMENTS.getEnabledPlayerSelects())
+      select.firstElementChild.children[correctIndex].text = name;
    return `Done: Name changed to ${name}`;
 }
 
@@ -590,28 +640,34 @@ async function disablePerson() {
    numPeople--;
    numPlayers--;
 
-   let correctIndex = this.parentElement.innerText[8];
-   people.splice(correctIndex, 1);
-   for (let i = correctIndex + 1; i < people.length; i++)
-      for (let player of players)
-         if (player.index === i + 1 && player.type === "human") player.index = i;
+   let personIndex = this.parentElement.innerText[8];
+   people[personIndex].disabled = true;
+   
+   let playerIndex;
+   for (let [indexOfPlayer, player] of Object.entries(players))
+      if (player.index > personIndex + 1 && player.type === "human")
+         player.correctIndex--;
+      else if (player.index === personIndex + 1 && player.type === "human")
+         playerIndex = indexOfPlayer;
 
-   for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
-      dropdown.disabled = true;
+   players[playerIndex].disabled = true;
+
+   for (let select of ELEMENTS.getEnabledPlayerSelects())
+      select.firstElementChild.children[personIndex].disabled = true;
 
    this.disabled = true;
-   return `Done: Person at index ${correctIndex} disabled.`;
+   return `Done: Person at index ${personIndex} disabled.`;
 }
 
 async function enablePeople() {}
 
 async function disablePeople() {}
 
-async function addPlayer() {}
+async function enablePlayer() {}
 
 async function disablePlayer() {}
 
-async function addPlayers() {}
+async function enablePlayers() {}
 
 async function disablePlayers() {}
 
