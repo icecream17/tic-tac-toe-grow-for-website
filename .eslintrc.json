@@ -165,7 +165,7 @@
          {
             "min": 3,
             "max": 42,
-            "excpetions": [
+            "exceptions": [
                "i",
                "j",
                "x",
