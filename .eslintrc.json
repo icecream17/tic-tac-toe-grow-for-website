@@ -198,7 +198,13 @@
       ],
       "key-spacing": "warn",
       "keyword-spacing": "warn",
-      "lines-between-class-members": "warn",
+      "lines-between-class-members": [
+         "warn",
+         "always",
+         {
+            "exceptAfterSingleLine": true
+         }
+      ],
       "max-depth": "warn",
       "max-len": [
          "warn",
