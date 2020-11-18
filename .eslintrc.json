@@ -269,10 +269,13 @@
       "operator-linebreak": [
          "warn",
          "before",
-         "overrides": {
-            "?": "before",
-            ":": "before",
-            "||": "ignore"
+         {
+            "overrides":
+            {
+               "?": "before",
+               ":": "before",
+               "||": "ignore"
+            }
          }
       ],
       "padding-line-between-statements": [
