@@ -596,7 +596,7 @@ async function EnableOrDisablePlayers() {
    if (this.value < numPlayers)
       return (await disablePlayers(numPlayers - this.value));
    else if (this.value > numPlayers)
-      return (await addPlayers(this.value - numPlayers));
+      return (await enablePlayers(this.value - numPlayers));
    else
       throw Error('It "changed" to the same value');
 }
