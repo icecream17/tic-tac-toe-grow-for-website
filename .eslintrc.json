@@ -144,7 +144,7 @@
       "camelcase": [
          "warn",
          {
-            allow: [
+            "allow": [
                "player_assets",
                "bot_mechanics",
                "random_move",
