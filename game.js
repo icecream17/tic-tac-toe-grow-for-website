@@ -99,7 +99,7 @@ class Game {
                cell.win = true;
          } else if (moveFinish[0] === "draw")
             notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
-         else 
+         else
             throw Error("Invalid moveFinish");
 
       this.updateVisual();
@@ -435,7 +435,7 @@ const ELEMENTS = {
       return document.querySelectorAll("#choosePlayerField label select");
    },
    getEnabledPlayerSelects: function () {
-      return document.querySelectorAll("#choosePlayerField label select:enabled")  
+      return document.querySelectorAll("#choosePlayerField label select:enabled");
    }
 };
 
@@ -508,10 +508,10 @@ class Bot extends Player {
 
 class PlayerReference {
    constructor (type, index) {
-      if (type === "human" && people.length <= index) 
-         throw ReferenceError(`Person at index ${index} doesn't exist`);
+      if (type === "human" && people.length <= index)
+         throw new ReferenceError(`Person at index ${index} doesn't exist`);
       else if (type === "bot" && bots.length <= index)
-         throw ReferenceError(`Bot at index ${index} doesn't exist`);
+         throw new ReferenceError(`Bot at index ${index} doesn't exist`);
       
       this.type = type;
       this.index = index;
@@ -525,11 +525,11 @@ class PlayerReference {
    }
    
    set disabled (isDisabled) {
-      this.player.disabled = isDisabled; 
+      this.player.disabled = isDisabled;
    }
    
    get disabled () {
-      return this.player.disabled;  
+      return this.player.disabled;
    }
 }
 
@@ -592,28 +592,28 @@ for (let select of ELEMENTS.getEnabledPlayerSelects())
  * disablePlayers
  */
 
-async function EnableOrDisablePlayers() {
+async function EnableOrDisablePlayers () {
    if (this.value < numPlayers)
-      return (await disablePlayers(numPlayers - this.value));
+      return await disablePlayers(numPlayers - this.value);
    else if (this.value > numPlayers)
-      return (await enablePlayers(this.value - numPlayers));
+      return await enablePlayers(this.value - numPlayers);
    else
       throw Error('It "changed" to the same value');
 }
 
-async function EnableOrDisablePeople() {
+async function EnableOrDisablePeople () {
    if (this.value < numPeople)
-      return (await disablePeople(numPeople - this.value));
+      return await disablePeople(numPeople - this.value);
    else if (this.value > numPeople)
-      return (await enablePeople(this.value - numPeople));
+      return await enablePeople(this.value - numPeople);
    else
       throw Error('It "changed" to the same value');
 }
 
-async function changePlayer() {
+async function changePlayer () {
    this.selected = true;
 
-   let type = this.parentElement.label;  // <optgroup> label
+   let type = this.parentElement.label; // <optgroup> label
    let correctIndex = Array.prototype.indexOf.call(
       this.parentElement.children, this
    );
@@ -624,7 +624,7 @@ async function changePlayer() {
    players[this.index] = new PlayerReference(type, this.index);
 }
 
-async function changeName() {
+async function changeName () {
    let correctIndex = this.parentElement.innerText[10];
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
@@ -633,9 +633,9 @@ async function changeName() {
    return `Done: Name changed to ${name}`;
 }
 
-async function enablePerson() {}
+async function enablePerson () {}
       
-async function disablePerson() {
+async function disablePerson () {
    if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing");
    numPeople--;
    numPlayers--;
@@ -659,17 +659,17 @@ async function disablePerson() {
    return `Done: Person at index ${personIndex} disabled.`;
 }
 
-async function enablePeople() {}
+async function enablePeople () {}
 
-async function disablePeople() {}
+async function disablePeople () {}
 
-async function enablePlayer() {}
+async function enablePlayer () {}
 
-async function disablePlayer() {}
+async function disablePlayer () {}
 
-async function enablePlayers() {}
+async function enablePlayers () {}
 
-async function disablePlayers() {}
+async function disablePlayers () {}
 
 
 /* 
