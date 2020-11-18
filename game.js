@@ -501,14 +501,14 @@ class Bot extends Player {
    }
    
    play (...params) {
-      if (this.disabled) throw BotIsDisabledError(this);
-      return mechanics.apply(currentGame);  
+      if (this.disabled) throw new BotIsDisabledError(this);
+      return this.mechanics.apply(currentGame, ...params);
    }
 }
 
 class PlayerReference {
    constructor (type, index) {
-      if (type === "human" && humans.length <= index) 
+      if (type === "human" && people.length <= index) 
          throw ReferenceError(`Person at index ${index} doesn't exist`);
       else if (type === "bot" && bots.length <= index)
          throw ReferenceError(`Bot at index ${index} doesn't exist`);
