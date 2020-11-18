@@ -26,7 +26,7 @@
                <label id = "playerAmountLabel">
                   <var>Number of players: </var>
                   <select>
-                     <option>2</option>
+                     <option selected>2</option>
                      <option>3</option>
                      <option>4</option>
                   </select>
@@ -43,10 +43,24 @@
                   </select>
                </label>
             </fieldset>
+            <!-- When disabled.onclick, enablePlayer. 
+                 [+] Button is redundant but nice. -->
             <fieldset id = "namesField">
                <label id = "usernameLabel1">
                   <var>Username #1: </var>
                   <input type = "text" placeholder = "Person 1">
+               </label>
+               <label id = "usernameLabel2">
+                  <var>Username #2: </var>
+                  <input type = "text" placeholder = "Person 2">
+               </label>
+               <label id = "usernameLabel3">
+                  <var>Username #3: </var>
+                  <input disabled type = "text" placeholder = "Person 3">
+               </label>
+               <label id = "usernameLabel4">
+                  <var>Username #4: </var>
+                  <input disabled type = "text" placeholder = "Person 4">
                </label>
             </fieldset>
             <fieldset id = "choosePlayerField">
@@ -54,7 +68,58 @@
                   <var>Player #1: </var>
                   <select aria-labelledby = "whoPlays1">
                      <optgroup label = "Humans">
+                        <option selected>Person 1</option>
+                        <option disabled>Person 2</option>
+                        <option disabled>Person 3</option>
+                        <option disabled>Person 4</option>
+                     </optgroup>
+                     <optgroup label = "Bots">
+                        <option>random_move</option>
+                        <option>middle_index</option>
+                     </optgroup>
+                  </select>
+               </label>
+               
+               <label id = "whoPlays2">
+                  <var>Player #2: </var>
+                  <select aria-labelledby = "whoPlays2">
+                     <optgroup label = "Humans">
                         <option>Person 1</option>
+                        <option disabled>Person 2</option>
+                        <option disabled>Person 3</option>
+                        <option disabled>Person 4</option>
+                     </optgroup>
+                     <optgroup label = "Bots">
+                        <option selected>random_move</option>
+                        <option>middle_index</option>
+                     </optgroup>
+                  </select>
+               </label>
+               
+               <label id = "whoPlays3">
+                  <var>Player #3: </var>
+                  <select disabled aria-labelledby = "whoPlays3">
+                     <optgroup label = "Humans">
+                        <option>Person 1</option>
+                        <option disabled>Person 2</option>
+                        <option disabled>Person 3</option>
+                        <option disabled>Person 4</option>
+                     </optgroup>
+                     <optgroup label = "Bots">
+                        <option>random_move</option>
+                        <option>middle_index</option>
+                     </optgroup>
+                  </select>
+               </label>
+               
+               <label id = "whoPlays4">
+                  <var>Player #4: </var>
+                  <select disabled aria-labelledby = "whoPlays4">
+                     <optgroup label = "Humans">
+                        <option>Person 1</option>
+                        <option disabled>Person 2</option>
+                        <option disabled>Person 3</option>
+                        <option disabled>Person 4</option>
                      </optgroup>
                      <optgroup label = "Bots">
                         <option>random_move</option>
