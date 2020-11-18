@@ -42,8 +42,5 @@ jobs:
         with:
           html_file: game.html
 
-      - uses: github-actions-up-and-running/pr-comment@v1.0.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          message: ${{ format('[Click here to preview HTML page in browser]({0})', steps.html_preview.outputs.url) }}
+      - run: echo "${{ format('[Click here to preview HTML page in browser]({0})', steps.html_preview.outputs.url) }}"
         
