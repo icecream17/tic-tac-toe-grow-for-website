@@ -262,9 +262,9 @@
       "padding-line-between-statements": [
          "warn",
          {
-            blankLine: "any",
-            prev: ["const", "let", "var"],
-            next: ["const", "let", "var"]
+            "blankLine": "any",
+            "prev": ["const", "let", "var"],
+            "next": ["const", "let", "var"]
          }
       ],
       "prefer-exponentiation-operator": "error",
