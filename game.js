@@ -540,7 +540,7 @@ for (let dropdown of document.querySelectorAll("#choosePlayerField label select"
 // It was better than "deleted".
 // "Removed" is inaccurate, since the <select>s and the <input> are still there.
 
-// Order: Big to small, Change first
+// Order: None clear
 
 async function EnableOrDisablePlayers() {
    if (this.value < numPlayers)
@@ -579,8 +579,8 @@ async function changeName() {
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
    for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
-      await dropdown.firstElementChild.firstElementChild.text = name;
-   resolve(`Done: Changed name to ${name}`);
+      dropdown.firstElementChild.firstElementChild.text = name;
+   return `Done: Name changed to ${name}`;
 }
 
 async function enablePerson() {}
@@ -596,16 +596,11 @@ async function disablePerson() {
       for (let player of players)
          if (player.index === i + 1 && player.type === "human") player.index = i;
 
-   for (let dropdown of document.querySelectorAll("#choosePlayerField label select")) {
-      await dropdown.disabled = true;
-   }
+   for (let dropdown of document.querySelectorAll("#choosePlayerField label select"))
+      dropdown.disabled = true;
 
-   // Do I really want to delete?
-   // Maybe even have 4 players all the time, but just hidden
-   
-   // delete correct_person
-   this.remove();  // <delete this, as an element>
-   resolve(`Done: Person at index ${correctIndex} disabled.`)
+   this.disabled = true;
+   return `Done: Person at index ${correctIndex} disabled.`;
 }
 
 async function enablePeople() {}
