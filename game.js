@@ -624,8 +624,8 @@ const bot_mechanics = {
       else if (lastMove.gameState.moveHistory.length === 1)
          this.play(lastMove.x + 1, lastMove.y); // Amazing shortcut
       else {
-         let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
-         let indexOfLastMove = secondLastMove.gameState.getMoves().find(
+         let secondLastMove = this.moveHistory[this.moveHistory.length - 2].getCorrespondingPosition();
+         let indexOfLastMove = secondLastMove.gameState.getMoves().findIndex(
             position => position.x === lastMove.x && position.y === lastMove.y
          );
       
