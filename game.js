@@ -650,7 +650,7 @@ const bot_mechanics = {
          chosen = moves[
             Math.random() < 0.5
                ? moves.length / 2
-               : (moves.length - 1) / 2
+               : (moves.length / 2) - 1
          ];
       this.play(chosen.x, chosen.y);
    },
