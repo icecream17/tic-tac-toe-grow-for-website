@@ -78,7 +78,7 @@ class GameState {
          for (let x = 0; x < game.board.width; x++) {
             const cell = new Cell(game.board[y][x].value, y, x);
             cell.win = game.board[y][x].win;
-            this.board.push(cell);
+            this.board[y].push(cell);
          }
       }
       
