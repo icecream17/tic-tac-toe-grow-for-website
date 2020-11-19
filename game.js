@@ -631,7 +631,7 @@ const bot_mechanics = {
                      && position.y === positionOf2ndLastMove.y
          );
       
-         if (indexOfLastMove === undefined)
+         if (indexOfLastMove === -1)
             throw new TypeError("Last move was not an option...?");
          let chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
