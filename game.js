@@ -44,8 +44,8 @@ class Move extends Position {
    constructor (x, y, game = currentGame) {
       super(x, y);
       this.game = game;
-      this.index = game.moveHistory.length; // Assumes Move isn't in History yet.
-      this.gameState = game.gameStates[index + 1];
+      this.index = game.moveHistory.length; // must be true
+      this.gameState = game.gameStates[this.index + 1];
    }
       
    getCorrespondingPosition () {
@@ -130,7 +130,7 @@ class Game {
       this.visualStart();
 
       this.moveHistory = [];
-      this.gameStates = [new GameState(this)];
+      this.gameStates = [new GameState(this)]; // starts with the original position
    }
    
    // These static methods must be gotten from the class Game
