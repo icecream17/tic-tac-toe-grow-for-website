@@ -36,26 +36,34 @@ class Cell extends Position {
       super(x, y);
       this.value = value;
       this.win = false; // Idea: setter errors when value is '' or ' '
-      this.moveIndex = null;
+      this.moveIndex = null; // Index when a move is played on that square
    }
 }
 
 class Move extends Position {
+   // Due to the unique position of the constructor in Game.update:
+      // x, y: updated
+      // game.moveHistory: latest move is the one before this move
    constructor (x, y, game = currentGame) {
       super(x, y);
       this.game = game;
       this.index = game.moveHistory.length; // must be true
       this.gameState = game.gameStates[this.index + 1];
    }
-      
-   getCorrespondingPosition () {
+
+   get originalPosition () {
       const correctPosition = new Position(this.x, this.y);
-      for (
-         let index = this.gameState.moveHistory.length;
-         index < this.game.moveHistory.length;
-         index++
-      ) {
-         const nextMove = this.game.moveHistory[index];
+      if (this.x === 1) correctPosition.x = 0;
+      if (this.y === 1) correctPosition.y = 0;
+      return correctPosition;
+   }
+      
+   get correspondingPosition () {
+      const correctPosition = new Position(this.x, this.y);
+      
+      // this.index === this.gameState.moveHistory.length
+      for (let index = this.index; index < this.game.moveHistory.length; index++) {
+        const nextMove = this.game.moveHistory[index].originalPosition;
          if (nextMove.x === 0) correctPosition.x++;
          if (nextMove.y === 0) correctPosition.y++;
       }
@@ -86,7 +94,7 @@ class GameState {
       this.moveHistory = game.moveHistory.slice();
    }
       
-   getMoves () {
+   get originalMoves () {
       const moves = [];
       for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++)
@@ -95,15 +103,15 @@ class GameState {
       return moves;
    }
    
-   getCorrespondingMoves () {
-      let moves = this.getMoves();
+   get correspondingMoves () {
+      let moves = this.originalMoves;
       for (let move of moves)
          for (
             let index = this.moveHistory.length;
             index < this.game.moveHistory.length;
             index++
          ) {
-            const nextMove = this.game.moveHistory[index];
+            const nextMove = this.game.moveHistory[index].originalPosition;
             if (nextMove.x === 0) move.x++;
             if (nextMove.y === 0) move.y++;
          }
@@ -645,10 +653,10 @@ const bot_mechanics = {
          this.play(lastMove.x + 1, lastMove.y); // Amazing shortcut
       else {
          let secondLastMove = this.moveHistory[this.moveHistory.length - 2]
-         let positionOf2ndLastMove = secondLastMove.getCorrespondingPosition();
+         let positionOf2ndLastMove = secondLastMove.correspondingPosition;
          let indexOfLastMove = (
             secondLastMove.gameState
-               .getCorrespondingMoves()
+               .correspondingMoves
                .findIndex(
                   position => position.x === positionOf2ndLastMove.x
                            && position.y === positionOf2ndLastMove.y
