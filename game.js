@@ -63,7 +63,7 @@ class Move extends Position {
       
       // this.index === this.gameState.moveHistory.length
       for (let index = this.index; index < this.game.moveHistory.length; index++) {
-        const nextMove = this.game.moveHistory[index].originalPosition;
+         const nextMove = this.game.moveHistory[index].originalPosition;
          if (nextMove.x === 0) correctPosition.x++;
          if (nextMove.y === 0) correctPosition.y++;
       }
@@ -146,8 +146,8 @@ class Game {
    
    // TODO: Add a way to change this.
    static set MAX_LENGTH (value) {throw new TypeError("Assignment to constant property {MAX_LENGTH}")}
-   static set MAX_TURNS (value) {throw new TypeError("Assignment to constant property {MAX_TURNS}")}
    static get MAX_LENGTH () {return 511}
+   static set MAX_TURNS (value) {throw new TypeError("Assignment to constant property {MAX_TURNS}")}
    static get MAX_TURNS () {return 292}
    
    setCell (x, y, value) {
@@ -248,7 +248,7 @@ class Game {
       if (this.board[y][x + 1].value === '') this.setCell(x + 1, y, ' ');
 
       this.board[y][x] = new Cell("xo/<"[this.toMove], x, y);
-      this.board[y][x].moveIndex = this.moveHistory.length
+      this.board[y][x].moveIndex = this.moveHistory.length;
 
       for (let y2 = 0; y2 < this.board.length; y2++)
          for (let x2 = 0; x2 < this.board.width; x2++) {
@@ -634,13 +634,24 @@ class PlayerReference {
 
 const bot_mechanics = {
    random_move () {
-      let moves = this.getMoves();
-      let chosen = moves[Math.floor(Math.random() * moves.length)];
+      const moves = this.getMoves();
+      const chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    },
    middle_index () {
-      let moves = this.getMoves();
-      let chosen = moves[Math.round(moves.length / 2)]; // Not perfectly uniform
+      const moves = this.getMoves();
+      const chosen;
+      
+      // a b c --> length: 3, index: 1
+      // a b c d --> length: 4, index: 1 or 2
+      if (moves.length % 2 === 1)
+         chosen = moves[(moves.length - 1) / 2];
+      else
+         chosen = moves[
+            Math.random() < 0.5
+               ? moves.length / 2
+               : (moves.length - 1) / 2
+         ];
       this.play(chosen.x, chosen.y);
    },
    copy () {
@@ -652,7 +663,7 @@ const bot_mechanics = {
       else if (this.moveHistory.length === 1)
          this.play(lastMove.x + 1, lastMove.y); // Amazing shortcut
       else {
-         let secondLastMove = this.moveHistory[this.moveHistory.length - 2]
+         let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
          let positionOf2ndLastMove = secondLastMove.correspondingPosition;
          let indexOfLastMove = (
             secondLastMove.gameState
@@ -767,7 +778,7 @@ async function disablePerson () {
    activePeople--;
    activePlayers--;
 
-   let personIndex = this.parentElement.innerText[8];
+   const personIndex = this.parentElement.innerText[8];
    people[personIndex].disabled = true;
    
    let playerIndex;
