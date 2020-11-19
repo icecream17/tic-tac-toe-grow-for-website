@@ -36,6 +36,7 @@ class Cell extends Position {
       super(x, y);
       this.value = value;
       this.win = false; // Idea: setter errors when value is '' or ' '
+      this.moveIndex = null;
    }
 }
 
@@ -44,7 +45,7 @@ class Move extends Position {
       super(x, y);
       this.game = game;
       this.index = game.moveHistory.length; // Assumes Move isn't in History yet.
-      this.gameState = new GameState(game);
+      this.gameState = game.gameStates[index + 1];
    }
       
    getCorrespondingPosition () {
@@ -93,6 +94,21 @@ class GameState {
                moves.push(new Position(x, y));
       return moves;
    }
+   
+   getCorrespondingMoves () {
+      let moves = this.getMoves();
+      for (let move of moves)
+         for (
+            let index = this.moveHistory.length;
+            index < this.game.moveHistory.length;
+            index++
+         ) {
+            const nextMove = this.game.moveHistory[index];
+            if (nextMove.x === 0) move.x++;
+            if (nextMove.y === 0) move.y++;
+         }
+      return moves;
+   }
 }
 
 class Game {
@@ -114,6 +130,7 @@ class Game {
       this.visualStart();
 
       this.moveHistory = [];
+      this.gameStates = [new GameState(this)];
    }
    
    // These static methods must be gotten from the class Game
@@ -173,9 +190,11 @@ class Game {
             throw Error("Invalid moveFinish");
 
       this.updateVisual();
-      this.moveHistory.push(new Move(newXY.x, newXY.y, this));
 
+      this.gameStates.push(new GameState(this)); 
+      this.moveHistory.push(new Move(newXY.x, newXY.y, this));
       this.toMove = (this.toMove + 1) % players.length;
+
       console.log("update:", x, y, moveFinish);
    }
 
@@ -221,6 +240,7 @@ class Game {
       if (this.board[y][x + 1].value === '') this.setCell(x + 1, y, ' ');
 
       this.board[y][x] = new Cell("xo/<"[this.toMove], x, y);
+      this.board[y][x].moveIndex = this.moveHistory.length
 
       for (let y2 = 0; y2 < this.board.length; y2++)
          for (let x2 = 0; x2 < this.board.width; x2++) {
@@ -621,14 +641,18 @@ const bot_mechanics = {
       
       if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
-      else if (lastMove.gameState.moveHistory.length === 1)
+      else if (this.moveHistory.length === 1)
          this.play(lastMove.x + 1, lastMove.y); // Amazing shortcut
       else {
          let secondLastMove = this.moveHistory[this.moveHistory.length - 2]
          let positionOf2ndLastMove = secondLastMove.getCorrespondingPosition();
-         let indexOfLastMove = secondLastMove.gameState.getMoves().findIndex(
-            position => position.x === positionOf2ndLastMove.x
-                     && position.y === positionOf2ndLastMove.y
+         let indexOfLastMove = (
+            secondLastMove.gameState
+               .getCorrespondingMoves()
+               .findIndex(
+                  position => position.x === positionOf2ndLastMove.x
+                           && position.y === positionOf2ndLastMove.y
+               )
          );
       
          if (indexOfLastMove === -1)
