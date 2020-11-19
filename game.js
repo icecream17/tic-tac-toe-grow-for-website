@@ -640,7 +640,7 @@ const bot_mechanics = {
    },
    middle_index () {
       const moves = this.getMoves();
-      const chosen;
+      let chosen;
       
       // a b c --> length: 3, index: 1
       // a b c d --> length: 4, index: 1 or 2
