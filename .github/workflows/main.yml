@@ -42,5 +42,5 @@ jobs:
         with:
           html_file: game.html
 
-      - run: echo "${{ format('[Click here to preview HTML page in browser]({0})', steps.html_preview.outputs.url) }}"
+      - run: echo "${{ format('[Click here to preview HTML page in browser] {0}', steps.html_preview.outputs.url) }}"
         
