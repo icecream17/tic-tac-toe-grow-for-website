@@ -1,12 +1,18 @@
 "use strict";
 
-class BotIsDisabledError extends Error {
+class CustomError extends Error {
+   constructor (message) {
+      super(message);
+      Error.captureStackTrace?.(this, this.constructor);
+   }
+   
+   get name () {return this.constructor.name} // For ease of maintenance
+}
+
+class BotIsDisabledError extends CustomError {
    constructor (bot) {
       super(`${bot.name} is disabled and cannot play.`);
 
-      Error.captureStackTrace?.(this, BotIsDisabledError);
-
-      this.name = this.constructor.name; // For ease of maintenance
       this.bot = bot;
    }
 }
@@ -42,13 +48,13 @@ class Move extends Position {
    }
       
    getCorrespondingPosition () {
-      let correctPosition = new Position(this.x, this.y);
+      const correctPosition = new Position(this.x, this.y);
       for (
          let index = this.gameState.moveHistory.length;
          index < this.game.moveHistory.length;
          index++
       ) {
-         let nextMove = this.game.moveHistory[index];
+         const nextMove = this.game.moveHistory[index];
          if (nextMove.x === 0) correctPosition.x++;
          if (nextMove.y === 0) correctPosition.y++;
       }
@@ -70,7 +76,7 @@ class GameState {
       for (let y = 0; y < game.board.length; y++) {
          this.board.push([]);
          for (let x = 0; x < game.board.width; x++) {
-            let cell = new Cell (game.board[y][x].value, y, x);
+            const cell = new Cell(game.board[y][x].value, y, x);
             cell.win = game.board[y][x].win;
             this.board.push(cell);
          }
@@ -80,7 +86,7 @@ class GameState {
    }
       
    getMoves () {
-      let moves = [];
+      const moves = [];
       for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++)
             if (this.board[y][x].value === ' ')
@@ -114,10 +120,10 @@ class Game {
    // i.e.: Game.MAX_LENGTH instead of this.MAX_LENGTH
    
    // TODO: Add a way to change this.
-   static set MAX_LENGTH (value) {throw TypeError("Assignment to constant property {MAX_LENGTH}");}
-   static set MAX_TURNS (value) {throw TypeError("Assignment to constant property {MAX_TURNS}");}
-   static get MAX_LENGTH () {return 511;}
-   static get MAX_TURNS () {return 292;}
+   static set MAX_LENGTH (value) {throw new TypeError("Assignment to constant property {MAX_LENGTH}")}
+   static set MAX_TURNS (value) {throw new TypeError("Assignment to constant property {MAX_TURNS}")}
+   static get MAX_LENGTH () {return 511}
+   static get MAX_TURNS () {return 292}
    
    setCell (x, y, value) {
       this.board[y][x] = new Cell(value, x, y);
@@ -280,19 +286,19 @@ class Game {
    }
 
    checkWin (x, y) {
+      const playerValue = this.board[y][x].value;
       let wins = [];
-      let playerValue = this.board[y][x].value;
       let orthogonal = [[], [], [], []];
       let diagonal = [[], [], [], []];
       for (let i = 0; i < 4; i++) {
-         let orthogonalStep = [
+         const orthogonalStep = [
             new Step(-1, 0),
             new Step(1, 0),
             new Step(0, 1),
             new Step(0, -1),
          ][i];
 
-         let diagonalStep = [
+         const diagonalStep = [
             new Step(1, 1),
             new Step(1, -1),
             new Step(-1, 1),
@@ -339,7 +345,7 @@ class Game {
             return false;
       }
 
-      let sevenChecks = [
+      const sevenChecks = [
          sevenNArow(orthogonal[0], orthogonal[1]),
          sevenNArow(orthogonal[2], orthogonal[3]),
          sevenNArow(diagonal[0], diagonal[3]),
@@ -349,7 +355,7 @@ class Game {
       if (sevenChecks.find(check => Boolean(check)))
          wins.push(sevenChecks.find(check => Boolean(check)));
 
-      let markChecks = [
+      const markChecks = [
          checkMark(diagonal[0], diagonal[1]),
          checkMark(diagonal[0], diagonal[2]),
          checkMark(diagonal[3], diagonal[1]),
@@ -493,13 +499,13 @@ const ELEMENTS = {
    shifts: document.querySelectorAll('#mapControls button'),
    squares: [],
    
-   getSquare: function (x, y) {
-      return document.getElementById(x + '-' + y);
+   getSquare (x, y) {
+      return document.getElementById(`${x}-${y}`);
    },
-   getPlayerSelects: function () {
+   getPlayerSelects () {
       return document.querySelectorAll("#choosePlayerField label select");
    },
-   getEnabledPlayerSelects: function () {
+   getEnabledPlayerSelects () {
       return document.querySelectorAll("#choosePlayerField label select:enabled");
    }
 };
@@ -530,7 +536,7 @@ for (let x = 0; x < 20; x++) {
       let element = document.createElement('button');
       ELEMENTS.squares[x].push(element);
 
-      element.id = x + '-' + y;
+      element.id = `${x}-${y}`;
       element.setAttribute("aria-label", `Square at ${x}-${y}`);
       element.style.gridColumn = x + 1;
       element.style.gridRow = y + 1;
@@ -613,17 +619,18 @@ const bot_mechanics = {
       let moves = this.getMoves();
       let lastMove = this.moveHistory?.[this.moveHistory.length - 1];
       
-      if (lastMove === undefined) {
+      if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
-      } else if (lastMove.gameState.moveHistory.length === 1) {
-         // Amazing shortcut
-         this.play(lastMove.x + 1, lastMove.y);
-      } else {
+      else if (lastMove.gameState.moveHistory.length === 1)
+         this.play(lastMove.x + 1, lastMove.y); // Amazing shortcut
+      else {
          let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
          let indexOfLastMove = secondLastMove.gameState.getMoves().find(
             position => position.x === lastMove.x && position.y === lastMove.y
          );
-         if (indexOfLastMove === undefined) throw TypeError("Last move was not an option...?");
+      
+         if (indexOfLastMove === undefined)
+            throw new TypeError("Last move was not an option...?");
          let chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
       }
@@ -631,9 +638,9 @@ const bot_mechanics = {
 };
 
 
-let numBots = 1; // Number of players represented by people or bots
-let numPeople = 1;
-let numPlayers = 2;
+let activeBots = 1;
+let activePeople = 1;
+let activePlayers = 2;
 
 let people = [new Human("Person 1")];
 let bots = [];
@@ -647,7 +654,9 @@ for (let key of Object.keys(bot_mechanics)) {
 
 players = [
    new PlayerReference("human", 0),
-   new PlayerReference("bot", 0)
+   new PlayerReference("bot", 0),
+   new PlayerReference("bot", 1),
+   new PlayerReference("bot", 2)
 ];
 
 for (let select of ELEMENTS.getEnabledPlayerSelects())
@@ -677,19 +686,19 @@ for (let select of ELEMENTS.getEnabledPlayerSelects())
  */
 
 async function EnableOrDisablePlayers () {
-   if (this.value < numPlayers)
-      return await disablePlayers(numPlayers - this.value);
-   else if (this.value > numPlayers)
-      return await enablePlayers(this.value - numPlayers);
+   if (this.value < activePlayers)
+      return await disablePlayers(activePlayers - this.value);
+   else if (this.value > activePlayers)
+      return await enablePlayers(this.value - activePlayers);
    else
       throw Error('It "changed" to the same value');
 }
 
 async function EnableOrDisablePeople () {
-   if (this.value < numPeople)
-      return await disablePeople(numPeople - this.value);
-   else if (this.value > numPeople)
-      return await enablePeople(this.value - numPeople);
+   if (this.value < activePeople)
+      return await disablePeople(activePeople - this.value);
+   else if (this.value > activePeople)
+      return await enablePeople(this.value - activePeople);
    else
       throw Error('It "changed" to the same value');
 }
@@ -720,9 +729,9 @@ async function changeName () {
 async function enablePerson () {}
       
 async function disablePerson () {
-   if (numPlayers === 0 || numPeople === 0) throw Error("Can't delete nothing");
-   numPeople--;
-   numPlayers--;
+   if (activePlayers === 0 || activePeople === 0) throw Error("Can't delete nothing");
+   activePeople--;
+   activePlayers--;
 
    let personIndex = this.parentElement.innerText[8];
    people[personIndex].disabled = true;
@@ -821,10 +830,10 @@ Player #{n}:
       -> onchange changePlayer()
       -> default {
          Where index = this.parentElement.indexof(this)
-            If index < numPeople
+            If index < activePeople
                person[index].name
             Else
-               bot[index - numPeople].name
+               bot[index - activePeople].name
       }
       Layout
       = <select aria-labelledby={ID of label whose value is Player #{n}}>
@@ -872,10 +881,10 @@ changeName()
    for each (dropdown of Player labels), correct_option.value = this.value
 
 deletePerson()
-   if (numPlayers === 0 || numPeople === 0) throw
+   if (activePlayers === 0 || activePeople === 0) throw
 
-   numPeople--
-   numPlayers--
+   activePeople--
+   activePlayers--
    people.splice_away(correct_person)
    for each (person whose index > the index of correct_person) in people
       for each time person is in players
@@ -887,10 +896,10 @@ deletePerson()
    this.remove()  <delete this, as an element>
 
 addPerson()
-   if (numPlayers === 4 || numPeople === 4) throw
+   if (activePlayers === 4 || activePeople === 4) throw
 
-   numPeople++
-   numPlayers++
+   activePeople++
+   activePlayers++
    make this.nextElementSibling = 
       (see Person #{n} above)
    
@@ -915,17 +924,17 @@ changePlayer()
    for each Player_dropdown, correct_option.value = this.value
 
 deletePlayer()
-   if (numPlayers === 0) throw
-   if (players[players.length - 1].type === "Human" ? numPeople : numBots === 0) throw
+   if (activePlayers === 0) throw
+   if (players[players.length - 1].type === "Human" ? activePeople : activeBots === 0) throw
 
-   numPlayers--
-   players.pop().type === "Human" ? numPeople : numBots === 0
+   activePlayers--
+   players.pop().type === "Human" ? activePeople : activeBots === 0
    
    this.remove()
 
 
 addPlayer()
-   if (numPlayers === 4) throw
+   if (activePlayers === 4) throw
    ugh
 
 deletePlayers(n)
