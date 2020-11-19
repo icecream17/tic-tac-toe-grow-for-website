@@ -531,10 +531,10 @@ const ELEMENTS = {
       return document.getElementById(`${x}-${y}`);
    },
    getPlayerSelects () {
-      return document.querySelectorAll("#choosePlayerField label select");
+      return document.querySelectorAll("#choosePlayerFields label select");
    },
    getEnabledPlayerSelects () {
-      return document.querySelectorAll("#choosePlayerField label select:enabled");
+      return document.querySelectorAll("#choosePlayerFields label select:enabled");
    }
 };
 
