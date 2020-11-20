@@ -23,6 +23,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.15'
+
+      - uses: codecov/codecov-action@v1
+        with:
+          name: codecov-umbrella # optional
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
     
       - name: Install HTMLValidator
         run: npm install html-validator-cli -g
