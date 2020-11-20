@@ -110,17 +110,35 @@ button.disable:active {
    background-color: #cfc;  
 }
 
-button.enable:hover:not(:active) {
+button.enable:disabled,
+button.disable:disabled {
+   font-weight: normal;
+   background-color: rgba(239, 239, 239, 30%);
+}
+
+button.enable:disabled {
+   border-color: rgba(0, 255, 153, 30%);
+   color: rgba(58, 175, 128, 50%);
+}
+
+button.disable:disabled {
+    border-color: rgba(255, 85, 68, 30%);
+    color: rgba(234, 67, 53, 30%);
+}
+
+button.enable:hover:not(:active):not(:disabled) {
    border-color: #0e8;
    color: #2b7;
    background-color: #eee;
 }
 
-button.disable:hover:not(:active) {
+button.disable:hover:not(:active):not(:disabled) {
    border-color: #f76;
    color: #f54;
    background-color: #eee;
 }
+
+
 
 .monospace {
    font-family: Consolas, monospace;
