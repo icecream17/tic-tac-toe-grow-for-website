@@ -57,9 +57,61 @@ button.win {
    border-color: #19FF19;
 }
 
+#nameFields,
+#choosePlayerFields {
+   padding: 0;  
+}
+
+fieldset fieldset {
+   margin: 0;
+   border: none;
+}
+
 aside button,
 button.board {
    visibility: visible;
+}
+
+button.enable {
+   border-color: #0f9;
+   color: #0f9d58;
+}
+
+button.disable {
+   border-color: #f54;
+   color: #ea4335;
+}
+
+button.enable,
+button.disable {
+   font-weight: bold;
+   background-color: white;
+   border-style: outset;
+}
+
+button.enable:active,
+button.disable:active {
+   border-style: inset;
+}
+
+button.enable:active {
+   background-color: #cfc;
+}
+
+button.disable:active {
+   background-color: #cfc;  
+}
+
+button.enable:hover:not(:active) {
+   border-color: #0e8;
+   color: #2b7;
+   background-color: #eee;
+}
+
+button.disable:hover:not(:active) {
+   border-color: #f76;
+   color: #f54;
+   background-color: #eee;
 }
 
 .monospace {
