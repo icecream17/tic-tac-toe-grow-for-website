@@ -5,8 +5,8 @@ class CustomError extends Error {
       super(message);
       Error.captureStackTrace?.(this, this.constructor);
    }
-   
-   get name () {return this.constructor.name} // For ease of maintenance
+
+   get name() { return this.constructor.name } // For ease of maintenance
 }
 
 class BotIsDisabledError extends CustomError {
@@ -44,23 +44,18 @@ class Move extends Position {
    // Due to the unique position of the constructor in Game.update:
       // x, y: updated
       // game.moveHistory: latest move is the one before this move
-   constructor (x, y, game = currentGame) {
-      super(x, y);
+   constructor (oldXY, newXY, game = currentGame) {
+      super(newXY.x, newXY.y);
       this.game = game;
       this.index = game.moveHistory.length; // must be true
       this.gameState = game.gameStates[this.index + 1];
+
+      this.originalPosition = oldXY; // No board update
    }
 
-   get originalPosition () {
+   get correspondingPosition() {
       const correctPosition = new Position(this.x, this.y);
-      if (this.x === 1) correctPosition.x = 0;
-      if (this.y === 1) correctPosition.y = 0;
-      return correctPosition;
-   }
-      
-   get correspondingPosition () {
-      const correctPosition = new Position(this.x, this.y);
-      
+
       // this.index === this.gameState.moveHistory.length
       for (let index = this.index; index < this.game.moveHistory.length; index++) {
          const nextMove = this.game.moveHistory[index].originalPosition;
@@ -90,11 +85,11 @@ class GameState {
             this.board[y].push(cell);
          }
       }
-      
+
       this.moveHistory = game.moveHistory.slice();
    }
-      
-   get originalMoves () {
+
+   get originalMoves() {
       const moves = [];
       for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++)
@@ -102,8 +97,8 @@ class GameState {
                moves.push(new Position(x, y));
       return moves;
    }
-   
-   get correspondingMoves () {
+
+   get correspondingMoves() {
       let moves = this.originalMoves;
       for (let move of moves)
          for (
@@ -140,21 +135,21 @@ class Game {
       this.moveHistory = [];
       this.gameStates = [new GameState(this)]; // starts with the original position
    }
-   
+
    // These static methods must be gotten from the class Game
    // i.e.: Game.MAX_LENGTH instead of this.MAX_LENGTH
-   
+
    // TODO: Add a way to change this.
-   static set MAX_LENGTH (value) {throw new TypeError("Assignment to constant property {MAX_LENGTH}")}
-   static get MAX_LENGTH () {return 511}
-   static set MAX_TURNS (value) {throw new TypeError("Assignment to constant property {MAX_TURNS}")}
-   static get MAX_TURNS () {return 292}
-   
-   setCell (x, y, value) {
+   static set MAX_LENGTH(value) { throw new TypeError("Assignment to constant property {MAX_LENGTH}") }
+   static get MAX_LENGTH() { return 511 }
+   static set MAX_TURNS(value) { throw new TypeError("Assignment to constant property {MAX_TURNS}") }
+   static get MAX_TURNS() { return 292 }
+
+   setCell(x, y, value) {
       this.board[y][x] = new Cell(value, x, y);
    }
 
-   visualStart () {
+   visualStart() {
       // the top-left of the board is 0, 0
       // second row is 1, 0
       // third row, seventh column is 3, 7
@@ -168,7 +163,7 @@ class Game {
                ).className = 'board';
    }
 
-   play (x, y) {
+   play(x, y) {
       this.update(x, y);
 
       // toMove is updated now
@@ -176,12 +171,13 @@ class Game {
          this.doBotMove();
    }
 
-   update (x, y) {
+   update(x, y) {
       console.log('move: ', x, y);
 
       if (this.board[y][x].value !== ' ')
          throw Error("AAA WHAT!????");
 
+      const oldPosition = {x, y};
       let newXY = this.updateBoard(x, y);
       x = newXY.x;
       y = newXY.y;
@@ -199,14 +195,14 @@ class Game {
 
       this.updateVisual();
 
-      this.gameStates.push(new GameState(this)); 
-      this.moveHistory.push(new Move(newXY.x, newXY.y, this));
+      this.gameStates.push(new GameState(this));
+      this.moveHistory.push(new Move(oldPosition, {x, y}, this));
       this.toMove = (this.toMove + 1) % players.length;
 
       console.log("update:", x, y, moveFinish);
    }
 
-   updateBoard (x, y) {
+   updateBoard(x, y) {
       // Possible bug in the future, the else ifs assume that the
       // first cell is not the same as the last cell, which would be untrue if
       // the width or height was 1
@@ -260,7 +256,7 @@ class Game {
    }
 
    // Same as visualStart really
-   updateVisual () {
+   updateVisual() {
       for (let y = 0; y < 20; y++)
          for (let x = 0; x < 20; x++) {
             ELEMENTS.getSquare(x, y).className = '';
@@ -275,7 +271,7 @@ class Game {
                this.visual.offset.y + y
             );
             if (element === null) continue;
-            
+
             let cellValue = this.board[y][x].value;
             if (cellValue === '') {
                element.className = '';
@@ -285,7 +281,7 @@ class Game {
                element.style.background = '';
             } else {
                element.className = 'board';
-               
+
                let whichAsset = "xo/<".indexOf(this.board[y][x].value);
                if (whichAsset === -1)
                   element.style.background = "red";
@@ -301,7 +297,7 @@ class Game {
       // Outer for doesn't need brackets
    }
 
-   checkGameEnd (x, y) {
+   checkGameEnd(x, y) {
       let win = this.checkWin(x, y);
       if (win) return ["win", win];
 
@@ -313,7 +309,7 @@ class Game {
          return false;
    }
 
-   checkWin (x, y) {
+   checkWin(x, y) {
       const playerValue = this.board[y][x].value;
       let wins = [];
       let orthogonal = [[], [], [], []];
@@ -356,14 +352,14 @@ class Game {
       }
 
       // good good good n good good good
-      function sevenNArow (oneDirection, oppositeDirection) {
+      function sevenNArow(oneDirection, oppositeDirection) {
          if (oneDirection.length + oppositeDirection.length >= 6)
             return oneDirection.concat(...oppositeDirection);
          else
             return false;
       }
 
-      function checkMark (side1, side2) {
+      function checkMark(side1, side2) {
          if (
             side1.length >= 3 && side2.length >= 1 ||
             side2.length >= 3 && side1.length >= 1
@@ -484,11 +480,11 @@ class Game {
       return wins.length ? wins : false; // If there is a win return wins
    }
 
-   doBotMove () {
+   doBotMove() {
       players[this.toMove].player.play();
    }
 
-   getMoves () {
+   getMoves() {
       let moves = [];
       for (let y = 0; y < this.board.height; y++)
          for (let x = 0; x < this.board.width; x++)
@@ -498,7 +494,7 @@ class Game {
    }
 }
 
-function handleClick (x, y) {
+function handleClick(x, y) {
    console.log("Click!", x, y);
    x -= currentGame.visual.offset.x;
    y -= currentGame.visual.offset.y;
@@ -508,8 +504,8 @@ function handleClick (x, y) {
    )
       currentGame.play(x, y);
 }
-      
-function notice (...args) {
+
+function notice(...args) {
    // do something
 }
 
@@ -526,14 +522,14 @@ const ELEMENTS = {
    gameDataElement: document.getElementById('gameData'),
    shifts: document.querySelectorAll('#mapControls button'),
    squares: [],
-   
-   getSquare (x, y) {
+
+   getSquare(x, y) {
       return document.getElementById(`${x}-${y}`);
    },
-   getPlayerSelects () {
+   getPlayerSelects() {
       return document.querySelectorAll("#choosePlayerFields label select");
    },
-   getEnabledPlayerSelects () {
+   getEnabledPlayerSelects() {
       return document.querySelectorAll("#choosePlayerFields label select:enabled");
    }
 };
@@ -580,7 +576,7 @@ let currentGame = new Game();
 
 
 class Player {
-   constructor (type, name, disabled) {
+   constructor(type, name, disabled) {
       this.type = type;
       this.name = name;
       this.disabled = disabled;
@@ -598,8 +594,8 @@ class Bot extends Player {
       super("bot", name, disabled);
       this.mechanics = mechanics;
    }
-   
-   play (...params) {
+
+   play(...params) {
       if (this.disabled) throw new BotIsDisabledError(this);
       return this.mechanics.apply(currentGame, ...params);
    }
@@ -611,37 +607,37 @@ class PlayerReference {
          throw new ReferenceError(`Person at index ${index} doesn't exist`);
       else if (type === "bot" && bots.length <= index)
          throw new ReferenceError(`Bot at index ${index} doesn't exist`);
-      
+
       this.type = type;
       this.index = index;
    }
 
-   get player () {
+   get player() {
       if (this.type === "human")
          return people[this.index];
       else
          return bots[this.index];
    }
-   
-   set disabled (isDisabled) {
+
+   set disabled(isDisabled) {
       this.player.disabled = isDisabled;
    }
-   
-   get disabled () {
+
+   get disabled() {
       return this.player.disabled;
    }
 }
 
 const bot_mechanics = {
-   random_move () {
+   random_move() {
       const moves = this.getMoves();
       const chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    },
-   middle_index () {
+   middle_index() {
       const moves = this.getMoves();
       let chosen;
-      
+
       // a b c --> length: 3, index: 1
       // a b c d --> length: 4, index: 1 or 2
       if (moves.length % 2 === 1)
@@ -654,10 +650,10 @@ const bot_mechanics = {
          ];
       this.play(chosen.x, chosen.y);
    },
-   copy () {
+   copy() {
       let moves = this.getMoves();
       let lastMove = this.moveHistory?.[this.moveHistory.length - 1];
-      
+
       if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
       else if (this.moveHistory.length === 1)
@@ -670,10 +666,10 @@ const bot_mechanics = {
                .correspondingMoves
                .findIndex(
                   position => position.x === positionOf2ndLastMove.x
-                           && position.y === positionOf2ndLastMove.y
+                     && position.y === positionOf2ndLastMove.y
                )
          );
-      
+
          if (indexOfLastMove === -1)
             throw new TypeError("Last move was not an option...?");
          let chosen = moves[indexOfLastMove];
@@ -687,7 +683,12 @@ let activeBots = 1;
 let activePeople = 1;
 let activePlayers = 2;
 
-let people = [new Human("Person 1")];
+let people = [
+   new Human("Person 1"),
+   new Human("Person 2"),
+   new Human("Person 3"),
+   new Human("Person 4")
+];
 let bots = [];
 let players; // Contains (type, index) based on dropdowns
 
@@ -699,23 +700,19 @@ for (let key of Object.keys(bot_mechanics)) {
 
 players = [
    new PlayerReference("human", 0),
-   new PlayerReference("bot", 0),
-   new PlayerReference("bot", 1),
-   new PlayerReference("bot", 2)
+   new PlayerReference("bot", 0)
 ];
 
-for (let select of ELEMENTS.getEnabledPlayerSelects())
-   select.onchange = event => changePlayer.bind(event.target.selectedOptions[0]);
-      
+for (let select of ELEMENTS.getPlayerSelects())
+   select.onchange = function changeEvent(event) {
+      if (event.target.disabled) return Error('element is disabled')
+      changePlayer.apply(event.target.selectedOptions[0]);
+   }
+
 // These async functions are really fast
 // They might not even need to be async functions,
 // But it's nice and I might need them for tournaments.
-      
-// I feel weird about putting "disabled", though it's just a regular term describing HTML elements.
-// It was better than "deleted".
-// "Removed" is inaccurate, since the <select>s and the <input> are still there.
 
-// Order: None clear
 /* EnableOrDisablePlayers
  * EnableOrDisablePeople
  * changePlayer
@@ -730,7 +727,7 @@ for (let select of ELEMENTS.getEnabledPlayerSelects())
  * disablePlayers
  */
 
-async function EnableOrDisablePlayers () {
+async function EnableOrDisablePlayers() {
    if (this.value < activePlayers)
       return await disablePlayers(activePlayers - this.value);
    else if (this.value > activePlayers)
@@ -739,7 +736,7 @@ async function EnableOrDisablePlayers () {
       throw Error('It "changed" to the same value');
 }
 
-async function EnableOrDisablePeople () {
+async function EnableOrDisablePeople() {
    if (this.value < activePeople)
       return await disablePeople(activePeople - this.value);
    else if (this.value > activePeople)
@@ -748,69 +745,82 @@ async function EnableOrDisablePeople () {
       throw Error('It "changed" to the same value');
 }
 
-async function changePlayer () {
+// this = <optgroup>
+async function changePlayer() {
    this.selected = true;
 
    let type = this.parentElement.label; // <optgroup> label
    let correctIndex = Array.prototype.indexOf.call(
       this.parentElement.children, this
    );
-   
-   if (type === "bot") bots[correctIndex].value = this.text;
+
+   if (type === "Bots") bots[correctIndex].value = this.text;
    else people[correctIndex].value = this.text;
-   
+
    players[this.index] = new PlayerReference(type, this.index);
 }
 
-async function changeName () {
+async function changeName() {
    let correctIndex = this.parentElement.innerText[10];
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
+
    for (let select of ELEMENTS.getEnabledPlayerSelects())
       select.firstElementChild.children[correctIndex].text = name;
    return `Done: Name changed to ${name}`;
 }
 
-async function enablePerson () {}
-      
-async function disablePerson () {
-   if (activePlayers === 0 || activePeople === 0) throw Error("Can't delete nothing");
+// this = <input>
+async function enablePerson() {
+   if (activePlayers === 4 || activePeople === 4) throw Error("Max players reached");
+   activePeople++;
+   activePlayers++;
+
+   const personIndex = this.parentElement.innerText[8];
+   people[personIndex].disabled = false;
+
+   for (let select of ELEMENTS.getPlayerSelects())
+      select.firstElementChild.children[personIndex].disabled = false;
+
+   this.disabled = true;
+   this.parentElement.parentElement.children[1].disabled = true;
+   this.parentElement.parentElement.children[2].disabled = false;
+   return `Done: Person at index ${personIndex} enabled.`;
+}
+
+
+// Bug, probably feature: Player not changed when disabled
+async function disablePerson() {
+   if (activePlayers === 0 || activePeople === 0) throw Error("Nothing to disable");
    activePeople--;
    activePlayers--;
 
    const personIndex = this.parentElement.innerText[8];
    people[personIndex].disabled = true;
-   
-   let playerIndex;
-   for (let [indexOfPlayer, player] of Object.entries(players))
-      if (player.index > personIndex + 1 && player.type === "human")
-         player.correctIndex--;
-      else if (player.index === personIndex + 1 && player.type === "human")
-         playerIndex = indexOfPlayer;
 
-   players[playerIndex].disabled = true;
-
-   for (let select of ELEMENTS.getEnabledPlayerSelects())
+   for (let select of ELEMENTS.getPlayerSelects())
       select.firstElementChild.children[personIndex].disabled = true;
 
    this.disabled = true;
+   this.parentElement.parentElement.children[1].disabled = false;
+   this.parentElement.parentElement.children[2].disabled = true;
    return `Done: Person at index ${personIndex} disabled.`;
 }
 
-async function enablePeople () {}
+async function enablePeople() { }
 
-async function disablePeople () {}
+async function disablePeople() { }
 
-async function enablePlayer () {}
+async function enablePlayer() { }
 
-async function disablePlayer () {}
+async function disablePlayer() { }
 
-async function enablePlayers () {}
+async function enablePlayers() { }
 
-async function disablePlayers () {}
+async function disablePlayers() { }
 
 
-/* 
+/*
 Types: human, bot
 
 {x} = expression, including variable calls, can be converted to string
@@ -848,8 +858,8 @@ Layout:
 innerHTML: <x> <y b=c> {etc, more lines}
 
 ________
-Number of players: 
-   <dropdown> 
+Number of players:
+   <dropdown>
       -> onchange addOrDeletePlayers()
       -> default 2
       -> values 2, 3, 4
@@ -945,9 +955,9 @@ addPerson()
 
    activePeople++
    activePlayers++
-   make this.nextElementSibling = 
+   make this.nextElementSibling =
       (see Person #{n} above)
-   
+
    people.splice_in(this.nextElementSibling.value)
    players.push(playerReference("human"), splice_in_index)
    for each (person whose index > splice_in_index) in people
@@ -974,7 +984,7 @@ deletePlayer()
 
    activePlayers--
    players.pop().type === "Human" ? activePeople : activeBots === 0
-   
+
    this.remove()
 
 
