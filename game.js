@@ -729,35 +729,37 @@ for (let select of ELEMENTS.getPlayerSelects())
 
 async function EnableOrDisablePlayers() {
    if (this.value < activePlayers)
-      return await disablePlayers(activePlayers - this.value);
+      return await disablePlayers(this.value);
    else if (this.value > activePlayers)
-      return await enablePlayers(this.value - activePlayers);
+      return await enablePlayers(this.value);
    else
       throw Error('It "changed" to the same value');
 }
 
 async function EnableOrDisablePeople() {
    if (this.value < activePeople)
-      return await disablePeople(activePeople - this.value);
+      return await disablePeople(this.value);
    else if (this.value > activePeople)
-      return await enablePeople(this.value - activePeople);
+      return await enablePeople(this.value);
    else
       throw Error('It "changed" to the same value');
 }
 
-// this = <optgroup>
+// this = <option>
 async function changePlayer() {
    this.selected = true;
 
-   let type = this.parentElement.label; // <optgroup> label
-   let correctIndex = Array.prototype.indexOf.call(
+   let type = this.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
+   let localIndex = Array.prototype.indexOf.call(
       this.parentElement.children, this
    );
 
-   if (type === "Bots") bots[correctIndex].value = this.text;
-   else people[correctIndex].value = this.text;
+   let playerIndex = this.parentElement.parentElement.parentElement.innerText[8]
 
-   players[this.index] = new PlayerReference(type, this.index);
+   if (type === "bot") bots[localIndex].value = this.text;
+   else people[localIndex].value = this.text;
+
+   players[playerIndex] = new PlayerReference(type, playerIndex);
 }
 
 async function changeName() {
@@ -807,17 +809,32 @@ async function disablePerson() {
    return `Done: Person at index ${personIndex} disabled.`;
 }
 
-async function enablePeople() { }
+// num === this.value, in above func
+async function enablePeople(num) {
+   let results = [];
+   let throwError = false;
+   for (let button of ELEMENTS.getEnablePersonButtons()) {
+      let result;
+      try {
+         result = button.click()
+      } catch (error) {
+         result = error;
+         throwError = true;
+      }
+   }
+   if (throwError) throw results;
+   return results;
+}
 
-async function disablePeople() { }
+async function disablePeople(num) { }
 
 async function enablePlayer() { }
 
 async function disablePlayer() { }
 
-async function enablePlayers() { }
+async function enablePlayers(num) { }
 
-async function disablePlayers() { }
+async function disablePlayers(num) { }
 
 
 /*
