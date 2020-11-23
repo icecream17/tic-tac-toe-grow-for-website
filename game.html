@@ -1,29 +1,29 @@
 <!doctype html>
-<html lang = "en-us">
+<html lang="en-us">
 
 <head>
-   <meta charset = "UTF-8">
+   <meta charset="UTF-8">
    <title>Tic Tac Toe Grow</title>
-   <script defer src = "game.js"></script>
-   <link rel = "stylesheet" href = "style.css">
+   <script defer src="game.js"></script>
+   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-   <div id = "container">
+   <div id="container">
       <aside>
          <h1>Tic tac toe grow!</h1>
          <!-- Make this section a flexbox or grid -->
-         <section id = "mapControls">
+         <section id="mapControls">
             <h2>Map controls</h2>
-            <button type = "button" class = "mapControl">up</button>
-            <button type = "button" class = "mapControl">down</button>
-            <button type = "button" class = "mapControl">left</button>
-            <button type = "button" class = "mapControl">right</button>
+            <button type="button" class="mapControl">up</button>
+            <button type="button" class="mapControl">down</button>
+            <button type="button" class="mapControl">left</button>
+            <button type="button" class="mapControl">right</button>
          </section>
-         <section id = "gameData">
+         <section id="gameData">
             <h2>Game data</h2>
-            <fieldset id = "countFields">
-               <label id = "playerAmountLabel">
+            <fieldset id="countFields">
+               <label id="playerAmountLabel">
                   <var>Number of players: </var>
                   <select>
                      <option selected>2</option>
@@ -32,7 +32,7 @@
                   </select>
                </label>
                <br>
-               <label id = "personCountLabel">
+               <label id="personCountLabel">
                   <var>Number of people playing: </var>
                   <select>
                      <option>0</option>
@@ -44,121 +44,121 @@
                </label>
             </fieldset>
             <!-- When disabled.onclick, enablePlayer. 
-                 [+] Button is redundant but nice. -->
-            <fieldset id = "nameFields">
-               <fieldset id = "nameField1">
-                  <label id = "usernameLabel1">
+               [+] Button is redundant but nice. -->
+            <fieldset id="nameFields">
+               <fieldset id="nameField1">
+                  <label id="usernameLabel1">
                      <var>Username #1: </var>
-                     <input type = "text" placeholder = "Person 1">
+                     <input type="text" placeholder="Person 1">
                   </label>
-                  <button type = "button" id = "enableName1" class = "enable" disabled></button>
-                  <button type = "button" id = "disableName1" class = "disable"></button>
+                  <button type="button" id="enableName1" class="enable" disabled></button>
+                  <button type="button" id="disableName1" class="disable"></button>
                </fieldset>
-               <fieldset id = "nameField2">
-                  <label id = "usernameLabel2">
+               <fieldset id="nameField2">
+                  <label id="usernameLabel2">
                      <var>Username #2: </var>
-                     <input disabled type = "text" placeholder = "Person 2">
+                     <input disabled type="text" placeholder="Person 2">
                   </label>
-                  <button type = "button" id = "enableName2" class = "enable"></button>
-                  <button type = "button" id = "disableName2" class = "disable" disabled></button>
+                  <button type="button" id="enableName2" class="enable"></button>
+                  <button type="button" id="disableName2" class="disable" disabled></button>
                </fieldset>
-               <fieldset id = "nameField3">
-                  <label id = "usernameLabel3">
+               <fieldset id="nameField3">
+                  <label id="usernameLabel3">
                      <var>Username #3: </var>
-                     <input disabled type = "text" placeholder = "Person 3">
+                     <input disabled type="text" placeholder="Person 3">
                   </label>
-                  <button type = "button" id = "enableName3" class = "enable"></button>
-                  <button type = "button" id = "disableName3" class = "disable" disabled></button>
+                  <button type="button" id="enableName3" class="enable"></button>
+                  <button type="button" id="disableName3" class="disable" disabled></button>
                </fieldset>
-               <fieldset id = "nameField4">
-                  <label id = "usernameLabel4">
+               <fieldset id="nameField4">
+                  <label id="usernameLabel4">
                      <var>Username #4: </var>
-                     <input disabled type = "text" placeholder = "Person 4">
+                     <input disabled type="text" placeholder="Person 4">
                   </label>
-                  <button type = "button" id = "enableName4" class = "enable"></button>
-                  <button type = "button" id = "disableName4" class = "disable" disabled></button>
+                  <button type="button" id="enableName4" class="enable"></button>
+                  <button type="button" id="disableName4" class="disable" disabled></button>
                </fieldset>
             </fieldset>
-            <fieldset id = "choosePlayerFields">
-               <fieldset id = "playerField1">
-                  <label id = "whoPlays1">
+            <fieldset id="choosePlayerFields">
+               <fieldset id="playerField1">
+                  <label id="whoPlays1">
                      <var>Player #1: </var>
-                     <select aria-labelledby = "whoPlays1">
-                        <optgroup label = "Humans">
+                     <select aria-labelledby="whoPlays1">
+                        <optgroup label="Humans">
                            <option selected>Person 1</option>
                            <option disabled>Person 2</option>
                            <option disabled>Person 3</option>
                            <option disabled>Person 4</option>
                         </optgroup>
-                        <optgroup label = "Bots">
+                        <optgroup label="Bots">
                            <option>random_move</option>
                            <option>middle_index</option>
                            <option>copy</option>
                         </optgroup>
                      </select>
                   </label>
-                  <button type = "button" id = "enablePlayer1" class = "enable" disabled></button>
-                  <button type = "button" id = "disablePlayer1" class = "disable"></button>
+                  <button type="button" id="enablePlayer1" class="enable" disabled></button>
+                  <button type="button" id="disablePlayer1" class="disable"></button>
                </fieldset>
-               <fieldset id = "playerField2">
-                  <label id = "whoPlays2">
+               <fieldset id="playerField2">
+                  <label id="whoPlays2">
                      <var>Player #2: </var>
-                     <select aria-labelledby = "whoPlays2">
-                        <optgroup label = "Humans">
+                     <select aria-labelledby="whoPlays2">
+                        <optgroup label="Humans">
                            <option>Person 1</option>
                            <option disabled>Person 2</option>
                            <option disabled>Person 3</option>
                            <option disabled>Person 4</option>
                         </optgroup>
-                        <optgroup label = "Bots">
+                        <optgroup label="Bots">
                            <option selected>random_move</option>
                            <option>middle_index</option>
                            <option>copy</option>
                         </optgroup>
                      </select>
                   </label>
-                  <button type = "button" id = "enablePlayer2" class = "enable" disabled></button>
-                  <button type = "button" id = "disablePlayer2" class = "disable"></button>
+                  <button type="button" id="enablePlayer2" class="enable" disabled></button>
+                  <button type="button" id="disablePlayer2" class="disable"></button>
                </fieldset>
-               <fieldset id = "playerField3">
-                  <label id = "whoPlays3">
+               <fieldset id="playerField3">
+                  <label id="whoPlays3">
                      <var>Player #3: </var>
-                     <select aria-labelledby = "whoPlays3" disabled>
-                        <optgroup label = "Humans">
+                     <select aria-labelledby="whoPlays3" disabled>
+                        <optgroup label="Humans">
                            <option>Person 1</option>
                            <option disabled>Person 2</option>
                            <option disabled>Person 3</option>
                            <option disabled>Person 4</option>
                         </optgroup>
-                        <optgroup label = "Bots">
+                        <optgroup label="Bots">
                            <option>random_move</option>
                            <option selected>middle_index</option>
                            <option>copy</option>
                         </optgroup>
                      </select>
                   </label>
-                  <button type = "button" id = "enablePlayer3" class = "enable"></button>
-                  <button type = "button" id = "disablePlayer3" class = "disable" disabled></button>
+                  <button type="button" id="enablePlayer3" class="enable"></button>
+                  <button type="button" id="disablePlayer3" class="disable" disabled></button>
                </fieldset>
-               <fieldset id = "playerField4">
-                  <label id = "whoPlays4">
+               <fieldset id="playerField4">
+                  <label id="whoPlays4">
                      <var>Player #4: </var>
-                     <select aria-labelledby = "whoPlays4" disabled>
-                        <optgroup label = "Humans">
+                     <select aria-labelledby="whoPlays4" disabled>
+                        <optgroup label="Humans">
                            <option>Person 1</option>
                            <option disabled>Person 2</option>
                            <option disabled>Person 3</option>
                            <option disabled>Person 4</option>
                         </optgroup>
-                        <optgroup label = "Bots">
+                        <optgroup label="Bots">
                            <option>random_move</option>
                            <option>middle_index</option>
                            <option selected>copy</option>
                         </optgroup>
                      </select>
                   </label>
-                  <button type = "button" id = "enablePlayer4" class = "enable"></button>
-                  <button type = "button" id = "disablePlayer4" class = "disable" disabled></button>
+                  <button type="button" id="enablePlayer4" class="enable"></button>
+                  <button type="button" id="disablePlayer4" class="disable" disabled></button>
                </fieldset>
             </fieldset>
          </section>
@@ -174,7 +174,7 @@
       <details>
          <summary>Examples:</summary>
          <p>I recommend just trying these out above.</p>
-         <p class = "monospace">
+         <p class="monospace">
             <br>&nbsp;X__<br>&nbsp;___<br>&nbsp;___<br>
             <br>&nbsp;_<br>_X__<br>&nbsp;___<br>&nbsp;___<br>
             <br>
@@ -206,9 +206,9 @@
       </ul>
       <details>
          <summary>Example checkmarks:</summary>
-         <p class = "monospace">____X<br>___X_<br>X_X__<br>_X___</p>
-         <p class = "monospace">_X__<br>X____<br>_X__<br>__X_<br>___X</p>
-         <p class = "monospace">
+         <p class="monospace">____X<br>___X_<br>X_X__<br>_X___</p>
+         <p class="monospace">_X__<br>X____<br>_X__<br>__X_<br>___X</p>
+         <p class="monospace">
             X_______<br>_X______<br>__X_____<br>___X___X<br>____X_X_<br>_____X__
          </p>
          <p>
@@ -271,4 +271,5 @@
       <p>By default, it's 1 player against a bot named "random_move"</p>
    </aside>
 </body>
+
 </html>
