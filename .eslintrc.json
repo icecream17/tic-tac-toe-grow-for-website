@@ -315,7 +315,7 @@
          "warn",
          {
             "anonymous": "always",
-            "named": "always",
+            "named": "ignore",
             "asyncArrow": "always"
          }
       ],
