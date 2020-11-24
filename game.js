@@ -169,6 +169,8 @@ class Game {
       // toMove is updated now
       if (players[this.toMove].type === "bot")
          this.doBotMove();
+
+      this.logAscii();
    }
 
    update(x, y) {
@@ -243,7 +245,7 @@ class Game {
       if (this.board[y][x - 1].value === '') this.setCell(x - 1, y, ' ');
       if (this.board[y][x + 1].value === '') this.setCell(x + 1, y, ' ');
 
-      this.board[y][x] = new Cell("xo/<"[this.toMove], x, y);
+      this.board[y][x] = new Cell(PLAYER_CHARS[this.toMove], x, y);
       this.board[y][x].moveIndex = this.moveHistory.length;
 
       for (let y2 = 0; y2 < this.board.length; y2++)
@@ -282,7 +284,7 @@ class Game {
             } else {
                element.className = 'board';
 
-               let whichAsset = "xo/<".indexOf(this.board[y][x].value);
+               let whichAsset = PLAYER_CHARS.indexOf(cellValue);
                if (whichAsset === -1)
                   element.style.background = "red";
                else
@@ -492,6 +494,42 @@ class Game {
                moves.push(new Position(x, y));
       return moves;
    }
+   
+   // Adds padding to left and right
+   getAscii() {
+      let str = `+-${'-'.repeat(this.board.width)}-+\n`
+      for (let y = 0; y < this.board.length; y++) {
+         str += '| '
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value === '') str += ' '
+            else if (this.board[y][x].value === ' ') str += '.'
+            else str += this.board[y][x].value
+         str += ' |\n'
+      }
+      str += `+-${'-'.repeat(this.board.width)}-+`
+      return str
+   }
+
+   logAscii() {
+      let text = this.getAscii()
+      let args = ["", []]
+      for (let char of text) {
+         let css = ""
+         if (char === PLAYER_CHARS[0]) css = 'color:red'
+         else if (char === PLAYER_CHARS[1]) css = 'color:blue'
+         else if (char === PLAYER_CHARS[2]) css = 'color:green'
+         else if (char === PLAYER_CHARS[3]) css = 'color:orange'
+         else if (char === '.') css = 'color:white'
+         else if (char === ' ') css = 'background-color:gray'
+         else if (char === '-') css = 'background-color:gray;color:gray'
+         else css = 'color:white'
+
+         args[0] += '%c' + char; args[1].push(css)
+      }
+      console.log(args[0], ...args[1])
+   }
+   
+   
 }
 
 function handleClick(x, y) {
@@ -515,6 +553,8 @@ const player_assets = [
    "player_assets/triangle.png",
    "player_assets/square.png"
 ];
+
+const PLAYER_CHARS = "xovn";
 
 const ELEMENTS = {
    container: document.getElementById('container'),
