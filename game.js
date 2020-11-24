@@ -494,7 +494,7 @@ class Game {
                moves.push(new Position(x, y));
       return moves;
    }
-   
+
    // Adds padding to left and right
    getAscii() {
       let str = `+-${'-'.repeat(this.board.width)}-+\n`
@@ -528,8 +528,8 @@ class Game {
       }
       console.log(args[0], ...args[1])
    }
-   
-   
+
+
 }
 
 function handleClick(x, y) {
@@ -566,11 +566,29 @@ const ELEMENTS = {
    getSquare(x, y) {
       return document.getElementById(`${x}-${y}`);
    },
+
+   // {b} is unneccesary in {a b c}, the space selects all children
+   getUsernameInputs() {
+      return document.querySelectorAll('#nameFields fieldset input');
+   },
+   getEnablePersonButtons() {
+      return document.querySelectorAll('#nameFields fieldset button.enable');
+   },
+   getDisablePersonButtons() {
+      return document.querySelectorAll('#nameFields fieldset button.disable');
+   },
+
    getPlayerSelects() {
-      return document.querySelectorAll("#choosePlayerFields label select");
+      return document.querySelectorAll('#choosePlayerFields label select');
    },
    getEnabledPlayerSelects() {
-      return document.querySelectorAll("#choosePlayerFields label select:enabled");
+      return document.querySelectorAll('#choosePlayerFields label select:enabled');
+   },
+   getEnablePlayerButtons() {
+      return document.querySelectorAll('#choosePlayerFields button.enable');
+   },
+   getDisablePlayerButtons() {
+      return document.querySelectorAll('#choosePlayerFields button.disable');
    }
 };
 
@@ -851,30 +869,69 @@ async function disablePerson() {
 
 // num === this.value, in above func
 async function enablePeople(num) {
-   let results = [];
-   let throwError = false;
+   let clickPromises = [];
    for (let button of ELEMENTS.getEnablePersonButtons()) {
-      let result;
-      try {
-         result = button.click()
-      } catch (error) {
-         result = error;
-         throwError = true;
-      }
+      if (button.disabled) continue;
+      clickPromises.push(button.click());
+      if (activePeople + clickPromises.length === num) break;
    }
-   if (throwError) throw results;
-   return results;
+
+   let promiseGroup = Promise.allSettled(clickPromises);
+   for (let promise of promiseGroup)
+      if (promise.status === 'rejected') throw promiseGroup;
+
+   return promiseGroup;
 }
 
-async function disablePeople(num) { }
+// Disables first-to-last just like enable.
+async function disablePeople(num) {
+   let clickPromises = [];
+   for (let button of ELEMENTS.getDisablePersonButtons()) {
+      if (button.disabled) continue;
+      clickPromises.push(button.click());
+      if (activePeople - clickPromises.length === num) break;
+   }
+
+   let promiseGroup = Promise.allSettled(clickPromises);
+   for (let promise of promiseGroup)
+      if (promise.status === 'rejected') throw promiseGroup;
+
+   return promiseGroup;
+}
 
 async function enablePlayer() { }
 
 async function disablePlayer() { }
 
-async function enablePlayers(num) { }
+async function enablePlayers(num) {
+   let clickPromises = [];
+   for (let button of ELEMENTS.getEnablePlayerButtons()) {
+      if (button.disabled) continue;
+      clickPromises.push(button.click());
+      if (activePeople + clickPromises.length === num) break;
+   }
 
-async function disablePlayers(num) { }
+   let promiseGroup = Promise.allSettled(clickPromises);
+   for (let promise of promiseGroup)
+      if (promise.status === 'rejected') throw promiseGroup;
+
+   return promiseGroup;
+}
+
+async function disablePlayers(num) {
+   let clickPromises = [];
+   for (let button of ELEMENTS.getDisablePlayerButtons()) {
+      if (button.disabled) continue;
+      clickPromises.push(button.click());
+      if (activePlayers - clickPromises.length === num) break;
+   }
+
+   let promiseGroup = Promise.allSettled(clickPromises);
+   for (let promise of promiseGroup)
+      if (promise.status === 'rejected') throw promiseGroup;
+
+   return promiseGroup;
+}
 
 
 /*
