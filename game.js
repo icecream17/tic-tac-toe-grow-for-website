@@ -1,5 +1,11 @@
 "use strict";
 
+// for async functions
+async function pause(ms) {
+   return await new Promise(resolve => setTimeout(resolve, ms, "Done!"));
+}
+
+
 class CustomError extends Error {
    constructor (message) {
       super(message);
@@ -221,12 +227,14 @@ class Game {
                ).className = 'board';
    }
 
-   play(x, y) {
+   async play(x, y) {
       this.update(x, y);
 
       // toMove is updated now
-      if (players[this.toMove].type === "bot")
+      if (players[this.toMove].type === "bot") {
+         await pause(500);
          this.doBotMove();
+      }
 
       this.logAscii();
    }
@@ -876,9 +884,6 @@ async function changePlayer() {
    this.selected = true;
 
    let type = this.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
-   // let localIndex = Array.prototype.indexOf.call(
-   //    this.parentElement.children, this
-   // );
 
    let playerIndex = this.parentElement.parentElement.parentElement.innerText[8] - 1
    if (players[playerIndex].type !== type)
@@ -890,7 +895,11 @@ async function changePlayer() {
          activeBots--;
       }
 
-   players[playerIndex] = new PlayerReference(type, playerIndex);
+   let localIndex = Array.prototype.indexOf.call(
+      this.parentElement.children, this
+   );
+
+   players[playerIndex] = new PlayerReference(type, localIndex);
    return ["Done! Player changed: ", players[playerIndex]];
 }
 
