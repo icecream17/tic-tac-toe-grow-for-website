@@ -810,14 +810,14 @@ let players = [
 
 for (let select of ELEMENTS.getPlayerSelects())
    select.onchange = function playerChange(event) {
-      if (event.target.disabled) return ElementIsDisabledError(element.target)
+      if (event.target.disabled) return ElementIsDisabledError(event.target)
       let result = changePlayer.apply(event.target.selectedOptions[0]);
       console.log(result);
       return result;
    }
 for (let input of ELEMENTS.getUsernameInputs())
    input.onchange = function usernameChange(event) {
-      if (event.target.disabled) return ElementIsDisabledError(element.target);
+      if (event.target.disabled) return ElementIsDisabledError(event.target);
       let result = changeName.apply(event.target);
       console.log(result);
       return result;
