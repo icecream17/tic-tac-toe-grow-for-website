@@ -764,7 +764,8 @@ players = [
 for (let select of ELEMENTS.getPlayerSelects())
    select.onchange = function changeEvent(event) {
       if (event.target.disabled) return Error('element is disabled')
-      changePlayer.apply(event.target.selectedOptions[0]);
+      let result = changePlayer.apply(event.target.selectedOptions[0]);
+      console.log(result)
    }
 
 // These async functions are really fast
@@ -813,11 +814,17 @@ async function changePlayer() {
    );
 
    let playerIndex = this.parentElement.parentElement.parentElement.innerText[8]
-
-   if (type === "bot") bots[localIndex].value = this.text;
-   else people[localIndex].value = this.text;
-
+   if (players[playerIndex].type !== type)
+      if (type === "bot") {
+         activePeople--;
+         activeBots++;
+      } else {
+         activePeople++;
+         activeBots--;
+      }
+         
    players[playerIndex] = new PlayerReference(type, playerIndex);
+   return ["Done! Player changed: ", players[playerIndex]];
 }
 
 async function changeName() {
