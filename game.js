@@ -237,7 +237,7 @@ class Game {
       if (this.board[y][x].value !== ' ')
          throw ERRORS.SQUARE_NOT_UPDATED;
 
-      const oldPosition = { x, y };
+      const oldPosition = {x, y};
       let newXY = this.updateBoard(x, y);
       x = newXY.x;
       y = newXY.y;
@@ -256,7 +256,7 @@ class Game {
       this.updateVisual();
 
       this.gameStates.push(new GameState(this));
-      this.moveHistory.push(new Move(oldPosition, { x, y }, this));
+      this.moveHistory.push(new Move(oldPosition, {x, y}, this));
       this.toMove = (this.toMove + 1) % players.length;
 
       console.log("update:", x, y, moveFinish);
@@ -565,12 +565,12 @@ class Game {
          str += ' |\n';
       }
       str += `+-${'-'.repeat(this.board.width)}-+`;
-      return str
+      return str;
    }
 
    logAscii() {
-      let text = this.getAscii()
-      let args = ["", []]
+      let text = this.getAscii();
+      let args = ["", []];
       for (let char of text) {
          let css = "";
          if (char === PLAYER_CHARS[0]) css = 'color:red';
@@ -821,18 +821,18 @@ let players = [
 
 for (let select of ELEMENTS.getPlayerSelects())
    select.onchange = function playerChange(event) {
-      if (event.target.disabled) return ElementIsDisabledError(event.target)
+      if (event.target.disabled) return new ElementIsDisabledError(event.target)
       let result = changePlayer.apply(event.target.selectedOptions[0]);
       console.log(result);
       return result;
-   }
+   };
 for (let input of ELEMENTS.getUsernameInputs())
    input.onchange = function usernameChange(event) {
-      if (event.target.disabled) return ElementIsDisabledError(event.target);
+      if (event.target.disabled) return new ElementIsDisabledError(event.target);
       let result = changeName.apply(event.target);
       console.log(result);
       return result;
-   }
+   };
 
 
 // These async functions are really fast
@@ -859,7 +859,7 @@ async function EnableOrDisablePlayers() {
    else if (this.value > activePlayers)
       return await enablePlayers(this.value);
    else
-      throw DidntChangeError();
+      throw new DidntChangeError();
 }
 
 async function EnableOrDisablePeople() {
@@ -868,7 +868,7 @@ async function EnableOrDisablePeople() {
    else if (this.value > activePeople)
       return await enablePeople(this.value);
    else
-      throw DidntChangeError();
+      throw new DidntChangeError();
 }
 
 // this = <option>
@@ -876,11 +876,11 @@ async function changePlayer() {
    this.selected = true;
 
    let type = this.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
-   let localIndex = Array.prototype.indexOf.call(
-      this.parentElement.children, this
-   );
+   // let localIndex = Array.prototype.indexOf.call(
+   //    this.parentElement.children, this
+   // );
 
-   let playerIndex = this.parentElement.parentElement.parentElement.innerText[8]
+   let playerIndex = this.parentElement.parentElement.parentElement.innerText[8] - 1
    if (players[playerIndex].type !== type)
       if (type === "bot") {
          activePeople--;
@@ -896,7 +896,7 @@ async function changePlayer() {
 
 // this = <input>
 async function changeName() {
-   let correctIndex = this.parentElement.innerText[10];
+   let correctIndex = this.parentElement.innerText[10] - 1;
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
 
@@ -911,7 +911,7 @@ async function enablePerson() {
    activePeople++;
    activePlayers++;
 
-   const personIndex = this.parentElement.innerText[8];
+   const personIndex = this.parentElement.innerText[8] - 1;
    people[personIndex].disabled = false;
 
    for (let select of ELEMENTS.getPlayerSelects())
@@ -930,7 +930,7 @@ async function disablePerson() {
    activePeople--;
    activePlayers--;
 
-   const personIndex = this.parentElement.innerText[8];
+   const personIndex = this.parentElement.innerText[8] - 1;
    people[personIndex].disabled = true;
 
    for (let select of ELEMENTS.getPlayerSelects())
