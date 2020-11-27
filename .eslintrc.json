@@ -131,10 +131,7 @@
          "never"
       ],
       "array-element-newline": "off",
-      "block-spacing": [
-         "warn",
-         "never"
-      ],
+      "block-spacing": "off",
       "brace-style": [
          "warn",
          "1tbs",
@@ -356,7 +353,7 @@
             "allowNamedFunctions": true
          }
       ],
-      "prefer-const": "warn",
+      "prefer-const": "off",
       "prefer-numeric-literals": "warn",
       "prefer-rest-params": "warn",
       "prefer-spread": "warn",
