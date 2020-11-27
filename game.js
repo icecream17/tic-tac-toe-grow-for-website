@@ -41,8 +41,8 @@ class ElementIsDisabledError extends CustomError {
 
 // When an internal value is wrong
 class InvalidValueError extends CustomError {
-   constructor (message = "Some internal value is invalid") {
-      super(message);
+   constructor (valueName, message) {
+      super(message ?? `${valueName ? "Some" : "The"} internal value (${valueName ?? "name not provided"}) was invalid`);
    }
 }
 
@@ -63,6 +63,17 @@ class DidntChangeError extends SameValuesError {
       super(message);
    }
 }
+
+// Only for constant non-default errors
+const ERRORS = {
+   CONST_MAX_LENGTH: new TypeError("Assignment to constant property {MAX_LENGTH}"),
+   CONST_MAX_TURNS: new TypeError("Assignment to constant property {MAX_TURNS}"),
+   SQUARE_NOT_UPDATED: new InvalidValueError("square", "AAA WHAT!????"),
+   INVALID_MOVE_FINISH: new InvalidValueError("moveFinish"),
+   IMPOSSIBLE_LAST_MOVE: new ReferenceError("Last move was not an option...?"),
+   MAX_PLAYERS_REACHED: new MaxValueError("Max players reached"),
+   EVERYONEs_ENABLED: new NothingDisabledError("person", "people")
+};
 
 class Position {
    constructor (x, y) {
@@ -187,9 +198,9 @@ class Game {
    // i.e.: Game.MAX_LENGTH instead of this.MAX_LENGTH
 
    // TODO: Add a way to change this.
-   static set MAX_LENGTH(value) { throw new TypeError("Assignment to constant property {MAX_LENGTH}") }
+   static set MAX_LENGTH(value) { throw ERRORS.CONST_MAX_LENGTH }
    static get MAX_LENGTH() { return 511 }
-   static set MAX_TURNS(value) { throw new TypeError("Assignment to constant property {MAX_TURNS}") }
+   static set MAX_TURNS(value) { throw ERRORS.CONST_MAX_TURNS }
    static get MAX_TURNS() { return 292 }
 
    setCell(x, y, value) {
@@ -224,9 +235,9 @@ class Game {
       console.log('move: ', x, y);
 
       if (this.board[y][x].value !== ' ')
-         throw InvalidValueError("AAA WHAT!????");
+         throw ERRORS.SQUARE_NOT_UPDATED;
 
-      const oldPosition = {x, y};
+      const oldPosition = { x, y };
       let newXY = this.updateBoard(x, y);
       x = newXY.x;
       y = newXY.y;
@@ -240,12 +251,12 @@ class Game {
          } else if (moveFinish[0] === "draw")
             notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
          else
-            throw InvalidValueError("Invalid moveFinish");
+            throw ERRORS.INVALID_MOVE_FINISH
 
       this.updateVisual();
 
       this.gameStates.push(new GameState(this));
-      this.moveHistory.push(new Move(oldPosition, {x, y}, this));
+      this.moveHistory.push(new Move(oldPosition, { x, y }, this));
       this.toMove = (this.toMove + 1) % players.length;
 
       console.log("update:", x, y, moveFinish);
@@ -682,7 +693,7 @@ let currentGame = new Game();
 
 
 class Player {
-   constructor(type, name, disabled) {
+   constructor (type, name, disabled) {
       this.type = type;
       this.name = name;
       this.disabled = disabled;
@@ -777,7 +788,7 @@ const bot_mechanics = {
          );
 
          if (indexOfLastMove === -1)
-            throw new InvalidValueError("Last move was not an option...?");
+            throw ERRORS.IMPOSSIBLE_LAST_MOVE;
          let chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
       }
@@ -878,7 +889,7 @@ async function changePlayer() {
          activePeople++;
          activeBots--;
       }
-         
+
    players[playerIndex] = new PlayerReference(type, playerIndex);
    return ["Done! Player changed: ", players[playerIndex]];
 }
@@ -896,7 +907,7 @@ async function changeName() {
 
 // this = <input>
 async function enablePerson() {
-   if (activePlayers === 4 || activePeople === 4) throw new MaxValueError("Max players reached");
+   if (activePlayers === 4 || activePeople === 4) throw ERRORS.MAX_PLAYERS_REACHED;
    activePeople++;
    activePlayers++;
 
@@ -915,7 +926,7 @@ async function enablePerson() {
 
 // Bug, probably feature: Player not changed when disabled
 async function disablePerson() {
-   if (activePlayers === 0 || activePeople === 0) throw new NothingDisabledError("person", "people");
+   if (activePlayers === 0 || activePeople === 0) throw ERRORS.EVERYONEs_ENABLED;
    activePeople--;
    activePlayers--;
 
@@ -1001,183 +1012,5 @@ async function disablePlayers(num) {
 
 /*
 Types: human, bot
-
-{x} = expression, including variable calls, can be converted to string
-
-<name> = represents an element, <name></name> in HTML usually
-<name>.attribute = JavaScript property of Element or Node child
-<name x={y}> = HTML attribute x of element is y
-<name.className> = <name class={className}>
-<name#ID> = <name id={ID}>
-
-<dropdown> = <select>
-<dropdown>.values = <dropdown>.options.map(option => option.value)
-<dropdown>.default = <dropdown>.selectedOptions[0].value
-
-<input>.default = value
-   means
-<input placeholder={value}>
-
-x: <y> -> z1 z2
-   means
-<label> containing <var> containing x, followed by a <y> where <y>.z1 = z2
-
-x: <y> -> z1 z2 -> zN, zM  [etc.]
-   means
-x: <y> -> z1 z2, but also each <y> zN = zM
-
-zN: zM = zN zM
-
-Layout:
-= <x>
-=   <y b=c>
-= {etc, more lines}
-
-   means
-innerHTML: <x> <y b=c> {etc, more lines}
-
-________
-Number of players:
-   <dropdown>
-      -> onchange addOrDeletePlayers()
-      -> default 2
-      -> values 2, 3, 4
-
-Number of people:
-   <dropdown>
-      -> onchange addOrDeletePeople()
-      -> default 1
-      -> values 0, 1, 2, 3, 4
-
-Person #{n}:
-   <input>
-      -> onchange changeName()
-      -> default: Person {n}
-      -> values: Any
-   <button.x>
-      -> onclick deletePerson()
-   <button.add>
-      -> onclick addPerson()
-
-Player #{n}:
-   <dropdown>
-      -> onchange changePlayer()
-      -> default {
-         Where index = this.parentElement.indexof(this)
-            If index < activePeople
-               person[index].name
-            Else
-               bot[index - activePeople].name
-      }
-      Layout
-      = <select aria-labelledby={ID of label whose value is Player #{n}}>
-      =   <optgroup label="Humans">
-      =      {with n, from 0 to {Number of people}, an <option> where <option>.value = person #{n}}
-      =   </optgroup>
-      =   <optgroup label="Bots">
-      =      {for each {bot}, an <option> with a value of {bot.name}}
-      =   </optgroup>
-      = </select>
-   <button.x>
-      -> onclick deletePlayer()
-   <button.add>
-      -> onclick addPlayer()
-________
-Is disabled: All of the elements are disabled
-
-{Number of players} -> L
-{Number of people} -> N
-{Person #1}
-{Person #2}
-{Person #3}
-{Person #4}
-{Player #1}
-{Player #2}
-{Player #3}
-{Player #4}
-
-If X in {Player #X} > L,
- {Player #X} is disabled
-If X in {Person #X} > N,
- {Person #X} is disabled
-_________
-Correct = corresponding = figure the correct value out
-
-All of the following are async functions.
-addOrDeletePlayers()
-   If value went lower, deletePlayers(diff), else addPlayers(diff)
-
-addOrDeletePeople()
-   If value went lower, deletePeople(diff), else addPeoplel(diff)
-
-changeName()
-   person[correct_index].name = this.value
-   for each (dropdown of Player labels), correct_option.value = this.value
-
-deletePerson()
-   if (activePlayers === 0 || activePeople === 0) throw
-
-   activePeople--
-   activePlayers--
-   people.splice_away(correct_person)
-   for each (person whose index > the index of correct_person) in people
-      for each time person is in players
-         player_reference.index--
-   for each (Player_dropdown)
-      delete correct_option, and if correct_option is selected,
-         correct_next_option.setAttribute: selected
-   delete correct_person
-   this.remove()  <delete this, as an element>
-
-addPerson()
-   if (activePlayers === 4 || activePeople === 4) throw
-
-   activePeople++
-   activePlayers++
-   make this.nextElementSibling =
-      (see Person #{n} above)
-
-   people.splice_in(this.nextElementSibling.value)
-   players.push(playerReference("human"), splice_in_index)
-   for each (person whose index > splice_in_index) in people
-      for each time person is in players
-         player_reference.index++
-   for each (Player_dropdown)
-      add option in <optgroup label="Humans"> in correct_index
-
-changePlayer()
-   this.setAttribute: selected
-   correct_next_option.removeAttribute: selected
-
-   type = this.parentElement.value // <optgroup>.value
-   if (type === bot)
-      bot[correct_index].value = this.value
-   else
-      player[correct_index].value = this.value
-
-   for each Player_dropdown, correct_option.value = this.value
-
-deletePlayer()
-   if (activePlayers === 0) throw
-   if (players[players.length - 1].type === "Human" ? activePeople : activeBots === 0) throw
-
-   activePlayers--
-   players.pop().type === "Human" ? activePeople : activeBots === 0
-
-   this.remove()
-
-
-addPlayer()
-   if (activePlayers === 4) throw
-   ugh
-
-deletePlayers(n)
-   for (; n; n--) await(lastPlayer.x.click)
-
-addPlayers(n)
-   for (; n; n--) await(lastPlayer.add.click)
-
-
-
 
 */
