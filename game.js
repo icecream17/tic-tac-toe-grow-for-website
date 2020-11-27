@@ -9,11 +9,58 @@ class CustomError extends Error {
    get name() { return this.constructor.name } // For ease of maintenance
 }
 
+class NothingDisabledError extends CustomError {
+   constructor (noun = "Nothing", plural, message) {
+      super(message ?? `Cannot enable ${noun} since all ${plural ?? `${noun}s`} are already enabled.`);
+   }
+}
+
+// params = (string, string)
+// do not pass "null" into condition
+class DisabledError extends CustomError {
+   constructor (noun, condition = '') {
+      if (condition.length !== 0) condition = ` and ${condition}`;
+
+      super(`${noun} is disabled${condition}.`);
+   }
+}
+
 class BotIsDisabledError extends CustomError {
    constructor (bot) {
-      super(`${bot.name} is disabled and cannot play.`);
-
+      super(bot.name, 'cannot play');
       this.bot = bot;
+   }
+}
+
+class ElementIsDisabledError extends CustomError {
+   constructor (element, message = "shouldn't be changed") {
+      super(element.tagName, message);
+      this.element = element;
+   }
+}
+
+// When an internal value is wrong
+class InvalidValueError extends CustomError {
+   constructor (message = "Some internal value is invalid") {
+      super(message);
+   }
+}
+
+class MaxValueError extends InvalidValueError {
+   constructor (message = "Max value reached") {
+      super(message);
+   }
+}
+
+class SameValuesError extends CustomError {
+   constructor (message = "Some values are the same when they shouldn't be") {
+      super(message);
+   }
+}
+
+class DidntChangeError extends SameValuesError {
+   constructor (message = 'Something "changed" to the same value') {
+      super(message);
    }
 }
 
@@ -177,7 +224,7 @@ class Game {
       console.log('move: ', x, y);
 
       if (this.board[y][x].value !== ' ')
-         throw Error("AAA WHAT!????");
+         throw InvalidValueError("AAA WHAT!????");
 
       const oldPosition = {x, y};
       let newXY = this.updateBoard(x, y);
@@ -193,7 +240,7 @@ class Game {
          } else if (moveFinish[0] === "draw")
             notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
          else
-            throw Error("Invalid moveFinish");
+            throw InvalidValueError("Invalid moveFinish");
 
       this.updateVisual();
 
@@ -497,16 +544,16 @@ class Game {
 
    // Adds padding to left and right
    getAscii() {
-      let str = `+-${'-'.repeat(this.board.width)}-+\n`
+      let str = `+-${'-'.repeat(this.board.width)}-+\n`;
       for (let y = 0; y < this.board.length; y++) {
-         str += '| '
+         str += '| ';
          for (let x = 0; x < this.board.width; x++)
-            if (this.board[y][x].value === '') str += ' '
-            else if (this.board[y][x].value === ' ') str += '.'
-            else str += this.board[y][x].value
-         str += ' |\n'
+            if (this.board[y][x].value === '') str += ' ';
+            else if (this.board[y][x].value === ' ') str += '.';
+            else str += this.board[y][x].value;
+         str += ' |\n';
       }
-      str += `+-${'-'.repeat(this.board.width)}-+`
+      str += `+-${'-'.repeat(this.board.width)}-+`;
       return str
    }
 
@@ -514,19 +561,20 @@ class Game {
       let text = this.getAscii()
       let args = ["", []]
       for (let char of text) {
-         let css = ""
-         if (char === PLAYER_CHARS[0]) css = 'color:red'
-         else if (char === PLAYER_CHARS[1]) css = 'color:blue'
-         else if (char === PLAYER_CHARS[2]) css = 'color:green'
-         else if (char === PLAYER_CHARS[3]) css = 'color:orange'
-         else if (char === '.') css = 'color:white'
-         else if (char === ' ') css = 'background-color:gray'
-         else if (char === '-') css = 'background-color:gray;color:gray'
-         else css = 'color:white'
+         let css = "";
+         if (char === PLAYER_CHARS[0]) css = 'color:red';
+         else if (char === PLAYER_CHARS[1]) css = 'color:blue';
+         else if (char === PLAYER_CHARS[2]) css = 'color:green';
+         else if (char === PLAYER_CHARS[3]) css = 'color:orange';
+         else if (char === '.') css = 'color:white';
+         else if (char === ' ') css = 'background-color:gray';
+         else if (char === '-') css = 'background-color:gray;color:gray';
+         else css = 'color:white';
 
-         args[0] += '%c' + char; args[1].push(css)
+         args[0] += '%c' + char;
+         args[1].push(css);
       }
-      console.log(args[0], ...args[1])
+      console.log(args[0], ...args[1]);
    }
 
 
@@ -729,7 +777,7 @@ const bot_mechanics = {
          );
 
          if (indexOfLastMove === -1)
-            throw new TypeError("Last move was not an option...?");
+            throw new InvalidValueError("Last move was not an option...?");
          let chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
       }
@@ -747,26 +795,34 @@ let people = [
    new Human("Person 3"),
    new Human("Person 4")
 ];
-let bots = [];
-let players; // Contains (type, index) based on dropdowns
 
+let bots = [];
 for (let key of Object.keys(bot_mechanics)) {
    let newBot = new Bot(key, bot_mechanics[key]);
    bots.push(newBot);
    bots[key] = newBot;
 }
 
-players = [
+let players = [
    new PlayerReference("human", 0),
    new PlayerReference("bot", 0)
 ];
 
 for (let select of ELEMENTS.getPlayerSelects())
-   select.onchange = function changeEvent(event) {
-      if (event.target.disabled) return Error('element is disabled')
+   select.onchange = function playerChange(event) {
+      if (event.target.disabled) return ElementIsDisabledError(element.target)
       let result = changePlayer.apply(event.target.selectedOptions[0]);
-      console.log(result)
+      console.log(result);
+      return result;
    }
+for (let input of ELEMENTS.getUsernameInputs())
+   input.onchange = function usernameChange(event) {
+      if (event.target.disabled) return ElementIsDisabledError(element.target);
+      let result = changeName.apply(event.target);
+      console.log(result);
+      return result;
+   }
+
 
 // These async functions are really fast
 // They might not even need to be async functions,
@@ -792,7 +848,7 @@ async function EnableOrDisablePlayers() {
    else if (this.value > activePlayers)
       return await enablePlayers(this.value);
    else
-      throw Error('It "changed" to the same value');
+      throw DidntChangeError();
 }
 
 async function EnableOrDisablePeople() {
@@ -801,7 +857,7 @@ async function EnableOrDisablePeople() {
    else if (this.value > activePeople)
       return await enablePeople(this.value);
    else
-      throw Error('It "changed" to the same value');
+      throw DidntChangeError();
 }
 
 // this = <option>
@@ -827,6 +883,7 @@ async function changePlayer() {
    return ["Done! Player changed: ", players[playerIndex]];
 }
 
+// this = <input>
 async function changeName() {
    let correctIndex = this.parentElement.innerText[10];
    let name = this.value.length ? this.value : this.placeholder;
@@ -839,7 +896,7 @@ async function changeName() {
 
 // this = <input>
 async function enablePerson() {
-   if (activePlayers === 4 || activePeople === 4) throw Error("Max players reached");
+   if (activePlayers === 4 || activePeople === 4) throw new MaxValueError("Max players reached");
    activePeople++;
    activePlayers++;
 
@@ -858,7 +915,7 @@ async function enablePerson() {
 
 // Bug, probably feature: Player not changed when disabled
 async function disablePerson() {
-   if (activePlayers === 0 || activePeople === 0) throw Error("Nothing to disable");
+   if (activePlayers === 0 || activePeople === 0) throw new NothingDisabledError("person", "people");
    activePeople--;
    activePlayers--;
 
@@ -908,6 +965,7 @@ async function disablePeople(num) {
 
 async function enablePlayer() { }
 
+// Min players: 1
 async function disablePlayer() { }
 
 async function enablePlayers(num) {
