@@ -82,14 +82,6 @@ button.disable {
    color: #ea4335;
 }
 
-button.enable::before {
-   content: "+ enable"
-}
-
-button.disable::before {
-   content: "× remove"
-}
-
 button.enable,
 button.disable {
    font-weight: bold;
