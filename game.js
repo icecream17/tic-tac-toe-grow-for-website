@@ -70,6 +70,13 @@ class DidntChangeError extends SameValuesError {
    }
 }
 
+// When the user does something the user isn't supposed to
+class EvilPlayerError extends CustomError {
+   constructor (message = 'hmmph') {
+      super(message);
+   }
+}
+
 // Only for constant non-default errors
 const ERRORS = {
    CONST_MAX_LENGTH: new TypeError("Assignment to constant property {MAX_LENGTH}"),
@@ -78,7 +85,8 @@ const ERRORS = {
    INVALID_MOVE_FINISH: new InvalidValueError("moveFinish"),
    IMPOSSIBLE_LAST_MOVE: new ReferenceError("Last move was not an option...?"),
    MAX_PLAYERS_REACHED: new MaxValueError("Max players reached"),
-   EVERYONEs_ENABLED: new NothingDisabledError("person", "people")
+   EVERYONEs_ENABLED: new NothingDisabledError("person", "people"),
+   EVIL_CLICK: new EvilPlayerError("Hey, you're not supposed to click that")
 };
 
 class Position {
@@ -227,16 +235,20 @@ class Game {
                ).className = 'board';
    }
 
-   async play(x, y) {
+   play(x, y) {
       this.update(x, y);
+      this.playBots();
+      this.logAscii();
+   }
 
-      // toMove is updated now
+   async playBots(verbose=false) {
       if (players[this.toMove].type === "bot") {
-         await pause(500);
+         await pause(200);
          this.doBotMove();
       }
 
-      this.logAscii();
+      if (verbose)
+         this.logAscii();
    }
 
    update(x, y) {
@@ -265,6 +277,7 @@ class Game {
 
       this.gameStates.push(new GameState(this));
       this.moveHistory.push(new Move(oldPosition, {x, y}, this));
+      players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1]
       this.toMove = (this.toMove + 1) % players.length;
 
       console.log("update:", x, y, moveFinish);
@@ -327,39 +340,32 @@ class Game {
    updateVisual() {
       for (let y = 0; y < 20; y++)
          for (let x = 0; x < 20; x++) {
-            ELEMENTS.getSquare(x, y).className = '';
-            ELEMENTS.getSquare(x, y).style.background = '';
-         }
+            let button = ELEMENTS.getSquare(x, y);
+            let cell = this.board?.[y - this.visual.offset.y]?.[x - this.visual.offset.x];
 
-      // Maybe there should be a better name for "element"
-      for (let y = 0; y < this.board.height; y++)
-         for (let x = 0; x < this.board.width; x++) {
-            let element = ELEMENTS.getSquare(
-               this.visual.offset.x + x,
-               this.visual.offset.y + y
-            );
-            if (element === null) continue;
+            // undefined or empty string
+            button.className = '';
+            button.style.background = '';
+            button.style.borderColor = '';
 
-            let cellValue = this.board[y][x].value;
-            if (cellValue === '') {
-               element.className = '';
-               element.style.background = '';
-            } else if (cellValue === ' ') {
-               element.className = 'board';
-               element.style.background = '';
-            } else {
-               element.className = 'board';
+            if (cell === undefined) continue
 
-               let whichAsset = PLAYER_CHARS.indexOf(cellValue);
-               if (whichAsset === -1)
-                  element.style.background = "red";
+            if (cell.value === ' ') button.className = 'board';
+            if (cell.value !== undefined && cell.value !== '' && cell.value !== ' ') {
+               let playerIndex = PLAYER_CHARS.indexOf(cell.value);
+               if (playerIndex === -1)
+                  button.style.background = "red";
                else
-                  element.style.background = (
-                     `url("${player_assets[whichAsset]}")`
+                  button.style.background = (
+                     `url("${player_assets[playerIndex]}")`
                   );
 
-               if (this.board[y][x].win)
-                  element.classList.add("win");
+
+               button.className = 'board';
+               if (cell.win)
+                  button.classList.add("win");
+               else if (players?.[playerIndex].lastMove?.index === cell.moveIndex)
+                  button.style.borderColor = PLAYER_BORDERS[playerIndex]
             }
          }
       // Outer for doesn't need brackets
@@ -603,10 +609,12 @@ function handleClick(x, y) {
    console.log("Click!", x, y);
    x -= currentGame.visual.offset.x;
    y -= currentGame.visual.offset.y;
-   if (
-      players[currentGame.toMove].type === "human"
-      && currentGame.board[y][x].value === ' '
-   )
+
+   let square = currentGame.board?.[y]?.[x]
+   if (square === undefined)
+      throw ERRORS.EVIL_CLICK;
+
+   if (players[currentGame.toMove].type === "human" && square.value === ' ')
       currentGame.play(x, y);
 }
 
@@ -622,6 +630,13 @@ const player_assets = [
 ];
 
 const PLAYER_CHARS = "xovn";
+
+const PLAYER_BORDERS = [
+   "red",
+   "dodgerblue",
+   "green",
+   "#ffd74a"
+];
 
 const ELEMENTS = {
    container: document.getElementById('container'),
@@ -705,6 +720,7 @@ class Player {
       this.type = type;
       this.name = name;
       this.disabled = disabled;
+      this.lastMove = null;
    }
 }
 
@@ -900,6 +916,7 @@ async function changePlayer() {
    );
 
    players[playerIndex] = new PlayerReference(type, localIndex);
+   currentGame.playBots(true);
    return ["Done! Player changed: ", players[playerIndex]];
 }
 
@@ -983,7 +1000,25 @@ async function disablePeople(num) {
    return promiseGroup;
 }
 
-async function enablePlayer() { }
+// this = <select disabled>
+async function enablePlayer() {
+   if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
+   activePlayers++;
+   activeBots++;
+
+   this.disabled = false;
+   this.parentElement.nextElementSibling.disabled = true;
+   this.parentElement.nextElementSibling.nextElementSibling.disabled = false;
+
+   this.selectedIndex = 4;
+   this.dispatchEvent(new Event("change"));
+
+   players.push(new PlayerReference("bot", 0));
+   // if (currentGame.toMove === 0) currentGame.toMove = players.length - 1
+   // doesn't make sense here because player added is a bot
+
+   return "Done! Enabled player (random_move for safety)";
+}
 
 // Min players: 1
 async function disablePlayer() { }
@@ -1021,5 +1056,7 @@ async function disablePlayers(num) {
 
 /*
 Types: human, bot
+Throws an errror when doing bot move but player is changed to human
+
 
 */
