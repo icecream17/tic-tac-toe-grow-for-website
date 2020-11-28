@@ -114,8 +114,8 @@ button.enable:disabled {
 }
 
 button.disable:disabled {
-    border-color: rgba(255, 85, 68, 30%);
-    color: rgba(234, 67, 53, 30%);
+   border-color: rgba(255, 85, 68, 30%);
+   color: rgba(234, 67, 53, 30%);
 }
 
 button.enable:hover:not(:active):not(:disabled) {
