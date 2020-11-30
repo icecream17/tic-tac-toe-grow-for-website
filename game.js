@@ -31,18 +31,27 @@ class DisabledError extends CustomError {
    }
 }
 
-class BotIsDisabledError extends CustomError {
+class BotIsDisabledError extends DisabledError {
    constructor (bot) {
       super(bot.name, 'cannot play');
       this.bot = bot;
    }
 }
 
-class ElementIsDisabledError extends CustomError {
+class ElementIsDisabledError extends DisabledError {
    constructor (element, message = "shouldn't be changed") {
       super(element.tagName, message);
       this.element = element;
    }
+}
+
+class ElementIsEnabledWarning {
+   constructor (element) {
+      this.message = `${element.tagName} element is already enabled`;
+      this.element = element;
+   }
+
+   get name() { return this.constructor.name }
 }
 
 // When an internal value is wrong
@@ -288,6 +297,8 @@ class Game {
       // first cell is not the same as the last cell, which would be untrue if
       // the width or height was 1
 
+      // Since we grow the board down at the 4 ifs,
+      // the (i === x ? ' ' : '') is redundant
       if (y === 0) {
          this.board.unshift([]);
          for (let i = 0; i < this.board.width; i++)
@@ -348,24 +359,23 @@ class Game {
             button.style.background = '';
             button.style.borderColor = '';
 
-            if (cell === undefined) continue
+            // Assumes (cell === undefined || cell.value !== undefined)
+            if (cell === undefined || cell.value === '') continue;
+            else button.className = 'board';
 
-            if (cell.value === ' ') button.className = 'board';
-            if (cell.value !== undefined && cell.value !== '' && cell.value !== ' ') {
+            if (cell.value !== ' ') {
                let playerIndex = PLAYER_CHARS.indexOf(cell.value);
                if (playerIndex === -1)
                   button.style.background = "red";
                else
-                  button.style.background = (
-                     `url("${player_assets[playerIndex]}")`
-                  );
+                  button.style.background = `url("${player_assets[playerIndex]}")`;
 
 
                button.className = 'board';
                if (cell.win)
                   button.classList.add("win");
                else if (players?.[playerIndex].lastMove?.index === cell.moveIndex)
-                  button.style.borderColor = PLAYER_BORDERS[playerIndex]
+                  button.style.borderColor = PLAYER_BORDERS[playerIndex];
             }
          }
       // Outer for doesn't need brackets
@@ -712,7 +722,42 @@ for (let x = 0; x < 20; x++) {
 let currentGame = new Game();
 
 
-
+document.querySelector("#playerAmountLabel select").onchange = function (event) {
+   console.log(enableOrDisablePlayers.apply(event.target));
+}
+document.querySelector("#personCountLabel select").onchange = function (event) {
+   console.log(EnableOrDisablePeople.apply(event.target));
+}
+for (let input of ELEMENTS.getUsernameInputs())
+   input.onchange = function usernameChange(event) {
+      if (event.target.disabled) throw new ElementIsDisabledError(event.target);
+      console.log(changeName.apply(event.target));
+   };
+for (let button of ELEMENTS.getEnablePersonButtons())
+   button.onclick = function (event) {
+      if (event.target.disabled) throw new ElementIsDisabledError(event.target);
+      console.log(disablePerson.apply(event.target));
+   };
+for (let button of ELEMENTS.getDisablePersonButtons())
+   button.onclick = function (event) {
+      if (!event.target.disabled) return new ElementIsEnabledWarning(event.target);
+      console.log(enablePerson.apply(event.target));
+   };
+for (let select of ELEMENTS.getPlayerSelects())
+   select.onchange = function playerChange(event) {
+      if (event.target.disabled) throw new ElementIsDisabledError(event.target);
+      console.log(changePlayer.apply(event.target.selectedOptions[0]));
+   };
+for (let button of ELEMENTS.getEnablePlayerButtons())
+   button.onclick = function (event) {
+      if (event.target.disabled) throw new ElementIsDisabledError(event.target);
+      console.log(disablePlayer.apply(event.target));
+   };
+for (let button of ELEMENTS.getDisablePlayerButtons())
+   button.onclick = function (event) {
+      if (!event.target.disabled) return new ElementIsEnabledWarning(event.target);
+      console.log(enablePlayer.apply(event.target));
+   };
 
 
 class Player {
@@ -843,21 +888,6 @@ let players = [
    new PlayerReference("bot", 0)
 ];
 
-for (let select of ELEMENTS.getPlayerSelects())
-   select.onchange = function playerChange(event) {
-      if (event.target.disabled) return new ElementIsDisabledError(event.target)
-      let result = changePlayer.apply(event.target.selectedOptions[0]);
-      console.log(result);
-      return result;
-   };
-for (let input of ELEMENTS.getUsernameInputs())
-   input.onchange = function usernameChange(event) {
-      if (event.target.disabled) return new ElementIsDisabledError(event.target);
-      let result = changeName.apply(event.target);
-      console.log(result);
-      return result;
-   };
-
 
 // These async functions are really fast
 // They might not even need to be async functions,
@@ -877,6 +907,7 @@ for (let input of ELEMENTS.getUsernameInputs())
  * disablePlayers
  */
 
+// this = #playerAmountLabel <select>
 async function EnableOrDisablePlayers() {
    if (this.value < activePlayers)
       return await disablePlayers(this.value);
@@ -886,6 +917,7 @@ async function EnableOrDisablePlayers() {
       throw new DidntChangeError();
 }
 
+// this = #personCountLabel <select>
 async function EnableOrDisablePeople() {
    if (this.value < activePeople)
       return await disablePeople(this.value);
