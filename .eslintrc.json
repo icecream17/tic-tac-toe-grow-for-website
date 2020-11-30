@@ -182,7 +182,8 @@
                "vy",
                "x2",
                "y2",
-               "id"
+               "id",
+               "ms"
             ]
          }
       ],
@@ -246,8 +247,12 @@
             "message": "WithStatement: Noooo... (this is a warning)"
          },
          {
-            "selector": "CallExpression[callee.name='setTimeout'][arguments.length!=2]",
-            "message": "setTimeout needs 2 arguments"
+            "selector": "CallExpression[callee.name='isNaN'][arguments.length!=1]",
+            "message": "isNaN should only have 1 argument"
+         },
+         {
+            "selector": "CallExpression[callee.name='eval']",
+            "message": "uhoh eval"
          }
       ],
       "no-tabs": "error",
