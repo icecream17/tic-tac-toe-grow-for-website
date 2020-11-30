@@ -3,7 +3,9 @@
 
 Hi!
 
-This isn't done yet
+[View the current state of this project](https://htmlpreview.github.io/?https://github.com/icecream17/tic-tac-toe-grow/blob/main/game.html)
+
+
 
 ## How to play
 Win by getting either 7-in-a-row, or a checkmark.  
@@ -35,15 +37,21 @@ There's a more detailed explanation if you scroll down: https://icecream17.githu
    [ ] Game history
 [ ] Settings
    [ ] Green/red mode
+   [ ] Max length and turns check
+      [ ] Non constant
+      [ ] Note: MAX_LENGTH and MAX_TURNS are/should be static properties
 [ ] Highlight every square that has been played last by a player
+[ ] Add helper/tic-tac-toe-grow.js for other people
+   [ ] JSDoc or TypeScript maybe?
 
 ```
 
 ## List of strategies
 ```
 [x] random   DONE
-[ ] copy~
-[ ]    self_play
+[x] middleIndex   DONE
+[x] copy_index   DOESN'T WORK YET
+[ ] self_play
 [ ] spiral (8 ways)
 [ ] firstOnDiagonal1
 [ ] last~
@@ -59,7 +67,6 @@ There's a more detailed explanation if you scroll down: https://icecream17.githu
 [ ] diagonalToOpponent
 [ ] orthogonalToSelf
 [ ] diagonalToSelf
-[x] middleIndex   DONE
 [ ] closeToCenter
 [ ] middleAlpha
 [ ] middleRot13
