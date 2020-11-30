@@ -723,7 +723,7 @@ let currentGame = new Game();
 
 
 document.querySelector("#playerAmountLabel select").onchange = function (event) {
-   console.log(enableOrDisablePlayers.apply(event.target));
+   console.log(EnableOrDisablePlayers.apply(event.target));
 }
 document.querySelector("#personCountLabel select").onchange = function (event) {
    console.log(EnableOrDisablePeople.apply(event.target));
