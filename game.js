@@ -9,7 +9,6 @@ async function pause(ms) {
 class CustomError extends Error {
    constructor (message) {
       super(message);
-      Error.captureStackTrace?.(this, this.constructor);
    }
 
    get name() { return this.constructor.name } // For ease of maintenance
@@ -724,10 +723,10 @@ let currentGame = new Game();
 
 document.querySelector("#playerAmountLabel select").onchange = function (event) {
    console.log(EnableOrDisablePlayers.apply(event.target));
-}
+};
 document.querySelector("#personCountLabel select").onchange = function (event) {
    console.log(EnableOrDisablePeople.apply(event.target));
-}
+};
 for (let input of ELEMENTS.getUsernameInputs())
    input.onchange = function usernameChange(event) {
       if (event.target.disabled) throw new ElementIsDisabledError(event.target);
@@ -933,7 +932,7 @@ async function changePlayer() {
 
    let type = this.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
 
-   let playerIndex = this.parentElement.parentElement.parentElement.innerText[8] - 1
+   let playerIndex = this.parentElement.parentElement.parentElement.innerText[8] - 1;
    if (players[playerIndex].type !== type)
       if (type === "bot") {
          activePeople--;
@@ -1063,7 +1062,7 @@ async function enablePlayers(num) {
       if (activePeople + clickPromises.length === num) break;
    }
 
-   let promiseGroup = Promise.allSettled(clickPromises);
+   let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
@@ -1078,7 +1077,7 @@ async function disablePlayers(num) {
       if (activePlayers - clickPromises.length === num) break;
    }
 
-   let promiseGroup = Promise.allSettled(clickPromises);
+   let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
