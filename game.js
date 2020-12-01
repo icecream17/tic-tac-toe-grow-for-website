@@ -94,7 +94,8 @@ const ERRORS = {
    IMPOSSIBLE_LAST_MOVE: new ReferenceError("Last move was not an option...?"),
    MAX_PLAYERS_REACHED: new MaxValueError("Max players reached"),
    EVERYONEs_ENABLED: new NothingDisabledError("person", "people"),
-   EVIL_CLICK: new EvilPlayerError("Hey, you're not supposed to click that")
+   EVIL_CLICK: new EvilPlayerError("Hey, you're not supposed to click that"),
+   EVIL_CHANGE: new EvilPlayerError("How did you do that") 
 };
 
 class Position {
@@ -208,6 +209,8 @@ class Game {
       this.turn = 1;
       this.toMove = 0; // index in array
       this.result = null;
+      this.winner = null;
+
       this.board = [
          [new Cell(' ', 0, 0), new Cell(' ', 0, 1), new Cell(' ', 0, 2)],
          [new Cell(' ', 1, 0), new Cell(' ', 1, 1), new Cell(' ', 1, 2)],
@@ -279,8 +282,10 @@ class Game {
       y = newXY.y;
 
       let moveFinish = this.checkGameEnd(x, y);
-      if (moveFinish !== false)
+      if (moveFinish !== false) {
+         this.result ??= moveFinish[0];
          if (moveFinish[0] === "win") {
+            this.winner = [this.toMove, playerNames[this.toMove], players[this.toMove].player]
             notice("WINNNN", moveFinish);
             for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
                cell.win = true;
@@ -288,12 +293,15 @@ class Game {
             notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
          else
             throw ERRORS.INVALID_MOVE_FINISH
-
-      this.updateVisual();
+      }
 
       this.gameStates.push(new GameState(this));
       this.moveHistory.push(new Move(oldPosition, {x, y}, this));
       players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1]
+
+      // updateVisual must go after setting lastMove but before setting toMove
+      this.updateVisual();
+
       this.toMove = (this.toMove + 1) % players.length;
 
       console.log("update:", x, y, moveFinish);
@@ -653,6 +661,14 @@ const PLAYER_BORDERS = [
    "dodgerblue",
    "green",
    "#ffd74a"
+];
+
+const PLAYER_NAMES = [
+   "x",
+   "o",
+   "triangle",
+   "square",
+   "pentagon"
 ];
 
 const ELEMENTS = {
