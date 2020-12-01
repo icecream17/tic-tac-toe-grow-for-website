@@ -862,7 +862,7 @@ const bot_mechanics = {
          let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
          let indexOfLastMove = (
             secondLastMove.gameState
-               .correspondingMoves
+               .originalMoves
                .findIndex(
                   position => position.x === positionOfLastMove.x
                      && position.y === positionOfLastMove.y
