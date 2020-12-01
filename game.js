@@ -192,6 +192,14 @@ class GameState {
          }
       return moves;
    }
+
+   getAscii() {
+      return Game.prototype.getAscii.call(this);
+   }
+
+   logAscii() {
+      Game.prototype.logAscii.call(this);
+   }
 }
 
 class Game {
@@ -838,20 +846,26 @@ const bot_mechanics = {
    copy() {
       let moves = this.getMoves();
       let lastMove = this.moveHistory?.[this.moveHistory.length - 1];
+      let positionOfLastMove = lastMove?.originalPosition;
 
       if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
       else if (this.moveHistory.length === 1)
-         this.play(lastMove.x + 1, lastMove.y); // Amazing shortcut
+         if (positionOfLastMove.y === 0) {
+            this.play(lastMove.x, 0);
+         } else if (positionOfLastMove.x === 0) {
+            this.play(0, lastMove.y);
+         } else {
+            this.play(lastMove.x + 1, lastMove.y);
+         }
       else {
          let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
-         let positionOf2ndLastMove = secondLastMove.correspondingPosition;
          let indexOfLastMove = (
             secondLastMove.gameState
                .correspondingMoves
                .findIndex(
-                  position => position.x === positionOf2ndLastMove.x
-                     && position.y === positionOf2ndLastMove.y
+                  position => position.x === positionOfLastMove.x
+                     && position.y === positionOfLastMove.y
                )
          );
 
