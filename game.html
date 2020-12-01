@@ -13,19 +13,23 @@
       <aside>
          <h1>Tic tac toe grow!</h1>
          <!-- Make this section a flexbox or grid -->
-         <section id="mapControls">
-            <h2>Map controls</h2>
-            <button type="button" class="mapControl">up</button>
-            <button type="button" class="mapControl">down</button>
-            <button type="button" class="mapControl">left</button>
-            <button type="button" class="mapControl">right</button>
+         <section id="gameControls">
+            <fieldset id="mapControls">
+               <legend>Map controls</legend>
+               <button type="button" class="mapControl">up</button>
+               <button type="button" class="mapControl">down</button>
+               <button type="button" class="mapControl">left</button>
+               <button type="button" class="mapControl">right</button>
+            </fieldset>
+            <!-- Game CONTROLS here -->
          </section>
          <section id="gameData">
             <h2>Game data</h2>
+            <!-- Add width and height and turns and more here -->
             <fieldset id="countFields">
                <label id="playerAmountLabel">
                   <var>Number of players: </var>
-                  <select>
+                  <select autocomplete="off">
                      <option selected>2</option>
                      <option>3</option>
                      <option>4</option>
@@ -34,7 +38,7 @@
                <br>
                <label id="personCountLabel">
                   <var>Number of people playing: </var>
-                  <select>
+                  <select autocomplete="off">
                      <option>0</option>
                      <option selected>1</option>
                      <option>2</option>
@@ -83,7 +87,7 @@
                <fieldset id="playerField1">
                   <label id="whoPlays1">
                      <var>Player #1: </var>
-                     <select aria-labelledby="whoPlays1">
+                     <select aria-labelledby="whoPlays1" autocomplete="off">
                         <optgroup label="Humans">
                            <option selected>Person 1</option>
                            <option disabled>Person 2</option>
@@ -103,7 +107,7 @@
                <fieldset id="playerField2">
                   <label id="whoPlays2">
                      <var>Player #2: </var>
-                     <select aria-labelledby="whoPlays2">
+                     <select aria-labelledby="whoPlays2" autocomplete="off">
                         <optgroup label="Humans">
                            <option>Person 1</option>
                            <option disabled>Person 2</option>
@@ -123,7 +127,7 @@
                <fieldset id="playerField3">
                   <label id="whoPlays3">
                      <var>Player #3: </var>
-                     <select aria-labelledby="whoPlays3" disabled>
+                     <select aria-labelledby="whoPlays3" autocomplete="off" disabled>
                         <optgroup label="Humans">
                            <option>Person 1</option>
                            <option disabled>Person 2</option>
@@ -143,7 +147,7 @@
                <fieldset id="playerField4">
                   <label id="whoPlays4">
                      <var>Player #4: </var>
-                     <select aria-labelledby="whoPlays4" disabled>
+                     <select aria-labelledby="whoPlays4" autocomplete="off" disabled>
                         <optgroup label="Humans">
                            <option>Person 1</option>
                            <option disabled>Person 2</option>
