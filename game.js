@@ -285,7 +285,7 @@ class Game {
       if (moveFinish !== false) {
          this.result ??= moveFinish[0];
          if (moveFinish[0] === "win") {
-            this.winner = [this.toMove, playerNames[this.toMove], players[this.toMove].player]
+            this.winner = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player]
             notice("WINNNN", moveFinish);
             for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
                cell.win = true;
