@@ -7,10 +7,6 @@ async function pause(ms) {
 
 
 class CustomError extends Error {
-   constructor (message) {
-      super(message);
-   }
-
    get name() { return this.constructor.name } // For ease of maintenance
 }
 
@@ -111,7 +107,7 @@ const ERRORS = {
    MAX_PLAYERS_REACHED: new MaxValueError("Max players reached"),
    EVERYONEs_ENABLED: new NothingDisabledError("person", "people"),
    EVIL_CLICK: new EvilPlayerError("Hey, you're not supposed to click that"),
-   EVIL_CHANGE: new EvilPlayerError("How did you do that") 
+   EVIL_CHANGE: new EvilPlayerError("How did you do that"),
 };
 
 class Position {
@@ -276,7 +272,7 @@ class Game {
       this.logAscii();
    }
 
-   async playBots(verbose=false) {
+   async playBots(verbose = false) {
       if (players[this.toMove].type === "bot") {
          await pause(200);
          this.doBotMove();
@@ -301,19 +297,19 @@ class Game {
       if (moveFinish !== false) {
          this.result ??= moveFinish[0];
          if (moveFinish[0] === "win") {
-            this.winner = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player]
+            this.winner = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
             notice("WINNNN", moveFinish);
             for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
                cell.win = true;
          } else if (moveFinish[0] === "draw")
             notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
          else
-            throw ERRORS.INVALID_MOVE_FINISH
+            throw ERRORS.INVALID_MOVE_FINISH;
       }
 
       this.gameStates.push(new GameState(this));
       this.moveHistory.push(new Move(oldPosition, {x, y}, this));
-      players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1]
+      players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1];
 
       // updateVisual must go after setting lastMove but before setting toMove
       this.updateVisual();
@@ -651,7 +647,7 @@ function handleClick(x, y) {
    x -= currentGame.visual.offset.x;
    y -= currentGame.visual.offset.y;
 
-   let square = currentGame.board?.[y]?.[x]
+   let square = currentGame.board?.[y]?.[x];
    if (square === undefined)
       throw ERRORS.EVIL_CLICK;
 
@@ -660,7 +656,7 @@ function handleClick(x, y) {
 }
 
 function notice(...args) {
-   // do something
+   // TODO: do something
 }
 
 const player_assets = [
@@ -886,13 +882,12 @@ const bot_mechanics = {
       if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
       else if (this.moveHistory.length === 1)
-         if (positionOfLastMove.y === 0) {
+         if (positionOfLastMove.y === 0)
             this.play(lastMove.x, 0);
-         } else if (positionOfLastMove.x === 0) {
+         else if (positionOfLastMove.x === 0)
             this.play(0, lastMove.y);
-         } else {
+         else
             this.play(lastMove.x + 1, lastMove.y);
-         }
       else {
          let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
          let indexOfLastMove = (
