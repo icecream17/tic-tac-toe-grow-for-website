@@ -146,10 +146,18 @@ details {
    border-radius: 4px;
 }
 
-summary {
-   padding-left: 0.5em;
-}
-
+summary,
 details p {
    padding-left: 0.5em;
 }
+
+aside h2, 
+aside p {
+   margin-inline-start: 2px;
+   margin-inline-end: 2px;
+}
+
+:-webkit-any(article, aside, nav, section) h2 {
+   font-size: 1.25em;
+}
+
