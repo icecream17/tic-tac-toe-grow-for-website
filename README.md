@@ -5,6 +5,7 @@ Hi!
 
 [View the current state of this project](https://htmlpreview.github.io/?https://github.com/icecream17/tic-tac-toe-grow/blob/main/game.html)
 
+Note: this uses normalize.css, see that file's comment for details.
 
 
 ## How to play
