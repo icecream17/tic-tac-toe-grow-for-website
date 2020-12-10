@@ -14,6 +14,7 @@
          <h1>Tic tac toe grow!</h1>
          <!-- Make this section a flexbox or grid -->
          <section id="gameControls">
+            <h2>Game controls</h2>
             <fieldset id="mapControls">
                <legend>Map controls</legend>
                <button type="button" class="mapControl">up</button>
@@ -26,6 +27,21 @@
          <section id="gameData">
             <h2>Game data</h2>
             <!-- Add width and height and turns and more here -->
+            <p id = "boardDimensions">Todo</p>
+            
+            <!-- Maybe could use this instead
+                  <input type="number" placeholder="2" step="1" min="2" max="4" 
+                         list="validNumberOfPlayerValues" autocomplete="off">
+                  </input>
+                  <datalist id="validNumberOfPlayerValues">
+                     <option value="2" selected>
+                     <option value="3">
+                     <option value="4">
+                  </datalist>
+                 but it suggests only "3" when 3 is the number which doesn't help.
+            -->
+            
+            <h2>Player data</h2>
             <fieldset id="countFields">
                <label id="playerAmountLabel">
                   <var>Number of players: </var>
@@ -197,7 +213,7 @@
          but you (e.g. your mouse) moves down in comparison.<br>
          It's kinda like scrolling.</p>
       <p>You win if you get 7 in a row, or a checkmark.</p>
-      <p>A checkmark is defined as a region of squares that:</p>
+      <p>A <dfn>checkmark</dfn> is defined as a region of squares that:</p>
       <ul>
          <li>are all <em>diagonally</em> adjacent to each other</li>
          <li>form a right angle, where
