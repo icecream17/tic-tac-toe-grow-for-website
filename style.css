@@ -157,6 +157,14 @@ aside p {
    margin-inline-end: 2px;
 }
 
+#countFields {
+   padding: 0.35em 0.75em;
+}
+
+:-webkit-any(article, aside, nav, section) h1 {
+   font-size: 1.5em;
+}
+
 :-webkit-any(article, aside, nav, section) h2 {
    font-size: 1.25em;
 }
