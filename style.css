@@ -53,7 +53,7 @@ button {
 }
 
 button.win {
-   background-color: #CFC !important;
+   background-color: #CFC;
    border-color: #19FF19;
 }
 
