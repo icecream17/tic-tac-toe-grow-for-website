@@ -761,6 +761,8 @@ let currentGame = new Game();
 // Assumes that the enable and disable buttons are disabled / enabled when appropriate.
 // For example, the enable button should not be enabled if the element is already enabled.
 // So the errors might be wrong.
+
+// Note: <var> <input>
 document.querySelector("#playerAmountLabel select").onchange = function (event) {
    console.log(EnableOrDisablePlayers.call(event.target));
 };
@@ -775,12 +777,12 @@ for (let input of ELEMENTS.getUsernameInputs())
 for (let button of ELEMENTS.getEnablePersonButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyEnabledError(event.target);
-      console.log(enablePerson.call(event.target.parentElement.children[0].children[0]));
+      console.log(enablePerson.call(event.target.parentElement.children[0].children[1]));
    };
 for (let button of ELEMENTS.getDisablePersonButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyDisabledError(event.target);
-      console.log(disablePerson.call(event.target.parentElement.children[0].children[0]));
+      console.log(disablePerson.call(event.target.parentElement.children[0].children[1]));
    };
 for (let select of ELEMENTS.getPlayerSelects())
    select.onchange = function playerChange(event) {
@@ -790,12 +792,12 @@ for (let select of ELEMENTS.getPlayerSelects())
 for (let button of ELEMENTS.getEnablePlayerButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyEnabledError(event.target);
-      console.log(enablePlayer.call(event.target.parentElement.children[0].children[0]));
+      console.log(enablePlayer.call(event.target.parentElement.children[0].children[1]));
    };
 for (let button of ELEMENTS.getDisablePlayerButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyDisabledError(event.target);
-      console.log(disablePlayer.call(event.target.parentElement.children[0].children[0]));
+      console.log(disablePlayer.call(event.target.parentElement.children[0].children[1]));
    };
 
 
@@ -946,8 +948,8 @@ let players = [
  * disablePerson           #nameFields <input>           #nameFields <button.disable>
  * enablePeople            undefined                     used in EnableOrDisablePeople
  * disablePeople           undefined                     used in EnableOrDisablePeople
- * enablePlayer            #choosePlayerFields <option>  #choosePlayerFields <button.enable>
- * disablePlayer           #choosePlayerFields <option>  #choosePlayerFields <button.disable>
+ * enablePlayer            #choosePlayerFields <option>? #choosePlayerFields <button.enable>
+ * disablePlayer           #choosePlayerFields <option>? #choosePlayerFields <button.disable>
  * enablePlayers           undefined                     used in EnableOrDisablePlayers
  * disablePlayers          undefined                     used in EnableOrDisablePlayers
  * 
