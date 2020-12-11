@@ -383,8 +383,9 @@ class Game {
 
             // undefined or empty string
             button.className = '';
-            button.style.background = '';
-            button.style.borderColor = '';
+            button.style.removeProperty("border-color");
+            button.style.removeProperty("background-color");
+            button.style.removeProperty("background-image");
 
             // Assumes (cell === undefined || cell.value !== undefined)
             if (cell === undefined || cell.value === '') continue;
@@ -392,10 +393,10 @@ class Game {
 
             if (cell.value !== ' ') {
                let playerIndex = PLAYER_CHARS.indexOf(cell.value);
-               if (playerIndex === -1)
-                  button.style.background = "red";
+               if (playerIndex === -1 && !cell.win)
+                  button.style.backgroundColor = "red";
                else
-                  button.style.background = `url("${player_assets[playerIndex]}")`;
+                  button.style.backgroundImage = `url("${player_assets[playerIndex]}")`;
 
 
                button.className = 'board';
