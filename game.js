@@ -954,6 +954,9 @@ let players = [
  * disablePlayers          undefined                     used in EnableOrDisablePlayers
  * 
  * <this> = <select> or <input> in general
+ * 
+ * ....[10] = "Username #A"
+ * ....[8]  = "Player #8"
  */
 
 // this = #playerAmountLabel <select>
@@ -1018,7 +1021,7 @@ async function enablePerson() {
    activePeople++;
    activePlayers++;
 
-   const personIndex = this.parentElement.innerText[8] - 1;
+   const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = false;
 
    for (let select of ELEMENTS.getPlayerSelects())
@@ -1037,7 +1040,7 @@ async function disablePerson() {
    activePeople--;
    activePlayers--;
 
-   const personIndex = this.parentElement.innerText[8] - 1;
+   const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = true;
 
    for (let select of ELEMENTS.getPlayerSelects())
@@ -1101,9 +1104,11 @@ async function enablePlayer() {
    this.parentElement.nextElementSibling.nextElementSibling.disabled = false;
 
    this.selectedIndex = 4;
-   this.dispatchEvent(new Event("change"));
-
+   
+   // Add a dummy player before dispatchEvent
    players.push(new PlayerReference("bot", 0));
+   this.dispatchEvent(new Event("change")); // triggers changePlayer; *changes* new player
+   
    // if (currentGame.toMove === 0) currentGame.toMove = players.length - 1
    // doesn't make sense here because player added is a bot
 
