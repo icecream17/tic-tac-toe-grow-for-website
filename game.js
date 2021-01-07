@@ -962,9 +962,9 @@ let players = [
 // this = #playerAmountLabel <select>
 async function EnableOrDisablePlayers() {
    if (this.value < activePlayers)
-      return await disablePlayers(this.value);
+      return await disablePlayers(Number(this.value));
    else if (this.value > activePlayers)
-      return await enablePlayers(this.value);
+      return await enablePlayers(Number(this.value));
    else
       throw new DidntChangeError();
 }
@@ -972,9 +972,9 @@ async function EnableOrDisablePlayers() {
 // this = #personCountLabel <select>
 async function EnableOrDisablePeople() {
    if (this.value < activePeople)
-      return await disablePeople(this.value);
+      return await disablePeople(Number(this.value));
    else if (this.value > activePeople)
-      return await enablePeople(this.value);
+      return await enablePeople(Number(this.value));
    else
       throw new DidntChangeError();
 }
@@ -1118,20 +1118,24 @@ async function enablePlayer() {
 // Min players: 1
 async function disablePlayer() { }
 
+// Number!
 async function enablePlayers(num) {
    let clickPromises = [];
-   let counter = activePlayers;
+   let oldActivePlayers = activePlayers;
    for (let button of ELEMENTS.getEnablePlayerButtons()) {
       if (button.disabled) continue;
       clickPromises.push(button.click());
-      if (++counter === num) break;
+      if (++activePlayers === num) break;
    }
 
    let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
-      if (promise.status === 'rejected') throw promiseGroup;
+      if (promise.status === 'rejected') {
+         activePlayers = oldActivePlayers;
+         throw promiseGroup;
+      }
 
-   if (counter !== num)
+   if (activePlayers !== num)
       console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
    
    return promiseGroup;
