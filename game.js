@@ -1128,8 +1128,8 @@ async function enablePlayer() {
 
 // Min players: 1
 async function disablePlayer() {
-   if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
-   activePlayers--;
+   // if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
+   // activePlayers--;
    
    console.warn(NOT_DONE_YET);
    // this.disabled = true;
