@@ -23,6 +23,12 @@ class NothingDisabledError extends CustomError {
    }
 }
 
+class NothingEnabledError extends CustomError {
+   constructor (noun = "Nothing", plural, message) {
+      super(message ?? `Cannot disable ${noun} since all ${plural ?? `${noun}s`} are already disabled.`);
+   }
+}
+
 // params = (string, string)
 // do not pass "null" into condition
 class DisabledError extends CustomError {
@@ -106,9 +112,11 @@ const ERRORS = {
    IMPOSSIBLE_LAST_MOVE: new ReferenceError("Last move was not an option...?"),
    MAX_PLAYERS_REACHED: new MaxValueError("Max players reached"),
    EVERYONEs_ENABLED: new NothingDisabledError("person", "people"),
+   NO_ONEs_ENABLED: new NothingEnabledError("person", "people"),
    EVIL_CLICK: new EvilPlayerError("Hey, you're not supposed to click that"),
    EVIL_CHANGE: new EvilPlayerError("How did you do that"),
 };
+const NOT_DONE_YET = "This feature is not finished yet. So it doesn't work"
 
 class Position {
    constructor (x, y) {
@@ -1017,6 +1025,7 @@ async function changeName() {
 
 // this = <input>
 async function enablePerson() {
+   // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fits...
    if (activePlayers === 4 || activePeople === 4) throw ERRORS.MAX_PLAYERS_REACHED;
    activePeople++;
    activePlayers++;
@@ -1036,7 +1045,7 @@ async function enablePerson() {
 
 // Bug, probably feature: Player not changed when disabled
 async function disablePerson() {
-   if (activePlayers === 0 || activePeople === 0) throw ERRORS.EVERYONEs_ENABLED;
+   if (activePlayers === 0 || activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
    activePeople--;
    activePlayers--;
 
@@ -1052,7 +1061,8 @@ async function disablePerson() {
    return `Done: Person at index ${personIndex} disabled.`;
 }
 
-// num === this.value, in above func
+// num === Number(this.value), in enableOrDisablePlayers
+// Will only warn about bad num in the inner button.click()s
 async function enablePeople(num) {
    let clickPromises = [];
    let counter = activePeople;
@@ -1087,6 +1097,7 @@ async function disablePeople(num) {
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
+   activePeople = counter;
    if (counter !== num)
       console.warn(`Failed to disable the correct amount: ${counter} !== ${num}`);
 
@@ -1116,26 +1127,30 @@ async function enablePlayer() {
 }
 
 // Min players: 1
-async function disablePlayer() { }
+async function disablePlayer() {
+   if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
+   activePlayers--;
+   
+   console.warn(NOT_DONE_YET);
+   // this.disabled = true;
+}
 
 // Number!
 async function enablePlayers(num) {
    let clickPromises = [];
-   let oldActivePlayers = activePlayers;
+   let counter = activePlayers;
    for (let button of ELEMENTS.getEnablePlayerButtons()) {
       if (button.disabled) continue;
       clickPromises.push(button.click());
-      if (++activePlayers === num) break;
+      if (++counter === num) break;
    }
 
    let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
-      if (promise.status === 'rejected') {
-         activePlayers = oldActivePlayers;
-         throw promiseGroup;
-      }
+      if (promise.status === 'rejected') throw promiseGroup;
 
-   if (activePlayers !== num)
+   activePlayers = counter
+   if (counter !== num)
       console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
    
    return promiseGroup;
@@ -1154,6 +1169,7 @@ async function disablePlayers(num) {
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
+   activePlayers = counter;
    if (counter !== num)
       console.warn(`Failed to disable the correct amount: ${counter} !== ${num}`);
    
