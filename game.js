@@ -439,7 +439,7 @@ class Game {
          if (this.winners.every(array => !array.valuesEqual(winArray)))
             this.winners.push(winArray);
       } else if (result[0] === "draw") {
-         notice(`*gasp*! Draw!\n${moveFinish[1]}`, result);
+         notice(`*gasp*! Draw!\n${result[1]}`, result);
       } else
          throw ERRORS.INVALID_MOVE_FINISH;
    }
