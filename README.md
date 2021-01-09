@@ -3,7 +3,7 @@
 
 Hi!
 
-[View the current state of this project](https://htmlpreview.github.io/?https://github.com/icecream17/tic-tac-toe-grow/blob/main/game.html)
+[View the current state of this project](https://icecream17.github.io/tic-tac-toe-grow-for-website/game.html)
 
 Note: this uses normalize.css, see that file's comment for details.
 
@@ -24,7 +24,7 @@ Examples:
 ![Lots of moves have been played, O has won with a sideways checkmark.](https://user-images.githubusercontent.com/58114641/99096744-448ab900-259c-11eb-89b2-2d57672b40f9.png)
 ![Easy 7 in a row win. All moves by X are in the 7 in a row.](https://user-images.githubusercontent.com/58114641/99097026-a21f0580-259c-11eb-9955-e3f7d6663132.png)
 
-There's a more detailed explanation if you scroll down: https://icecream17.github.io/Stuff/Tic%20Tac%20Toe%20Grow/game.html
+There's a more detailed explanation if you scroll down in the website itself.
 
 
 ## Todo
@@ -33,17 +33,16 @@ There's a more detailed explanation if you scroll down: https://icecream17.githu
    [ ] Add and delete people
    [ ] Add and delete bots
 [ ] Add more bots
-[ ] Reset button
 [ ] Create a tournament to rank the bots
-   [ ] Game history
+   [x] Game history
 [ ] Settings
    [ ] Green/red mode
    [ ] Max length and turns check
       [ ] Non constant
       [ ] Note: MAX_LENGTH and MAX_TURNS are/should be static properties
-[ ] Highlight every square that has been played last by a player
-[ ] Add helper/tic-tac-toe-grow.js for other people
-   [ ] JSDoc or TypeScript maybe?
+      [ ] Note: MAX_TURNS will be 1000, MAX_LENGTH will be 880
+[x] Add helper/tic-tac-toe-grow.js for other people
+   [ ] See other repository
 
 ```
 
