@@ -5,6 +5,19 @@ async function pause(ms) {
    return await new Promise(resolve => setTimeout(resolve, ms, "Done!"));
 }
 
+Array.prototype.valuesEqual = function valuesEqual(arr) {
+   if (!Array.isArray(arr) || this.length !== arr.length)
+      return false;
+   
+   for (let i = 0; i < this.length; i++) {
+      if (Array.isArray(this[i]) && Array.isArray(arr[i]) && !this[i].valuesEqual(arr[i]))
+         return false;
+      else if (this[i] !== arr[i])
+         return false;
+   }
+   return true;
+}
+
 
 class CustomError extends Error {
    get name() { return this.constructor.name } // For ease of maintenance
@@ -123,6 +136,11 @@ class Position {
       this.x = x;
       this.y = y;
    }
+
+   /** Returns the manhattan distance from another position */
+   distance(position) {
+      return Math.abs(this.x - position.x) + Math.abs(this.y - position.y);
+   }
 }
 
 class Step {
@@ -172,6 +190,7 @@ class GameState {
       this.game = game;
 
       this.turn = game.turn;
+      this.ply = game.ply;
       this.toMove = game.toMove;
       this.result = game.result;
       this.board = [];
@@ -227,9 +246,10 @@ class Game {
    constructor () {
       // const - silently ignores any changes so watch out
       this.turn = 1;
+      this.ply = 0;
       this.toMove = 0; // index in array
       this.result = null;
-      this.winner = null;
+      this.winners = [];
 
       this.board = [
          [new Cell(' ', 0, 0), new Cell(' ', 0, 1), new Cell(' ', 0, 2)],
@@ -302,18 +322,7 @@ class Game {
       y = newXY.y;
 
       let moveFinish = this.checkGameEnd(x, y);
-      if (moveFinish !== false) {
-         this.result ??= moveFinish[0];
-         if (moveFinish[0] === "win") {
-            this.winner = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
-            notice("WINNNN", moveFinish);
-            for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
-               cell.win = true;
-         } else if (moveFinish[0] === "draw")
-            notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
-         else
-            throw ERRORS.INVALID_MOVE_FINISH;
-      }
+      if (moveFinish !== false) this.updateGameEnd(moveFinish);
 
       this.gameStates.push(new GameState(this));
       this.moveHistory.push(new Move(oldPosition, {x, y}, this));
@@ -322,7 +331,9 @@ class Game {
       // updateVisual must go after setting lastMove but before setting toMove
       this.updateVisual();
 
+      this.ply++;
       this.toMove = (this.toMove + 1) % players.length;
+      if (this.toMove === 0) this.turn++;
 
       console.log("update:", x, y, moveFinish);
    }
@@ -415,6 +426,22 @@ class Game {
             }
          }
       // Outer for doesn't need brackets
+   }
+
+   updateGameEnd(result) {
+      this.result ??= moveFinish[0];
+      if (moveFinish[0] === "win") {
+         notice("WINNNN", moveFinish);
+         for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
+            cell.win = true;
+
+         let winArray = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
+         if (this.winners.every(array => !array.valuesEqual(winArray)))
+            this.winners.push(winArray);
+      } else if (moveFinish[0] === "draw") {
+         notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
+      } else
+         throw ERRORS.INVALID_MOVE_FINISH;
    }
 
    checkGameEnd(x, y) {
@@ -869,11 +896,13 @@ class PlayerReference {
 }
 
 const bot_mechanics = {
+   /** Chooses a random move */
    random_move() {
       const moves = this.getMoves();
       const chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    },
+   /** Choosen the median move out of the list of moves */
    middle_index() {
       const moves = this.getMoves();
       let chosen;
@@ -890,6 +919,7 @@ const bot_mechanics = {
          ];
       this.play(chosen.x, chosen.y);
    },
+   /** Copies the index of the move you just played */
    copy() {
       let moves = this.getMoves();
       let lastMove = this.moveHistory?.[this.moveHistory.length - 1];
@@ -897,17 +927,9 @@ const bot_mechanics = {
 
       if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
-      else if (this.moveHistory.length === 1)
-         if (positionOfLastMove.y === 0)
-            this.play(lastMove.x, 0);
-         else if (positionOfLastMove.x === 0)
-            this.play(0, lastMove.y);
-         else
-            this.play(lastMove.x + 1, lastMove.y);
       else {
-         let secondLastMove = this.moveHistory[this.moveHistory.length - 2];
          let indexOfLastMove = (
-            secondLastMove.gameState
+            this.gameStates[this.gameStates.length - 2]
                .originalMoves
                .findIndex(
                   position => position.x === positionOfLastMove.x
@@ -920,6 +942,32 @@ const bot_mechanics = {
          let chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
       }
+   },
+   /** Tries to avoid the previous moves */
+   avoider() {
+      let moves = this.getMoves();
+      for (let move of moves)
+         move.distance = this.moveHistory.reduce((accum, curr) => (
+            accum + curr.distance(move)
+         ), 0)
+      
+      moves = moves.sort((a, b) => b.distance - a.distance)
+                   .filter(move => moves[0].distance === move.distance)
+      let chosen = moves[Math.floor(Math.random() * moves.length)]
+      this.play(chosen.x, chosen.y);
+   },
+   /** Makes the previous moves uncomfortable */
+   closer() {
+      let moves = this.getMoves();
+      for (let move of moves)
+         move.distance = this.moveHistory.reduce((accum, curr) => (
+            accum + curr.distance(move)
+         ), 0)
+      
+      moves = moves.sort((a, b) => a.distance - b.distance)
+                   .filter(move => moves[0].distance === move.distance)
+      let chosen = moves[Math.floor(Math.random() * moves.length)]
+      this.play(chosen.x, chosen.y);
    }
 };
 
