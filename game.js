@@ -696,6 +696,7 @@ const ELEMENTS = {
    container: document.getElementById('container'),
    infoElement: document.querySelector('#container aside'),
    gameDataElement: document.getElementById('gameData'),
+   resetGameButton: document.getElementById('resetGame'),
    shifts: document.querySelectorAll('#mapControls button'),
    squares: [],
 
@@ -727,8 +728,6 @@ const ELEMENTS = {
       return document.querySelectorAll('#choosePlayerFields button.disable');
    }
 };
-
-let gameHistory = [];
 
 // up down left right
 ELEMENTS.shifts[0].onclick = () => {
@@ -763,8 +762,14 @@ for (let x = 0; x < 20; x++) {
    }
 }
 
+let gameHistory = [];
 let currentGame = new Game();
 
+ELEMENTS.resetGameButton.onclick = function resetGame () {
+   gameHistory.push(currentGame);
+   currentGame = new Game();
+   currentGame.updateVisual();
+}
 
 // Assumes that the enable and disable buttons are disabled / enabled when appropriate.
 // For example, the enable button should not be enabled if the element is already enabled.
