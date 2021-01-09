@@ -322,7 +322,7 @@ class Game {
       y = newXY.y;
 
       let moveFinish = this.checkGameEnd(x, y);
-      if (moveFinish !== false) this.updateGameEnd(moveFinish);
+      if (moveFinish !== false) this.updateGameEnd(moveFinish, x, y);
 
       this.gameStates.push(new GameState(this));
       this.moveHistory.push(new Move(oldPosition, {x, y}, this));
@@ -428,18 +428,18 @@ class Game {
       // Outer for doesn't need brackets
    }
 
-   updateGameEnd(result) {
-      this.result ??= moveFinish[0];
-      if (moveFinish[0] === "win") {
-         notice("WINNNN", moveFinish);
-         for (let cell of moveFinish[1].flat().concat(this.board[y][x]))
+   updateGameEnd(result, lastX, lastY) {
+      this.result ??= result[0];
+      if (result[0] === "win") {
+         notice("WINNNN", result);
+         for (let cell of result[1].flat().concat(this.board[lastY][lastX]))
             cell.win = true;
 
          let winArray = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
          if (this.winners.every(array => !array.valuesEqual(winArray)))
             this.winners.push(winArray);
-      } else if (moveFinish[0] === "draw") {
-         notice(`*gasp*! Draw!\n${moveFinish[1]}`, moveFinish);
+      } else if (result[0] === "draw") {
+         notice(`*gasp*! Draw!\n${moveFinish[1]}`, result);
       } else
          throw ERRORS.INVALID_MOVE_FINISH;
    }
