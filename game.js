@@ -628,7 +628,10 @@ class Game {
    }
 
    doBotMove() {
-      players[this.toMove].player.play();
+      if (players[this.toMove].player.type === "bot")
+         players[this.toMove].player.play();
+      else
+         console.info("Player must've changed into a human");
    }
 
    getMoves() {
