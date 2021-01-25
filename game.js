@@ -470,6 +470,26 @@ Turns: ${this.turn}`;
       let wins = [];
       let orthogonal = [[], [], [], []];
       let diagonal = [[], [], [], []];
+
+      function goDiagonal(x2, y2, step) {
+         let diag = [];
+         let currentPos = new Position(x2, y2);
+         while (true) {
+            currentPos.x += step.vx;
+            currentPos.y += step.vy;
+            let square = this.board[currentPos.y]?.[currentPos.x];
+
+            if (square?.value !== playerValue) break;
+            diag[i].push(square);
+         }
+         return diag;
+      }
+
+      function isValidCheckmark(side1, side2) {
+         return (side1.length >= 2 && side2.length >= 4) || 
+                (side1.length >= 4 && side2.length >= 2)
+      }
+
       for (let i = 0; i < 4; i++) {
          const orthogonalStep = [
             new Step(-1, 0),
@@ -485,42 +505,14 @@ Turns: ${this.turn}`;
             new Step(-1, -1)
          ][i];
 
-         for (let j = 1; j < 7; j++) {
-            let square = this.board[
-               y + (orthogonalStep.vy * j)
-            ]?.[
-               x + (orthogonalStep.vx * j)
-            ];
-
-            if (square?.value !== playerValue) break;
-            orthogonal[i].push(square);
-         }
-         for (let j = 1; j < 7; j++) {
-            let square = this.board[
-               y + (diagonalStep.vy * j)
-            ]?.[
-               x + (diagonalStep.vx * j)
-            ];
-
-            if (square?.value !== playerValue) break;
-            diagonal[i].push(square);
-         }
+         orthogonal[i].push(...goDiagonal(x, y, orthogonalStep));
+         diagonal[i].push(...goDiagonal(x, y, diagonalStep));
       }
 
       // good good good n good good good
       function sevenNArow(oneDirection, oppositeDirection) {
          if (oneDirection.length + oppositeDirection.length >= 6)
             return oneDirection.concat(...oppositeDirection);
-         else
-            return false;
-      }
-
-      function checkMark(side1, side2) {
-         if (
-            side1.length >= 3 && side2.length >= 1 ||
-            side2.length >= 3 && side1.length >= 1
-         )
-            return side1.concat(...side2);
          else
             return false;
       }
@@ -535,103 +527,45 @@ Turns: ${this.turn}`;
       if (sevenChecks.find(check => Boolean(check)))
          wins.push(sevenChecks.find(check => Boolean(check)));
 
-      const markChecks = [
-         checkMark(diagonal[0], diagonal[1]),
-         checkMark(diagonal[0], diagonal[2]),
-         checkMark(diagonal[3], diagonal[1]),
-         checkMark(diagonal[3], diagonal[2]),
-      ];
+      // diagonal, oppositeDiagonal, perpendicularStep, oppositePerpendicularStep
+      function checkmarks(diag, oppDiag, perpStep, oppPerpStep) {
+         // The way the diags work:
+         // above, the squares are pushed onto the array, *away* from the xy.
+         // So the diag arrays' first elements are the ones in the diag closer to the xy
+         let newWins = [];
 
-      if (markChecks.find(check => Boolean(check)))
-         wins.push(markChecks.find(check => Boolean(check)));
+         // First find all secondary diags
 
+         // The checkmarks 
+         let baseLength1 = oppDiag.length;
+         let baseLength2 = diag.length;
+         let currBase = [...oppDiag, this.board[y][x]];
+         for (let square of diag) {
+            currBase.push(square)
+            let perpDiag = goDiagonal(square.x, square.y, perpStep);
+            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
+            if (isValidCheckmark(currBase, perpDiag))
+               newWins.push([...currBase, ...perpDiag])
+            if (isValidCheckmark(currBase, oppPerpDiag))
+               newWins.push([...currBase, ...oppPerpDiag])
+         }
 
-      // This breaks the parsing
-      let moreSquares = [
-         this.board[y + 1]?.[x + 3],
-         this.board[y + 1]?.[x - 3],
-         this.board[y + 3]?.[x + 1],
-         this.board[y + 3]?.[x - 1],
+         currBase = [...diag, this.board[y][x]];
+         for (let square of oppDiag) {
+            currBase.push(square)
+            let perpDiag = goDiagonal(square.x, square.y, perpStep);
+            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
+            if (isValidCheckmark(currBase, perpDiag))
+               newWins.push([...currBase, ...perpDiag])
+            if (isValidCheckmark(currBase, oppPerpDiag))
+               newWins.push([...currBase, ...oppPerpDiag])
+         }
 
-         this.board[y - 1]?.[x + 3],
-         this.board[y - 1]?.[x - 3],
-         this.board[y - 3]?.[x + 1],
-         this.board[y - 3]?.[x - 1],
+         return newWins;
+      }
 
-         this.board[y + 2]?.[x + 4],
-         this.board[y + 2]?.[x - 4],
-         this.board[y + 4]?.[x + 2],
-         this.board[y + 4]?.[x - 2],
-
-         this.board[y - 2]?.[x + 4],
-         this.board[y - 2]?.[x - 4],
-         this.board[y - 4]?.[x + 2],
-         this.board[y - 4]?.[x - 2],
-
-         this.board[y + 2]?.[x],
-         this.board[y - 2]?.[x],
-         this.board[y]?.[x + 2],
-         this.board[y]?.[x - 2]
-      ];
-
-      /*
-
-         1, 1,
-         1, -1,
-         -1, 1,
-         -1, -1
-
-            m15         m14
-         d32   m07   m06   d12
-      m13   d31   m17   d11   m12
-         m05   d30   d10   m04
-            m19   na    m18
-         m01   d20   d00   m00
-      m09   d21   m16   d01   m08
-         d22   m03   m02   d02
-            m11         m10
-
-      */
-
-      let additionalChecks = [
-         [diagonal[0][0], diagonal[0][1], diagonal[0][2], moreSquares[8]],
-         [diagonal[0][0], diagonal[0][1], diagonal[0][2], moreSquares[10]],
-         [diagonal[3][0], diagonal[0][0], diagonal[0][1], moreSquares[0]],
-         [diagonal[3][0], diagonal[0][0], diagonal[0][1], moreSquares[2]],
-         [diagonal[3][0], diagonal[0][0], diagonal[0][1], moreSquares[17]],
-         [diagonal[3][0], diagonal[0][0], diagonal[0][1], moreSquares[19]],
-         [diagonal[3][1], diagonal[3][0], diagonal[0][0], moreSquares[5]],
-         [diagonal[3][1], diagonal[3][0], diagonal[0][0], moreSquares[7]],
-         [diagonal[3][1], diagonal[3][0], diagonal[0][0], moreSquares[16]],
-         [diagonal[3][1], diagonal[3][0], diagonal[0][0], moreSquares[18]],
-         [diagonal[3][2], diagonal[3][1], diagonal[3][0], moreSquares[13]],
-         [diagonal[3][2], diagonal[3][1], diagonal[3][0], moreSquares[15]],
-         [diagonal[1][0], diagonal[1][1], diagonal[1][2], moreSquares[12]],
-         [diagonal[1][0], diagonal[1][1], diagonal[1][2], moreSquares[14]],
-         [diagonal[2][0], diagonal[1][0], diagonal[1][1], moreSquares[4]],
-         [diagonal[2][0], diagonal[1][0], diagonal[1][1], moreSquares[6]],
-         [diagonal[2][0], diagonal[1][0], diagonal[1][1], moreSquares[16]],
-         [diagonal[2][0], diagonal[1][0], diagonal[1][1], moreSquares[19]],
-         [diagonal[2][1], diagonal[2][0], diagonal[1][0], moreSquares[1]],
-         [diagonal[2][1], diagonal[2][0], diagonal[1][0], moreSquares[3]],
-         [diagonal[2][1], diagonal[2][0], diagonal[1][0], moreSquares[17]],
-         [diagonal[2][1], diagonal[2][0], diagonal[1][0], moreSquares[18]],
-         [diagonal[2][2], diagonal[2][1], diagonal[2][0], moreSquares[9]],
-         [diagonal[2][2], diagonal[2][1], diagonal[2][0], moreSquares[11]],
-
-         [diagonal[0][0], moreSquares[16], moreSquares[3], moreSquares[11]],
-         [diagonal[0][0], moreSquares[18], moreSquares[4], moreSquares[12]],
-         [diagonal[1][0], moreSquares[17], moreSquares[7], moreSquares[15]],
-         [diagonal[1][0], moreSquares[18], moreSquares[0], moreSquares[8]],
-         [diagonal[2][0], moreSquares[16], moreSquares[2], moreSquares[10]],
-         [diagonal[2][0], moreSquares[19], moreSquares[5], moreSquares[13]],
-         [diagonal[3][0], moreSquares[17], moreSquares[6], moreSquares[14]],
-         [diagonal[3][0], moreSquares[19], moreSquares[1], moreSquares[9]]
-      ];
-
-      for (let check of additionalChecks)
-         if (check.every(square => square?.value === playerValue))
-            wins.push(check);
+      wins.push(...checkmarks(diagonal[0], diagonal[3], new Step(1, -1), new Step(-1, 1)));
+      wins.push(...checkmarks(diagonal[1], diagonal[2], new Step(1, 1), new Step(-1, -1)));
 
       return wins.length ? wins : false; // If there is a win return wins
    }
@@ -809,6 +743,7 @@ ELEMENTS.resetGameButton.onclick = function resetGame () {
    gameHistory.push(currentGame);
    currentGame = new Game();
    currentGame.updateVisual();
+   currentGame.updateVisualStats();
 }
 
 // Assumes that the enable and disable buttons are disabled / enabled when appropriate.
