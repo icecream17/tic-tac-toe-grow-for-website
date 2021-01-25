@@ -29,15 +29,11 @@ jobs:
           name: log
           path: log.log
     
-      - name: HTML5 Validator
-        # You may pin to the exact commit or the version.
-        # uses: Cyb3r-Jak3/html5validator-action@cc0b0040e30e425201fbb5eeb6afcd5d6703cf35
-        uses: Cyb3r-Jak3/html5validator-action@v0.4.4
-        with:
-          # Logging Level. Valid values: DEBUG, INFO, WARNING. Default: WARNING
-          log_level: INFO
-          # Checks css as well
-          css: true
+      - name: Install HTMLValidator
+        run: npm install html-validator-cli -g
+
+      - name: Check html
+        run: html-validator --file=game.html --verbose
         
       - name: Install babel eslint
         run: yarn add eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env --dev
