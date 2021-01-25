@@ -10,12 +10,11 @@ Array.prototype.valuesEqual = function valuesEqual(arr) {
    if (!Array.isArray(arr) || this.length !== arr.length)
       return false;
    
-   for (let i = 0; i < this.length; i++) {
+   for (let i = 0; i < this.length; i++)
       if (Array.isArray(this[i]) && Array.isArray(arr[i]) && !this[i].valuesEqual(arr[i]))
          return false;
       else if (this[i] !== arr[i])
          return false;
-   }
    return true;
 }
 
@@ -130,7 +129,7 @@ const ERRORS = {
    EVIL_CLICK: new EvilPlayerError("Hey, you're not supposed to click that"),
    EVIL_CHANGE: new EvilPlayerError("How did you do that"),
 };
-const NOT_DONE_YET = "This feature is not finished yet. So it doesn't work"
+const NOT_DONE_YET = "This feature is not finished yet. So it doesn't work";
 
 class Position {
    constructor (x, y) {
@@ -245,7 +244,7 @@ class GameState {
 
 class Game {
    constructor () {
-      this.turn = 0; /// Starts at 0
+      this.turn = 0; /** Starts at 0 */
       this.ply = 0;
       this.toMove = 0; // index in player array
       this.result = null;
@@ -300,7 +299,7 @@ class Game {
       if (logBoard) this.logAscii();
    }
 
-   async playBots(verbose = false) {
+   async playBots() {
       if (players[this.toMove].type === "bot") {
          await pause(200);
          this.doBotMove();
@@ -396,7 +395,7 @@ class Game {
    }
 
    updateVisualStats() {
-      ELEMENTS.statsParagraph.innerText = 
+      ELEMENTS.statsParagraph.innerText =
 `Width: ${this.board.width}
 Height: ${this.board.height}
 Turns: ${this.turn}`;
@@ -474,20 +473,22 @@ Turns: ${this.turn}`;
       function goDiagonal(x2, y2, step) {
          let diag = [];
          let currentPos = new Position(x2, y2);
+
+         // eslint-disable-next-line no-constant-condition
          while (true) {
             currentPos.x += step.vx;
             currentPos.y += step.vy;
             let square = this.board[currentPos.y]?.[currentPos.x];
 
             if (square?.value !== playerValue) break;
-            diag[i].push(square);
+            diag.push(square);
          }
          return diag;
       }
 
       function isValidCheckmark(side1, side2) {
-         return (side1.length >= 2 && side2.length >= 4) || 
-                (side1.length >= 4 && side2.length >= 2)
+         return (side1.length >= 2 && side2.length >= 4) ||
+                (side1.length >= 4 && side2.length >= 2);
       }
 
       for (let i = 0; i < 4; i++) {
@@ -534,20 +535,16 @@ Turns: ${this.turn}`;
          // So the diag arrays' first elements are the ones in the diag closer to the xy
          let newWins = [];
 
-         // First find all secondary diags
-
-         // The checkmarks 
-         let baseLength1 = oppDiag.length;
-         let baseLength2 = diag.length;
+         // The checkmarks
          let currBase = [...oppDiag, this.board[y][x]];
          for (let square of diag) {
-            currBase.push(square)
+            currBase.push(square);
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...perpDiag])
+               newWins.push([...currBase, ...perpDiag]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...oppPerpDiag])
+               newWins.push([...currBase, ...oppPerpDiag]);
          }
 
          currBase = [...diag, this.board[y][x]];
@@ -556,9 +553,9 @@ Turns: ${this.turn}`;
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...perpDiag])
+               newWins.push([...currBase, ...perpDiag]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...oppPerpDiag])
+               newWins.push([...currBase, ...oppPerpDiag]);
          }
 
          return newWins;
@@ -899,9 +896,9 @@ const bot_mechanics = {
             accum + curr.distance(move)
          ), 0)
       
-      moves = moves.sort((a, b) => b.distance - a.distance)
-                   .filter(move => moves[0].distance === move.distance)
-      let chosen = moves[Math.floor(Math.random() * moves.length)]
+      moves = moves.sort((move1, move2) => move2.distance - move1.distance)
+                   .filter(move => moves[0].distance === move.distance);
+      let chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    },
    /** Makes the previous moves uncomfortable */
@@ -910,11 +907,11 @@ const bot_mechanics = {
       for (let move of moves)
          move.distance = this.moveHistory.reduce((accum, curr) => (
             accum + curr.distance(move)
-         ), 0)
+         ), 0);
       
-      moves = moves.sort((a, b) => a.distance - b.distance)
-                   .filter(move => moves[0].distance === move.distance)
-      let chosen = moves[Math.floor(Math.random() * moves.length)]
+      moves = moves.sort((move1, move2) => move1.distance - move2.distance)
+                   .filter(move => moves[0].distance === move.distance);
+      let chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    }
 };
@@ -1150,7 +1147,9 @@ async function enablePlayers(num) {
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
-   activePlayers = counter
+   // eslint-disable-next-line require-atomic-updates
+   // Doesn't apply in this case
+   activePlayers = counter;
    if (counter !== num)
       console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
    
