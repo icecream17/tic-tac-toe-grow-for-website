@@ -27,7 +27,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: log
-          path: log.log
+          path: .github/logs/log.txt
     
       - name: Install HTMLValidator
         run: npm install html-validator-cli -g
