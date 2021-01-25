@@ -245,10 +245,9 @@ class GameState {
 
 class Game {
    constructor () {
-      // const - silently ignores any changes so watch out
-      this.turn = 1;
+      this.turn = 0; /// Starts at 0
       this.ply = 0;
-      this.toMove = 0; // index in array
+      this.toMove = 0; // index in player array
       this.result = null;
       this.winners = [];
 
