@@ -1,4 +1,5 @@
 "use strict";
+let logBoard = false;
 
 // for async functions
 async function pause(ms) {
@@ -297,7 +298,7 @@ class Game {
    play(x, y) {
       this.update(x, y);
       this.playBots();
-      this.logAscii();
+      if (logBoard) this.logAscii();
    }
 
    async playBots(verbose = false) {
@@ -306,8 +307,7 @@ class Game {
          this.doBotMove();
       }
 
-      if (verbose)
-         this.logAscii();
+      if (logBoard) this.logAscii();
    }
 
    update(x, y) {
@@ -329,11 +329,14 @@ class Game {
       players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1];
 
       // updateVisual must go after setting lastMove but before setting toMove
-      this.updateVisual();
+      if (this === currentGame) this.updateVisual();
 
       this.ply++;
       this.toMove = (this.toMove + 1) % players.length;
       if (this.toMove === 0) this.turn++;
+
+      // But this must go after setting turn
+      if (this === currentGame) this.updateVisualStats();
 
       console.log("update:", x, y, moveFinish);
    }
@@ -391,6 +394,13 @@ class Game {
          }
 
       return this.board[y][x];
+   }
+
+   updateVisualStats() {
+      ELEMENTS.statsParagraph.innerText = 
+`Width: ${this.board.width}
+Height: ${this.board.height}
+Turns: ${this.turn}`;
    }
 
    // Same as visualStart really
@@ -728,6 +738,7 @@ const ELEMENTS = {
    gameDataElement: document.getElementById('gameData'),
    resetGameButton: document.getElementById('resetGame'),
    shifts: document.querySelectorAll('#mapControls button'),
+   statsParagraph: document.getElementById('nonPlayerStats'),
    squares: [],
 
    getSquare(x, y) {
@@ -1064,7 +1075,7 @@ async function changePlayer() {
    );
 
    players[playerIndex] = new PlayerReference(type, localIndex);
-   currentGame.playBots(true);
+   currentGame.playBots();
    return ["Done! Player changed: ", players[playerIndex]];
 }
 
