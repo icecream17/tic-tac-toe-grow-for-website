@@ -780,7 +780,7 @@ ELEMENTS.resetGameButton.onclick = function resetGame () {
 ELEMENTS.numPeopleSelect.onchange = function (event) {
    console.log(EnableOrDisablePlayers.call(event.target));
 };
-ELEMENTS.numPlayerSelect.onchange = function (event) {
+ELEMENTS.numPlayersSelect.onchange = function (event) {
    console.log(EnableOrDisablePeople.call(event.target));
 };
 for (let input of ELEMENTS.getUsernameInputs())
