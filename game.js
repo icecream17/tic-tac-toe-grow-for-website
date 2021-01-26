@@ -559,27 +559,29 @@ Turns: ${this.turn}`;
          // So the diag arrays' first elements are the ones in the diag closer to the xy
          let newWins = [];
 
-         // The checkmarks
-         let currBase = [...oppDiag, this.board[y][x]];
+         // The checkmarks are made of the opposite diagonal (minus this cell),
+         // plus this diagonal (with the cell), which make one big side.
+         // Then the other perpendicular sides are checked.
+         let currBase = [...(oppDiag.slice(1))];
          for (let square of diag) {
             currBase.push(square);
-            let perpDiag = goDiagonal(square.x, square.y, perpStep);
-            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
+            let perpDiag = goDiagonal(square.x, square.y, perpStep).slice(1);
+            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep).slice(1);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...(perpDiag.slice(1))]);
+               newWins.push([...currBase, ...perpDiag]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
+               newWins.push([...currBase, ...oppPerpDiag.slice]);
          }
 
-         currBase = [...diag, this.board[y][x]];
+         currBase = [...(diag.slice(1))];
          for (let square of oppDiag) {
             currBase.push(square)
-            let perpDiag = goDiagonal(square.x, square.y, perpStep);
-            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
+            let perpDiag = goDiagonal(square.x, square.y, perpStep).slice(1);
+            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep).slice(1);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...(perpDiag.slice(1))]);
+               newWins.push([...currBase, ...perpDiag]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
+               newWins.push([...currBase, ...oppPerpDiag.slice]);
          }
 
          return newWins;
