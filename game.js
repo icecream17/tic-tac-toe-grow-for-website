@@ -559,11 +559,11 @@ Turns: ${this.turn}`;
          // So the diag arrays' first elements are the ones in the diag closer to the xy
          let newWins = [];
 
-         // The checkmarks are made of the opposite diagonal (minus this cell),
-         // plus this diagonal (with the cell), which make one big side.
-         // Then the other perpendicular sides are checked.
-         let currBase = [...(oppDiag.slice(1))];
-         for (let square of diag) {
+         // The checkmarks are made of the opposite diagonal,
+         // plus this diagonal (minus the shared cell), which make one big side,
+         // then the other perpendicular sides.
+         let currBase = [...(oppDiag.slice(1)), diag[0]]; // Reordering cells
+         for (let square of diag.slice(1)) {
             currBase.push(square);
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
@@ -573,9 +573,9 @@ Turns: ${this.turn}`;
                newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
          }
 
-         currBase = [...(diag.slice(1))];
-         for (let square of oppDiag) {
-            currBase.push(square)
+         currBase = [...(diag.slice(1)), diag[0]];
+         for (let square of oppDiag.slice(1)) {
+            currBase.push(square);
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
