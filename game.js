@@ -565,23 +565,23 @@ Turns: ${this.turn}`;
          let currBase = [...(oppDiag.slice(1))];
          for (let square of diag) {
             currBase.push(square);
-            let perpDiag = goDiagonal(square.x, square.y, perpStep).slice(1);
-            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep).slice(1);
+            let perpDiag = goDiagonal(square.x, square.y, perpStep);
+            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...perpDiag]);
+               newWins.push([...currBase, ...(perpDiag.slice(1))]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...oppPerpDiag.slice]);
+               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
          }
 
          currBase = [...(diag.slice(1))];
          for (let square of oppDiag) {
             currBase.push(square)
-            let perpDiag = goDiagonal(square.x, square.y, perpStep).slice(1);
-            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep).slice(1);
+            let perpDiag = goDiagonal(square.x, square.y, perpStep);
+            let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...perpDiag]);
+               newWins.push([...currBase, ...(perpDiag.slice(1))]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...oppPerpDiag.slice]);
+               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
          }
 
          return newWins;
