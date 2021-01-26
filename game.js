@@ -183,6 +183,12 @@ class Move extends Position {
       }
       return correctPosition;
    }
+
+   updatedDistance(position) {
+      let updatedPosition = this.correspondingPosition;
+      return Math.abs(updatedPosition.x - position.x) +
+             Math.abs(updatedPosition.y - position.y);
+   }
 }
 
 class GameState {
@@ -922,7 +928,7 @@ const bot_mechanics = {
       let moves = this.getMoves();
       for (let move of moves)
          move.distance = this.moveHistory.reduce((accum, curr) => (
-            accum + curr.distance(move)
+            accum + curr.updatedDistance(move)
          ), 0)
       
       moves = moves.sort((move1, move2) => move2.distance - move1.distance)
@@ -935,7 +941,7 @@ const bot_mechanics = {
       let moves = this.getMoves();
       for (let move of moves)
          move.distance = this.moveHistory.reduce((accum, curr) => (
-            accum + curr.distance(move)
+            accum + curr.updatedDistance(move)
          ), 0);
       
       moves = moves.sort((move1, move2) => move1.distance - move2.distance)
