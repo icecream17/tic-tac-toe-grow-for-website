@@ -692,6 +692,8 @@ const ELEMENTS = {
    container: document.getElementById('container'),
    infoElement: document.querySelector('#container aside'),
    gameDataElement: document.getElementById('gameData'),
+   numPeopleSelect: document.querySelector('#playerAmountLabel select'),
+   numPlayersSelect: document.querySelector('#personCountLabel select'),
    resetGameButton: document.getElementById('resetGame'),
    shifts: document.querySelectorAll('#mapControls button'),
    statsParagraph: document.getElementById('nonPlayerStats'),
@@ -702,6 +704,7 @@ const ELEMENTS = {
    },
 
    // {b} is unneccesary in {a b c}, the space selects all children
+   // TODO: Only have a getter for non-constant elements
    getUsernameInputs() {
       return document.querySelectorAll('#nameFields fieldset input');
    },
@@ -774,10 +777,10 @@ ELEMENTS.resetGameButton.onclick = function resetGame () {
 // So the errors might be wrong.
 
 // Note: <var> <input>
-document.querySelector("#playerAmountLabel select").onchange = function (event) {
+ELEMENTS.numPeopleSelect.onchange = function (event) {
    console.log(EnableOrDisablePlayers.call(event.target));
 };
-document.querySelector("#personCountLabel select").onchange = function (event) {
+ELEMENTS.numPlayerSelect.onchange = function (event) {
    console.log(EnableOrDisablePeople.call(event.target));
 };
 for (let input of ELEMENTS.getUsernameInputs())
@@ -1051,8 +1054,8 @@ async function changeName() {
 async function enablePerson() {
    // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fits...
    if (activePlayers === 4 || activePeople === 4) throw ERRORS.MAX_PLAYERS_REACHED;
-   activePeople++;
-   activePlayers++;
+   activePeople++; ELEMENTS.numPeopleSelect.selectedIndex++;
+   activePlayers++; ELEMENTS.numPlayersSelect.selectedIndex++;
 
    const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = false;
@@ -1070,8 +1073,8 @@ async function enablePerson() {
 // Bug, probably feature: Player not changed when disabled
 async function disablePerson() {
    if (activePlayers === 0 || activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
-   activePeople--;
-   activePlayers--;
+   activePeople--; ELEMENTS.numPeopleSelect.selectedIndex--;
+   activePlayers--; ELEMENTS.numPlayersSelect.selectedIndex--;
 
    const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = true;
@@ -1131,7 +1134,7 @@ async function disablePeople(num) {
 // this = <select disabled>
 async function enablePlayer() {
    if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
-   activePlayers++;
+   activePlayers++; ELEMENTS.numPeopleSelect.selectedIndex++;
    activeBots++;
 
    this.disabled = false;
