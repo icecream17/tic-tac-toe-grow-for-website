@@ -470,7 +470,8 @@ Turns: ${this.turn}`;
       let orthogonal = [[], [], [], []];
       let diagonal = [[], [], [], []];
 
-      function goDiagonal(x2, y2, step) {
+      // Arrow function so that "this" is not undefined
+      const goDiagonal = (x2, y2, step) => {
          let diag = [];
          let currentPos = new Position(x2, y2);
 
