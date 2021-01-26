@@ -529,8 +529,9 @@ Turns: ${this.turn}`;
       if (sevenChecks.find(check => Boolean(check)))
          wins.push(sevenChecks.find(check => Boolean(check)));
 
-      // diagonal, oppositeDiagonal, perpendicularStep, oppositePerpendicularStep
-      function checkmarks(diag, oppDiag, perpStep, oppPerpStep) {
+      // arrow function in order to access "this"
+      // arguments = diagonal, oppositeDiagonal, perpendicularStep, oppositePerpendicularStep
+      const checkmarks = (diag, oppDiag, perpStep, oppPerpStep) => {
          // The way the diags work:
          // above, the squares are pushed onto the array, *away* from the xy.
          // So the diag arrays' first elements are the ones in the diag closer to the xy
