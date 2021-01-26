@@ -1045,7 +1045,7 @@ async function changeName() {
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
 
-   for (let select of ELEMENTS.getEnabledPlayerSelects())
+   for (let select of ELEMENTS.getPlayerSelects())
       select.firstElementChild.children[correctIndex].text = name;
    return `Done: Name changed to ${name}`;
 }
