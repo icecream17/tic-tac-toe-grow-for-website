@@ -1055,7 +1055,6 @@ async function enablePerson() {
    // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fits...
    if (activePlayers === 4 || activePeople === 4) throw ERRORS.MAX_PLAYERS_REACHED;
    activePeople++; ELEMENTS.numPeopleSelect.selectedIndex++;
-   activePlayers++; ELEMENTS.numPlayersSelect.selectedIndex++;
 
    const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = false;
@@ -1063,7 +1062,7 @@ async function enablePerson() {
    for (let select of ELEMENTS.getPlayerSelects())
       select.firstElementChild.children[personIndex].disabled = false;
 
-   this.disabled = true;
+   this.disabled = false;
    this.parentElement.parentElement.children[1].disabled = true;
    this.parentElement.parentElement.children[2].disabled = false;
    return `Done: Person at index ${personIndex} enabled.`;
