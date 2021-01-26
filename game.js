@@ -692,8 +692,8 @@ const ELEMENTS = {
    container: document.getElementById('container'),
    infoElement: document.querySelector('#container aside'),
    gameDataElement: document.getElementById('gameData'),
-   numPeopleSelect: document.querySelector('#playerAmountLabel select'),
-   numPlayersSelect: document.querySelector('#personCountLabel select'),
+   numPeopleSelect: document.querySelector('#personCountLabel select'),
+   numPlayersSelect: document.querySelector('#playerAmountLabel select'),
    resetGameButton: document.getElementById('resetGame'),
    shifts: document.querySelectorAll('#mapControls button'),
    statsParagraph: document.getElementById('nonPlayerStats'),
@@ -1052,8 +1052,8 @@ async function changeName() {
 
 // this = <input>
 async function enablePerson() {
-   // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fits...
-   if (activePlayers === 4 || activePeople === 4) throw ERRORS.MAX_PLAYERS_REACHED;
+   // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fit...
+   if (activePeople === 4) throw ERRORS.EVERYONEs_ENABLED;
    activePeople++; ELEMENTS.numPeopleSelect.selectedIndex++;
 
    const personIndex = this.parentElement.innerText[10] - 1;
@@ -1071,9 +1071,8 @@ async function enablePerson() {
 
 // Bug, probably feature: Player not changed when disabled
 async function disablePerson() {
-   if (activePlayers === 0 || activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
+   if (activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
    activePeople--; ELEMENTS.numPeopleSelect.selectedIndex--;
-   activePlayers--; ELEMENTS.numPlayersSelect.selectedIndex--;
 
    const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = true;
