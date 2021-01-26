@@ -472,7 +472,7 @@ Turns: ${this.turn}`;
 
       // Arrow function so that "this" is not undefined
       const goDiagonal = (x2, y2, step) => {
-         let diag = [];
+         let diag = [this.board[y2][x2]];
          let currentPos = new Position(x2, y2);
 
          // eslint-disable-next-line no-constant-condition
@@ -485,11 +485,6 @@ Turns: ${this.turn}`;
             diag.push(square);
          }
          return diag;
-      }
-
-      function isValidCheckmark(side1, side2) {
-         return (side1.length >= 2 && side2.length >= 4) ||
-                (side1.length >= 4 && side2.length >= 2);
       }
 
       for (let i = 0; i < 4; i++) {
@@ -507,16 +502,32 @@ Turns: ${this.turn}`;
             new Step(-1, -1)
          ][i];
 
-         orthogonal[i].push(...goDiagonal(x, y, orthogonalStep));
-         diagonal[i].push(...goDiagonal(x, y, diagonalStep));
+         orthogonal[i] = goDiagonal(x, y, orthogonalStep);
+         diagonal[i] = goDiagonal(x, y, diagonalStep);
       }
 
       // good good good n good good good
+      // n 1 1 1 n 2 2 2
       function sevenNArow(oneDirection, oppositeDirection) {
-         if (oneDirection.length + oppositeDirection.length >= 6)
-            return oneDirection.concat(...oppositeDirection);
+         if (oneDirection.length + oppositeDirection.length >= 8)
+            return oneDirection.slice(1).concat(...oppositeDirection);
          else
             return false;
+      }
+
+      function checkMark(side1, side2) {
+         if (
+            side1.length >= 4 && side2.length >= 2 ||
+            side2.length >= 4 && side1.length >= 2
+         )
+            return side1.slice(1).concat(...side2);
+         else
+            return false;
+      }
+
+      function isValidCheckmark(side1, side2) {
+         return (side1.length >= 2 && side2.length >= 4) ||
+                (side1.length >= 4 && side2.length >= 2);
       }
 
       const sevenChecks = [
@@ -526,8 +537,19 @@ Turns: ${this.turn}`;
          sevenNArow(diagonal[1], diagonal[2])
       ];
 
-      if (sevenChecks.find(check => Boolean(check)))
-         wins.push(sevenChecks.find(check => Boolean(check)));
+      for (let sevenNArowCheck of sevenChecks)
+         if (sevenNArowCheck) wins.push(sevenNArowCheck)
+
+      const rightAngleMarkChecks = [
+         checkMark(diagonal[0], diagonal[1]),
+         checkMark(diagonal[0], diagonal[2]),
+         checkMark(diagonal[3], diagonal[1]),
+         checkMark(diagonal[3], diagonal[2]),
+      ];
+
+      for (let markCheck of rightAngleMarkChecks)
+         if (markCheck) wins.push(markCheck)
+
 
       // arrow function in order to access "this"
       // arguments = diagonal, oppositeDiagonal, perpendicularStep, oppositePerpendicularStep
@@ -544,9 +566,9 @@ Turns: ${this.turn}`;
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...perpDiag]);
+               newWins.push([...currBase, ...(perpDiag.slice(1))]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...oppPerpDiag]);
+               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
          }
 
          currBase = [...diag, this.board[y][x]];
@@ -555,9 +577,9 @@ Turns: ${this.turn}`;
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...perpDiag]);
+               newWins.push([...currBase, ...(perpDiag.slice(1))]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...oppPerpDiag]);
+               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
          }
 
          return newWins;
