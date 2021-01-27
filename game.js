@@ -954,8 +954,12 @@ const bot_mechanics = {
       let moves = this.getMoves().filter(move => (
          (this.board.width + this.board.height + move.x + move.y) % 2 === 0
       ));
-      const chosen = moves[Math.floor(Math.random() * moves.length)];
-      this.play(chosen.x, chosen.y);
+      if (moves.length === 0)
+         bot_mechanics.random_move.apply(this);
+      else {
+         const chosen = moves[Math.floor(Math.random() * moves.length)];
+         this.play(chosen.x, chosen.y);
+      }
    },
 };
 
