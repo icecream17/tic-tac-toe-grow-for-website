@@ -9,10 +9,14 @@ for (let bot of bot_iterator) {
 }
 function doGame () {
     if (currentBots[0] === bot_iterator.length) return;
+
+    ELEMENTS.getPlayerSelects()[0].selectedIndex = 0;
+    ELEMENTS.getPlayerSelects()[0].dispatchEvent(new Event("change"));
+
     ELEMENTS.getPlayerSelects()[0].selectedIndex = 4 + currentBots[0];
     ELEMENTS.getPlayerSelects()[1].selectedIndex = 4 + currentBots[1];
-    ELEMENTS.getPlayerSelects()[0].dispatchEvent(new Event("change"));
     ELEMENTS.getPlayerSelects()[1].dispatchEvent(new Event("change"));
+    ELEMENTS.getPlayerSelects()[0].dispatchEvent(new Event("change"));
     ELEMENTS.resetGameButton.click();
     bot_iterator[currentBots[0]][1].games.push(currentGame);
     bot_iterator[currentBots[1]][1].games.push(currentGame);
