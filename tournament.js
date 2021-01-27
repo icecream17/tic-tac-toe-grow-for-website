@@ -15,7 +15,7 @@ class Tournament {
 
    start () {
       Game.prototype.doBotMove = Tournament.botMoveFunc;
-      this.intervalID = setInterval(this.playGame, this.interval);
+      this.intervalID = setInterval(this.playGame.bind(this), this.interval);
    }
 
    finish () {
