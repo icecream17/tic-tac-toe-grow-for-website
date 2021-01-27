@@ -279,7 +279,7 @@ class Game {
    static set MAX_LENGTH(value) { throw ERRORS.CONST_MAX_LENGTH }
    static get MAX_LENGTH() { return 511 }
    static set MAX_TURNS(value) { throw ERRORS.CONST_MAX_TURNS }
-   static get MAX_TURNS() { return 292 }
+   static get MAX_TURNS() { return 314 }
 
    setCell(x, y, value) {
       this.board[y][x] = new Cell(value, x, y);
@@ -466,6 +466,8 @@ Turns: ${this.turn}`;
          return ["draw", "width is 7 times the height"];
       else if (this.board.height > 7 * this.board.width)
          return ["draw", "height is 7 times the width"];
+      else if (this.turns >= Game.MAX_TURNS)
+         return ["draw", `max turns reached (${Game.MAX_TURNS})`]
       else
          return false;
    }
