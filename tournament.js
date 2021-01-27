@@ -35,7 +35,7 @@ class Tournament {
 
          return;
       }
-      if (!this.currentGame.result &&
+      if (!currentGame.result &&
          this.currentBots[0] + this.currentBots[1] !== 0) return;
         
       PlayerFields[0].selectedIndex = 0;
