@@ -919,7 +919,7 @@ const bot_mechanics = {
 
          if (indexOfLastMove === -1)
             throw ERRORS.IMPOSSIBLE_LAST_MOVE;
-         let chosen = moves[indexOfLastMove];
+         const chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
       }
    },
@@ -933,7 +933,7 @@ const bot_mechanics = {
       
       moves = moves.sort((move1, move2) => move2.distance - move1.distance)
                    .filter(move => moves[0].distance === move.distance);
-      let chosen = moves[Math.floor(Math.random() * moves.length)];
+      const chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
    },
    /** Makes the previous moves uncomfortable */
@@ -946,9 +946,17 @@ const bot_mechanics = {
       
       moves = moves.sort((move1, move2) => move1.distance - move2.distance)
                    .filter(move => moves[0].distance === move.distance);
-      let chosen = moves[Math.floor(Math.random() * moves.length)];
+      const chosen = moves[Math.floor(Math.random() * moves.length)];
       this.play(chosen.x, chosen.y);
-   }
+   },
+   /** Makes the first move on diagonal 1 */
+   firstDiagonal() {
+      let moves = this.getMoves().filter(move => (
+         (this.board.width + this.board.height + move.x + move.y) % 2 === 0
+      ));
+      const chosen = moves[Math.floor(Math.random() * moves.length)];
+      this.play(chosen.x, chosen.y);
+   },
 };
 
 
