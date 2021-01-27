@@ -466,8 +466,12 @@ Turns: ${this.turn}`;
          return ["draw", "width is 7 times the height"];
       else if (this.board.height > 7 * this.board.width)
          return ["draw", "height is 7 times the width"];
-      else if (this.turns >= Game.MAX_TURNS)
+      else if (this.turn >= Game.MAX_TURNS)
          return ["draw", `max turns reached (${Game.MAX_TURNS})`]
+      else if (this.board.width >= Game.MAX_LENGTH)
+         return ["draw", `max length reached by width (${Game.MAX_LENGTH})`]
+      else if (this.board.height >= Game.MAX_LENGTH)
+         return ["draw", `max length reached by height (${Game.MAX_LENGTH})`]
       else
          return false;
    }
