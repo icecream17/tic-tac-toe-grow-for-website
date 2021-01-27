@@ -59,7 +59,7 @@ There's a more detailed explanation if you scroll down in the website itself.
 [x] avoidAll (avoider) DONE
 [ ] self_play
 [ ] spiral (8 ways)
-[ ] firstOnDiagonal1
+[x] firstOnDiagonal1 (firstDiagonal) DONE
 [ ] last~
 [ ] first~2
 [ ] last~2
