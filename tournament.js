@@ -11,6 +11,7 @@ class Tournament {
       this.currentRound = 0;
       this.interval = interval;
       this.intervalID = null;
+      this.games = [];
    }
 
    start () {
