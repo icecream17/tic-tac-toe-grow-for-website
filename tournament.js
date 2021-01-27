@@ -2,14 +2,16 @@
 // class Tournament {}
 
 /**
-let bot_iterator = Object.entries(bot_mechanics)
-let currentBots = [0, 0]
+let bot_iterator = Object.entries(bot_mechanics);
+let currentBots = [0, 0];
+let repeat = 100;
 for (let bot of bot_iterator) {
     bot[1].games = []
 }
 function doGame () {
     if (currentBots[0] === bot_iterator.length) {
-        clearInterval(tournamentInterval);
+        currentBots = [0, 0]; repeat--;
+        if (repeat === 0) clearInterval(tournamentInterval);
         return;
     }
     if (!currentGame.result && currentBots[0] + currentBots[1] !== 0) return;
