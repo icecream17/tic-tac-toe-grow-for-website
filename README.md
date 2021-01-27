@@ -50,18 +50,19 @@ There's a more detailed explanation if you scroll down in the website itself.
 ```
 [x] random   DONE
 [x] middleIndex   DONE
-[x] copy_index   DOESN'T WORK YET
+[x] copy_index   DONE
+[ ] closerSelf (huddle)
+[ ] closerOpp (swarm)
+[x] closerAll (closer) DONE
+[ ] avoidSelf 
+[ ] avoidOpp (scared)
+[x] avoidAll (avoider) DONE
 [ ] self_play
 [ ] spiral (8 ways)
 [ ] firstOnDiagonal1
 [ ] last~
 [ ] first~2
 [ ] last~2
-[ ] huddle
-[ ] swarm
-[ ] avoidSelf
-[ ] avoidOpp
-[ ] avoidAll
 [ ] lastBackwards~
 [ ] orthgonalToOpponent
 [ ] diagonalToOpponent
