@@ -952,7 +952,7 @@ const bot_mechanics = {
       for (let move of moves) {
          let score = 0;
          for (let historicalMove of this.moveHistory) {
-            score += historicalMove.updateDistance(move);
+            score += historicalMove.updatedDistance(move);
             if (score < best_moves[0]) break;
          }
          if (score === best_moves[0]) best_moves[1].push(move);
