@@ -934,10 +934,8 @@ const bot_mechanics = {
       let best_moves = [-Infinity, []]
       for (let move of moves) {
          let score = 0;
-         for (let historicalMove of this.moveHistory) {
-            score -= historicalMove.updatedDistance(move);
-            if (score < best_moves[0]) break;
-         }
+         for (let historicalMove of this.moveHistory)
+            score += historicalMove.updatedDistance(move); // More distance
          if (score === best_moves[0]) best_moves[1].push(move);
          else if (score > best_moves[0]) best_moves = [score, [move]];
       }
@@ -950,9 +948,9 @@ const bot_mechanics = {
       let moves = this.getMoves();
       let best_moves = [-Infinity, []]
       for (let move of moves) {
-         let score = 0;
+         let score = 100_000; // Positive number --> Easier score tracking
          for (let historicalMove of this.moveHistory) {
-            score += historicalMove.updatedDistance(move);
+            score -= historicalMove.updatedDistance(move); // Less distance
             if (score < best_moves[0]) break;
          }
          if (score === best_moves[0]) best_moves[1].push(move);
