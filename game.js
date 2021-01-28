@@ -1050,7 +1050,7 @@ async function changePlayer() {
    let option = this.selectedOptions[0];
    option.selected = true;
 
-   let type = option.label === "Bots" ? "bot" : "human"; // <optgroup> label
+   let type = option.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
 
    let playerIndex = this.parentElement.parentElement.innerText[8] - 1;
    if (players[playerIndex].type !== type)
