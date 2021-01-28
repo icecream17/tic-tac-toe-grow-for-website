@@ -1,5 +1,5 @@
 "use strict";
-let logBoard = false;
+let verbose = false;
 
 // for async functions
 async function pause(ms) {
@@ -167,6 +167,7 @@ class Move extends Position {
       super(newXY.x, newXY.y);
       this.game = game;
       this.index = game.moveHistory.length; // must be true
+      this.lastUpdateIndex = this.index;
       this.gameState = game.gameStates[this.index + 1];
 
       this.originalPosition = oldXY; // No board update
@@ -174,10 +175,8 @@ class Move extends Position {
 
    get correspondingPosition() {
       const correctPosition = new Position(this.x, this.y);
-
-      // this.index === this.gameState.moveHistory.length
-      for (let index = this.index; index < this.game.moveHistory.length; index++) {
-         const nextMove = this.game.moveHistory[index].originalPosition;
+      for (; this.lastUpdateIndex < this.game.moveHistory.length; this.lastUpdateIndex++) {
+         const nextMove = this.game.moveHistory[this.lastUpdateIndex].originalPosition;
          if (nextMove.x === 0) correctPosition.x++;
          if (nextMove.y === 0) correctPosition.y++;
       }
@@ -302,7 +301,7 @@ class Game {
    play(x, y) {
       this.update(x, y);
       this.playBots();
-      if (logBoard) this.logAscii();
+      if (verbose) this.logAscii();
    }
 
    async playBots() {
@@ -311,11 +310,11 @@ class Game {
          this.doBotMove();
       }
 
-      if (logBoard) this.logAscii();
+      if (verbose) this.logAscii();
    }
 
    update(x, y) {
-      console.log('move: ', x, y);
+      if (verbose) console.log(`(update) move: ${x} ${y}`);
 
       if (this.board[y][x].value !== ' ')
          throw ERRORS.SQUARE_NOT_UPDATED;
@@ -342,7 +341,7 @@ class Game {
       // But this must go after setting turn
       if (this === currentGame) this.updateVisualStats();
 
-      console.log("update:", x, y, moveFinish);
+      if (verbose) console.log(`(update) move: ${x} ${y}, moveFinish: ${moveFinish}`);
    }
 
    updateBoard(x, y) {
@@ -415,14 +414,14 @@ Turns: ${this.turn}`;
             let cell = this.board?.[y - this.visual.offset.y]?.[x - this.visual.offset.x];
 
             // undefined or empty string
-            button.className = '';
+            button.classList.remove("board", "win");
             button.style.removeProperty("border-color");
             button.style.removeProperty("background-color");
             button.style.removeProperty("background-image");
 
             // Assumes (cell === undefined || cell.value !== undefined)
             if (cell === undefined || cell.value === '') continue;
-            else button.className = 'board';
+            else button.classList.add('board');
 
             if (cell.value !== ' ') {
                let playerIndex = PLAYER_CHARS.indexOf(cell.value);
@@ -432,7 +431,7 @@ Turns: ${this.turn}`;
                   button.style.backgroundImage = `url("${player_assets[playerIndex]}")`;
 
 
-               button.className = 'board';
+               button.classList.add("board");
                if (cell.win)
                   button.classList.add("win");
                else if (players?.[playerIndex].lastMove?.index === cell.moveIndex)
@@ -813,7 +812,7 @@ for (let button of ELEMENTS.getDisablePersonButtons())
 for (let select of ELEMENTS.getPlayerSelects())
    select.onchange = function playerChange(event) {
       if (event.target.disabled) throw new ElementIsDisabledError(event.target);
-      console.log(changePlayer.call(event.target.selectedOptions[0]));
+      console.log(changePlayer.call(event.target));
    };
 for (let button of ELEMENTS.getEnablePlayerButtons())
    button.onclick = function (event) {
@@ -932,27 +931,35 @@ const bot_mechanics = {
    /** Tries to avoid the previous moves */
    avoider() {
       let moves = this.getMoves();
-      for (let move of moves)
-         move.distance = this.moveHistory.reduce((accum, curr) => (
-            accum + curr.updatedDistance(move)
-         ), 0)
-      
-      moves = moves.sort((move1, move2) => move2.distance - move1.distance)
-                   .filter(move => moves[0].distance === move.distance);
-      const chosen = moves[Math.floor(Math.random() * moves.length)];
+      let best_moves = [-Infinity, []]
+      for (let move of moves) {
+         let score = 0;
+         for (let historicalMove of this.moveHistory) {
+            score -= historicalMove.updateDistance(move);
+            if (score < best_moves[0]) break;
+         }
+         if (score === best_moves[0]) best_moves[1].push(move);
+         else if (score > best_moves[0]) best_moves = [score, [move]];
+      }
+
+      const chosen = best_moves[1][Math.floor(Math.random() * best_moves[1].length)];
       this.play(chosen.x, chosen.y);
    },
    /** Makes the previous moves uncomfortable */
    closer() {
       let moves = this.getMoves();
-      for (let move of moves)
-         move.distance = this.moveHistory.reduce((accum, curr) => (
-            accum + curr.updatedDistance(move)
-         ), 0);
-      
-      moves = moves.sort((move1, move2) => move1.distance - move2.distance)
-                   .filter(move => moves[0].distance === move.distance);
-      const chosen = moves[Math.floor(Math.random() * moves.length)];
+      let best_moves = [-Infinity, []]
+      for (let move of moves) {
+         let score = 0;
+         for (let historicalMove of this.moveHistory) {
+            score += historicalMove.updateDistance(move);
+            if (score < best_moves[0]) break;
+         }
+         if (score === best_moves[0]) best_moves[1].push(move);
+         else if (score > best_moves[0]) best_moves = [score, [move]];
+      }
+
+      const chosen = best_moves[1][Math.floor(Math.random() * best_moves[1].length)];
       this.play(chosen.x, chosen.y);
    },
    /** Makes the first move on diagonal 1 */
@@ -1001,7 +1008,7 @@ let players = [
 /* async function          this                          event element (if different)
  * EnableOrDisablePlayers  #playerAmountLabel <select>
  * EnableOrDisablePeople   #personCountLabel <select>
- * changePlayer            #choosePlayerFields <option>  #choosePlayerFields <select>
+ * changePlayer            #choosePlayerFields <select>
  * changeName              #nameFields <input>
  * enablePerson            #nameFields <input>           #nameFields <button.enable>
  * disablePerson           #nameFields <input>           #nameFields <button.disable>
@@ -1038,13 +1045,13 @@ async function EnableOrDisablePeople() {
       throw new DidntChangeError();
 }
 
-// this = <option>
+// this = <select>
 async function changePlayer() {
-   this.selected = true;
+   this.selectedOptions[0].selected = true;
 
-   let type = this.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
+   let type = this.label === "Bots" ? "bot" : "human"; // <optgroup> label
 
-   let playerIndex = this.parentElement.parentElement.parentElement.innerText[8] - 1;
+   let playerIndex = this.parentElement.parentElement.innerText[8] - 1;
    if (players[playerIndex].type !== type)
       if (type === "bot") {
          activePeople--;
@@ -1055,7 +1062,7 @@ async function changePlayer() {
       }
 
    let localIndex = Array.prototype.indexOf.call(
-      this.parentElement.children, this
+      this.children, this.selectedOptions[0]
    );
 
    players[playerIndex] = new PlayerReference(type, localIndex);
@@ -1230,7 +1237,7 @@ async function disablePlayers(num) {
 
 /*
 Types: human, bot
-Throws an errror when doing bot move but player is changed to human
+Throws an error when doing bot move but player is changed to human
 
 
 */
