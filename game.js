@@ -167,6 +167,7 @@ class Move extends Position {
       super(newXY.x, newXY.y);
       this.game = game;
       this.index = game.moveHistory.length; // must be true
+      this.positionAtLastUpdate = new Position(this.x, this.y);
       this.lastUpdateIndex = this.index;
       this.gameState = game.gameStates[this.index + 1];
 
@@ -174,13 +175,12 @@ class Move extends Position {
    }
 
    get correspondingPosition() {
-      const correctPosition = new Position(this.x, this.y);
       for (; this.lastUpdateIndex < this.game.moveHistory.length; this.lastUpdateIndex++) {
          const nextMove = this.game.moveHistory[this.lastUpdateIndex].originalPosition;
-         if (nextMove.x === 0) correctPosition.x++;
-         if (nextMove.y === 0) correctPosition.y++;
+         if (nextMove.x === 0) this.positionAtLastUpdate.x++;
+         if (nextMove.y === 0) this.positionAtLastUpdate.y++;
       }
-      return correctPosition;
+      return this.positionAtLastUpdate;
    }
 
    updatedDistance(position) {
@@ -1023,6 +1023,9 @@ let players = [
  * ....[8]  = "Player #8"
  */
 
+// Some of these functions access the ID of an element, like this.parentElement.id[8]
+// which corresponds to the last character in the IDs, in this case "whoPlaysN"
+
 // this = #playerAmountLabel <select>
 async function EnableOrDisablePlayers() {
    if (this.value < activePlayers)
@@ -1050,7 +1053,7 @@ async function changePlayer() {
 
    let type = option.parentElement.label === "Bots" ? "bot" : "human"; // <optgroup> label
 
-   let playerIndex = this.parentElement.parentElement.innerText[8] - 1;
+   let playerIndex = this.parentElement.id[8] - 1;
    if (players[playerIndex].type !== type)
       if (type === "bot") {
          activePeople--;
@@ -1070,7 +1073,7 @@ async function changePlayer() {
 
 // this = <input>
 async function changeName() {
-   let correctIndex = this.parentElement.innerText[10] - 1;
+   let correctIndex = this.parentElement.id[13] - 1;
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
 
@@ -1103,7 +1106,7 @@ async function disablePerson() {
    if (activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
    activePeople--; ELEMENTS.numPeopleSelect.selectedIndex--;
 
-   const personIndex = this.parentElement.innerText[10] - 1;
+   const personIndex = this.parentElement.id[13] - 1;
    people[personIndex].disabled = true;
 
    for (let select of ELEMENTS.getPlayerSelects())
