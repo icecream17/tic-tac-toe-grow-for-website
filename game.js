@@ -1047,9 +1047,10 @@ async function EnableOrDisablePeople() {
 
 // this = <select>
 async function changePlayer() {
-   this.selectedOptions[0].selected = true;
+   let option = this.selectedOptions[0];
+   option.selected = true;
 
-   let type = this.label === "Bots" ? "bot" : "human"; // <optgroup> label
+   let type = option.label === "Bots" ? "bot" : "human"; // <optgroup> label
 
    let playerIndex = this.parentElement.parentElement.innerText[8] - 1;
    if (players[playerIndex].type !== type)
@@ -1061,9 +1062,8 @@ async function changePlayer() {
          activeBots--;
       }
 
-   let localIndex = Array.prototype.indexOf.call(
-      this.children, this.selectedOptions[0]
-   );
+   let localIndex = Array.prototype.indexOf.call(this.children, option);
+   if (localIndex === -1) throw ReferenceError("No player is selected!??");
 
    players[playerIndex] = new PlayerReference(type, localIndex);
    currentGame.playBots();
