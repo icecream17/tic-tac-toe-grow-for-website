@@ -1062,7 +1062,7 @@ async function changePlayer() {
          activeBots--;
       }
 
-   let localIndex = Array.prototype.indexOf.call(option.parentElement, option);
+   let localIndex = Array.prototype.indexOf.call(option.parentElement.children, option);
    if (localIndex === -1) throw ReferenceError("No player is selected!??");
 
    players[playerIndex] = new PlayerReference(type, localIndex);
