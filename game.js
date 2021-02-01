@@ -960,10 +960,12 @@ const bot_mechanics = {
       const chosen = best_moves[1][Math.floor(Math.random() * best_moves[1].length)];
       this.play(chosen.x, chosen.y);
    },
-   /** Makes the first move on diagonal 1 */
+   /** Makes moves on the diagonal where the first move was played if possible */
+   // Could be renamed to "firstMoveDiagonal"
    firstDiagonal() {
+      let positionOnDiagonal = this.moveHistory?.[0] ?? new Position(0, 0)
       let moves = this.getMoves().filter(move => (
-         (this.board.width + this.board.height + move.x + move.y) % 2 === 0
+         (positionOnDiagonal.x + positionOnDiagonal.y + move.x + move.y) % 2 === 0
       ));
       if (moves.length === 0)
          bot_mechanics.random_move.apply(this);
