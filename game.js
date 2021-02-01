@@ -141,6 +141,11 @@ class Position {
    distance(position) {
       return Math.abs(this.x - position.x) + Math.abs(this.y - position.y);
    }
+
+   /** Method returning a shallow copy of the position */
+   copy() {
+      return new Position(this.x, this.y);
+   }
 }
 
 class Step {
@@ -174,13 +179,17 @@ class Move extends Position {
       this.originalPosition = oldXY; // No board update
    }
 
+   /**
+    * The board might've updated, and gotten a new row to the left for example.
+    * So this getter method gets the updated position of a move.
+    */
    get correspondingPosition() {
       for (; this.lastUpdateIndex < this.game.moveHistory.length; this.lastUpdateIndex++) {
          const nextMove = this.game.moveHistory[this.lastUpdateIndex].originalPosition;
          if (nextMove.x === 0) this.positionAtLastUpdate.x++;
          if (nextMove.y === 0) this.positionAtLastUpdate.y++;
       }
-      return this.positionAtLastUpdate;
+      return this.positionAtLastUpdate.copy();
    }
 
    updatedDistance(position) {
