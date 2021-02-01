@@ -967,7 +967,7 @@ const bot_mechanics = {
          let move = this.moveHistory[0];
          positionOnDiagonal = move.correspondingPosition;
 
-         if ((move.x + move.y) % 2 === 1) position.x++;
+         if ((move.x + move.y) % 2 === 1) positionOnDiagonal.x++;
       } else positionOnDiagonal = new Position(0, 0);
 
       let moves = this.getMoves().filter(move => (
