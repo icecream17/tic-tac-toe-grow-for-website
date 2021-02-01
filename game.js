@@ -960,10 +960,16 @@ const bot_mechanics = {
       const chosen = best_moves[1][Math.floor(Math.random() * best_moves[1].length)];
       this.play(chosen.x, chosen.y);
    },
-   /** Makes moves on the diagonal where the first move was played if possible */
-   // Could be renamed to "firstMoveDiagonal"
+   /** Makes moves on the diagonal containing the corresponding square of 0, 0 */
    firstDiagonal() {
-      let positionOnDiagonal = this.moveHistory?.[0] ?? new Position(0, 0)
+      let positionOnDiagonal;
+      if (this.moveHistory.length) {
+         let move = this.moveHistory[0];
+         positionOnDiagonal = move.correspondingPosition;
+
+         if ((move.x + move.y) % 2 === 1) position.x++;
+      } else positionOnDiagonal = new Position(0, 0);
+
       let moves = this.getMoves().filter(move => (
          (positionOnDiagonal.x + positionOnDiagonal.y + move.x + move.y) % 2 === 0
       ));
