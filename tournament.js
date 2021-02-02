@@ -29,7 +29,7 @@ class TournamentGameList extends Array {
    
    add (dictOrGame) {
       if (dictOrGame instanceof TournamentGame) this.push(dictOrGame);
-      else this.push(new TournamentGame(dictOrGame);
+      else this.push(new TournamentGame(dictOrGame));
    }
 
    get results() {
