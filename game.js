@@ -662,33 +662,32 @@ Turns: ${this.turn}`;
             ascii += '%c'
             if (char === '') {
                ascii += ' ';
-               args.push('background-color:gray');
+               css.push('background-color:gray');
             } else if (char === ' ') {
                ascii += '.';
-               args.push('color:white');
+               css.push('color:white');
             } else if (PLAYER_CHARS.includes(char)) {
                ascii += char;
-               args.push(
-                  `color:${
-                     (['red', 'blue', 'green', 'orange', 'purple'][PLAYER_CHARS.indexOf(char)])
-                     + (this.board[y][x].win ? ';background-color:green' : '')
-                  }`
+               css.push(
+                  "color:"
+                  + ['red', 'blue', 'green', 'orange', 'purple'][PLAYER_CHARS.indexOf(char)]
+                  + (this.board[y][x].win ? ';background-color:green' : '')
                );
             }
          }
 
          ascii += '%c %c|\n';
-         args.push('background-color:gray', 'color:white');
+         css.push('background-color:gray', 'color:white');
       }
       ascii += `%c+%c-${'-'.repeat(this.board.width)}-%c+\n`;
-      args.push(
+      css.push(
          'color:white',
          'background-color:gray;color:gray',
          'color:white'
       )
 
-      if (verbose) console.debug(ascii, ...args)
-      else console.log(ascii, ...args);
+      if (verbose) console.debug(ascii, ...css)
+      else console.log(ascii, ...css);
    }
 
 
