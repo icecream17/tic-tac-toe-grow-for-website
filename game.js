@@ -671,7 +671,7 @@ Turns: ${this.turn}`;
                css.push(
                   "color:"
                   + ['red', 'blue', 'green', 'orange', 'purple'][PLAYER_CHARS.indexOf(char)]
-                  + (this.board[y][x].win ? ';background-color:green' : '')
+                  + (this.board[y][x].win ? ';background-color:#CFC' : '')
                );
             }
          }
