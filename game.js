@@ -1,5 +1,7 @@
 "use strict";
-let verbose = false;
+// let verbose = false;
+// console.debug --> verbose
+// console.info / console.log --> info
 
 // for async functions
 async function pause(ms) {
@@ -323,7 +325,7 @@ class Game {
    }
 
    update(x, y) {
-      if (verbose) console.log(`(update) move: ${x} ${y}`);
+      console.debug(`(update) move: ${x} ${y}`);
 
       if (this.board[y][x].value !== ' ')
          throw ERRORS.SQUARE_NOT_UPDATED;
@@ -350,7 +352,7 @@ class Game {
       // But this must go after setting turn
       if (this === currentGame) this.updateVisualStats();
 
-      if (verbose) console.log(`(update) move: ${x} ${y}, moveFinish: ${moveFinish}`);
+      console.debug(`(update) move: ${x} ${y}, moveFinish: ${moveFinish}`);
    }
 
    updateBoard(x, y) {
@@ -668,7 +670,7 @@ Turns: ${this.turn}`;
 }
 
 function handleClick(x, y) {
-   console.log("Click!", x, y);
+   console.debug("Click!", x, y);
    x -= currentGame.visual.offset.x;
    y -= currentGame.visual.offset.y;
 
@@ -798,40 +800,40 @@ ELEMENTS.resetGameButton.onclick = function resetGame () {
 
 // Note: <var> <input>
 ELEMENTS.numPeopleSelect.onchange = function (event) {
-   console.log(EnableOrDisablePlayers.call(event.target));
+   console.debug(EnableOrDisablePlayers.call(event.target));
 };
 ELEMENTS.numPlayersSelect.onchange = function (event) {
-   console.log(EnableOrDisablePeople.call(event.target));
+   console.debug(EnableOrDisablePeople.call(event.target));
 };
 for (let input of ELEMENTS.getUsernameInputs())
    input.onchange = function usernameChange(event) {
       if (event.target.disabled) throw new ElementIsDisabledError(event.target);
-      console.log(changeName.call(event.target));
+      console.debug(changeName.call(event.target));
    };
 for (let button of ELEMENTS.getEnablePersonButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyEnabledError(event.target);
-      console.log(enablePerson.call(event.target.parentElement.children[0].children[1]));
+      console.debug(enablePerson.call(event.target.parentElement.children[0].children[1]));
    };
 for (let button of ELEMENTS.getDisablePersonButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyDisabledError(event.target);
-      console.log(disablePerson.call(event.target.parentElement.children[0].children[1]));
+      console.debug(disablePerson.call(event.target.parentElement.children[0].children[1]));
    };
 for (let select of ELEMENTS.getPlayerSelects())
    select.onchange = function playerChange(event) {
       if (event.target.disabled) throw new ElementIsDisabledError(event.target);
-      console.log(changePlayer.call(event.target));
+      console.debug(changePlayer.call(event.target));
    };
 for (let button of ELEMENTS.getEnablePlayerButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyEnabledError(event.target);
-      console.log(enablePlayer.call(event.target.parentElement.children[0].children[1]));
+      console.debug(enablePlayer.call(event.target.parentElement.children[0].children[1]));
    };
 for (let button of ELEMENTS.getDisablePlayerButtons())
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyDisabledError(event.target);
-      console.log(disablePlayer.call(event.target.parentElement.children[0].children[1]));
+      console.debug(disablePlayer.call(event.target.parentElement.children[0].children[1]));
    };
 
 
