@@ -312,7 +312,7 @@ class Game {
    play(x, y) {
       this.update(x, y);
       this.playBots();
-      if (verbose) this.logAscii();
+      this.logAscii(true);
    }
 
    async playBots() {
@@ -321,7 +321,7 @@ class Game {
          this.doBotMove();
       }
 
-      if (verbose) this.logAscii();
+      this.logAscii(true);
    }
 
    update(x, y) {
@@ -646,7 +646,7 @@ Turns: ${this.turn}`;
       return str;
    }
 
-   logAscii() {
+   logAscii(verbose) {
       let text = this.getAscii();
       let args = ["", []];
       for (let char of text) {
@@ -663,7 +663,8 @@ Turns: ${this.turn}`;
          args[0] += '%c' + char;
          args[1].push(css);
       }
-      console.log(args[0], ...args[1]);
+      if (verbose) console.debug(args[0], ...args[1])
+      else console.log(args[0], ...args[1]);
    }
 
 
