@@ -24,6 +24,7 @@ class TournamentGame {
 
 class TournamentGameList extends Array {
    constructor (tournament) {
+      super();
       this.tournament = tournament;
    }
    
