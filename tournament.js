@@ -111,7 +111,7 @@ class Tournament {
       PlayerFields[1].selectedIndex = 4 + this.currentBots[1];
       PlayerFields[1].dispatchEvent(new Event("change"));
       PlayerFields[0].dispatchEvent(new Event("change"));
-      this.games.add({game: currentGame, players: [this.currentBots[0], this.currentBots[1]});
+      this.games.add({game: currentGame, players: [this.currentBots[0], this.currentBots[1]]});
 
       this.currentBots[1]++;
       if (this.currentBots[1] === bots.length) {
