@@ -1,6 +1,10 @@
-// TODO
+'use strict'
+
+// ugh Eslint
+/* global verbose pause CustomError ElementError NothingDisabledError NothingEnabledError DisabledError BotIsDisabledError ElementIsDisabledError ElementAlreadyError ElementIsAlreadyDisabledError ElementIsAlreadyEnabledError InvalidValueError MaxValueError SameValuesError DidntChangeError EvilPlayerError ERRORS NOT_DONE_YET Position Step Cell Move GameState Game handleClick notice player_assets PLAYER_CHARS PLAYER_BORDERS PLAYER_NAMES ELEMENTS gameHistory currentGame Player Human Bot PlayerReference bot_mechanics activeBots activePeople activePlayers people bots players EnableOrDisablePlayers EnableOrDisablePeople changePlayer changeName enablePerson disablePerson enablePeople disablePeople enablePlayer disablePlayer enablePlayers disablePlayers */
+
 const NON_TOURNAMENT_BOT_MOVE_FUNC = Game.prototype.doBotMove;
-const PlayerFields = Array.from(document.querySelectorAll("#choosePlayerFields select"))
+const PlayerFields = Array.from(document.querySelectorAll("#choosePlayerFields select"));
 let tournaments = [];
 
 class TournamentGame {
@@ -13,7 +17,7 @@ class TournamentGame {
    get result() {
       if (this.game.result === null) return null;
       else if (this.game.result === "draw") return "draw";
-      else if (this.game.result === "win") return {
+      else return { // this.game.result === "win"
          winner: this.game.winners[0][2],
          loser: (this.game.winners[0][2] === this.bots[0] 
                  ? this.bots[1]
