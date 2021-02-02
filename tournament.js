@@ -42,7 +42,7 @@ class TournamentGameList extends Array {
 
       for (let tournamentGame of this) {
          let gameResult = tournamentGame.result;
-         if (gameResult === null) return;
+         if (gameResult === null) return null;
          else if (gameResult === "draw") {
             if (!table.has(tournamentGame.bots[0])) table.set(tournamentGame.bots[0], new Map());
             if (!table.get(tournamentGame.bots[0]).has(tournamentGame.bots[1])) table.get(tournamentGame.bots[0]).set(tournamentGame.bots[1], {wins: 0, draws: 1, losses: 0});
