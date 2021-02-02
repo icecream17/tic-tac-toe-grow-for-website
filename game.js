@@ -633,38 +633,62 @@ Turns: ${this.turn}`;
 
    // Adds padding to left and right
    getAscii() {
-      let str = `+-${'-'.repeat(this.board.width)}-+\n`;
+      let ascii = `+-${'-'.repeat(this.board.width)}-+\n`;
       for (let y = 0; y < this.board.length; y++) {
-         str += '| ';
+         ascii += '| ';
          for (let x = 0; x < this.board.width; x++)
-            if (this.board[y][x].value === '') str += ' ';
-            else if (this.board[y][x].value === ' ') str += '.';
-            else str += this.board[y][x].value;
-         str += ' |\n';
+            if (this.board[y][x].value === '') ascii += ' ';
+            else if (this.board[y][x].value === ' ') ascii += '.';
+            else ascii += this.board[y][x].value;
+         ascii += ' |\n';
       }
-      str += `+-${'-'.repeat(this.board.width)}-+`;
-      return str;
+      return (ascii += `+-${'-'.repeat(this.board.width)}-+`);
    }
 
    logAscii(verbose) {
-      let text = this.getAscii();
-      let args = ["", []];
-      for (let char of text) {
-         let css = "";
-         if (char === PLAYER_CHARS[0]) css = 'color:red';
-         else if (char === PLAYER_CHARS[1]) css = 'color:blue';
-         else if (char === PLAYER_CHARS[2]) css = 'color:green';
-         else if (char === PLAYER_CHARS[3]) css = 'color:orange';
-         else if (char === '.') css = 'color:white';
-         else if (char === ' ') css = 'background-color:gray';
-         else if (char === '-') css = 'background-color:gray;color:gray';
-         else css = 'color:white';
+      let ascii = `%c+%c-${'-'.repeat(this.board.width)}-%c+\n`
+      let css = [
+         'color:white',
+         'background-color:gray;color:gray',
+         'color:white'
+      ];
 
-         args[0] += '%c' + char;
-         args[1].push(css);
+      for (let y = 0; y < this.board.length; y++) {
+         ascii += '%c|%c ';
+         css.push('color:white', 'background-color:gray');
+
+         for (let x = 0; x < this.board.width; x++) {
+            let char = this.board[y][x].value;
+            ascii += '%c'
+            if (char === '') {
+               ascii += ' ';
+               args.push('background-color:gray');
+            } else if (char === ' ') {
+               ascii += '.';
+               args.push('color:white');
+            } else if (PLAYER_CHARS.includes(char)) {
+               ascii += char;
+               args.push(
+                  `color:${
+                     (['red', 'blue', 'green', 'orange', 'purple'][PLAYER_CHARS.indexOf(char)])
+                     + (this.board[y][x].win ? ';background-color:green' : '')
+                  }`
+               );
+            }
+         }
+
+         ascii += '%c %c|\n';
+         args.push('background-color:gray', 'color:white');
       }
-      if (verbose) console.debug(args[0], ...args[1])
-      else console.log(args[0], ...args[1]);
+      ascii += `%c+%c-${'-'.repeat(this.board.width)}-%c+\n`;
+      args.push(
+         'color:white',
+         'background-color:gray;color:gray',
+         'color:white'
+      )
+
+      if (verbose) console.debug(ascii, ...args)
+      else console.log(ascii, ...args);
    }
 
 
