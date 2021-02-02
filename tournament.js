@@ -90,7 +90,7 @@ class Tournament {
    }
 
    playGame () {
-      if (this.currentBots[0] === bot_iterator.length) {
+      if (this.currentBots[0] === bots.length) {
          this.currentBots = [0, 0];
          this.currentRound++;
 
