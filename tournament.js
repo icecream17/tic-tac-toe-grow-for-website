@@ -39,21 +39,21 @@ class TournamentGameList extends Array {
          let gameResult = tournamentGame.result;
          if (gameResult === null) return;
          else if (gameResult === "draw") {
-            if (!table.has(tournamentGame.bots[0]) table.set(tournamentGame.bots[0], new Map());
+            if (!table.has(tournamentGame.bots[0])) table.set(tournamentGame.bots[0], new Map());
             if (!table.get(tournamentGame.bots[0]).has(tournamentGame.bots[1])) table.get(tournamentGame.bots[0]).set(tournamentGame.bots[1], {wins: 0, draws: 1, losses: 0});
             else table.get(tournamentGame.bots[0]).get(tournamentGame.bots[1]).draws++;
             
-            if (!table.has(tournamentGame.bots[1]) table.set(tournamentGame.bots[1], new Map());
+            if (!table.has(tournamentGame.bots[1])) table.set(tournamentGame.bots[1], new Map());
             if (!table.get(tournamentGame.bots[1]).has(tournamentGame.bots[0])) table.get(tournamentGame.bots[1]).set(tournamentGame.bots[0], {wins: 0, draws: 1, losses: 0});
             else table.get(tournamentGame.bots[1]).get(tournamentGame.bots[0]).draws++;
          } else { // gameResult = {winner: bot, loser: bot}
             let {winner, loser} = gameResult;
 
-            if (!table.has(winner) table.set(winner, new Map());
+            if (!table.has(winner)) table.set(winner, new Map());
             if (!table.get(winner).has(loser)) table.get(winner).set(loser, {wins: 1, draws: 0, losses: 0});
             else table.get(winner).get(loser).wins++;
             
-            if (!table.has(loser) table.set(loser, new Map());
+            if (!table.has(loser)) table.set(loser, new Map());
             if (!table.get(loser).has(winner)) table.get(loser).set(winner, {wins: 0, draws: 0, losses: 1});
             else table.get(loser).get(winner).losses++;
          }
