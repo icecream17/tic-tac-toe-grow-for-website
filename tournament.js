@@ -76,6 +76,7 @@ class Tournament {
       this.interval = interval;
       this.intervalID = null;
       this.games = new TournamentGameList();
+      this.finished = false;
    }
 
    start () {
@@ -84,23 +85,34 @@ class Tournament {
    }
 
    finish () {
+      this.finished = this.waitForLastGame();
+
+      if (this.finished) {
+         clearInterval(this.intervalID);
+         this.previousID = this.intervalID;
+         this.intervalID = null;
+         Game.prototype.doBotMove = NON_TOURNAMENT_BOT_MOVE_FUNC;
+         tournaments.push(this);
+      }
+   }
+   
+   /* Returns true when last game is finished */
+   waitForLastGame () {
+      if (!currentGame.result) return false;
       PlayerFields[0].selectedIndex = 0;
       PlayerFields[0].dispatchEvent(new Event("change"));
-
-      clearInterval(this.intervalID);
-      this.intervalID = null;
-      Game.prototype.doBotMove = NON_TOURNAMENT_BOT_MOVE_FUNC;
-      tournaments.push(this);
+      return true;
    }
 
    playGame () {
       if (this.currentBots[0] === bots.length) {
-         this.currentBots = [0, 0];
          this.currentRound++;
-         ELEMENTS.resetGameButton.click(); // Because of the if statement below
-
-         if (this.currentRound === this.rounds)
+         if (this.currentRound >= this.rounds)
             this.finish();
+         else {
+            this.currentBots = [0, 0];
+            ELEMENTS.resetGameButton.click(); // Because of the if statement below
+         }
 
          return;
       }
