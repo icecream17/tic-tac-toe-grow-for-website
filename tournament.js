@@ -97,6 +97,7 @@ class Tournament {
       if (this.currentBots[0] === bots.length) {
          this.currentBots = [0, 0];
          this.currentRound++;
+         ELEMENTS.resetGameButton.click(); // Because of the if statement below
 
          if (this.currentRound === this.rounds)
             this.finish();
