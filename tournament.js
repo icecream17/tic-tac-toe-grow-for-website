@@ -142,10 +142,8 @@ class Tournament {
    }
     
    static botMoveFunc () {
-      if (players[this.toMove].player.type === "bot")
-         // if (this.result and tournament mode
-         if (this.result) console.info("Game ended");
-         else players[this.toMove].player.play();
+      if (players[this.toMove].player.type === "bot" && !this.result)
+         players[this.toMove].player.play();
       else
          console.info("Player must've changed into a human");
    }
