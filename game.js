@@ -170,15 +170,20 @@ class Move extends Position {
    // Due to the unique position of the constructor in Game.update:
       // x, y: updated
       // game.moveHistory: latest move is the one before this move
-   constructor (oldXY, newXY, game = currentGame) {
+   constructor (oldXY, newXY, player, game = currentGame) {
       super(newXY.x, newXY.y);
       this.game = game;
       this.index = game.moveHistory.length; // must be true
+      this.player = player;
       this.positionAtLastUpdate = new Position(this.x, this.y);
-      this.lastUpdateIndex = this.index;
-      this.gameState = game.gameStates[this.index + 1];
+      this.lastUpdateIndex = this.index;  
 
       this.originalPosition = oldXY; // No board update
+   }
+
+   // Get the gameState on demand instead of using unneccesary storage
+   get gameState() {
+      return this.game.getGameStateAt(this.index);
    }
 
    /**
@@ -202,27 +207,37 @@ class Move extends Position {
 }
 
 class GameState {
-   constructor (game = currentGame) {
-      this.game = game;
+   constructor () {
+      this.turn = 0; /** Starts at 0 */
+      this.ply = 0;
+      this.toMove = 0; // index in player array
+      this.result = null;
+      this.winners = [];
 
-      this.turn = game.turn;
-      this.ply = game.ply;
-      this.toMove = game.toMove;
-      this.result = game.result;
-      this.board = [];
-      this.board.width = game.board.width;
-      this.board.height = game.board.height;
+      this.board = [
+         [new Cell(' ', 0, 0), new Cell(' ', 0, 1), new Cell(' ', 0, 2)],
+         [new Cell(' ', 1, 0), new Cell(' ', 1, 1), new Cell(' ', 1, 2)],
+         [new Cell(' ', 2, 0), new Cell(' ', 2, 1), new Cell(' ', 2, 2)]
+      ]; // WARNING: this.board[y][x]
+      this.board.width = 3;
+      this.board.height = 3; // same as this.board.length
 
-      for (let y = 0; y < game.board.length; y++) {
-         this.board.push([]);
-         for (let x = 0; x < game.board.width; x++) {
-            const cell = new Cell(game.board[y][x].value, y, x);
-            cell.win = game.board[y][x].win;
-            this.board[y].push(cell);
-         }
-      }
+      this.moveHistory = [];
+   }
 
-      this.moveHistory = game.moveHistory.slice();
+   doMove (move) {
+      if (this.board[move.y][move.x].value !== ' ')
+         throw ERRORS.SQUARE_NOT_UPDATED;
+
+      let {x, y} = Game.prototype.updateBoard.call(this, move.x, move.y);
+
+      let moveFinish = Game.prototype.checkGameEnd.call(this, x, y);
+      if (moveFinish !== false) Game.prototype.updateGameEnd.call(this, moveFinish, x, y);
+
+      this.moveHistory.push(move);
+      this.ply++;
+      this.toMove = (this.toMove + 1) % players.length;
+      if (this.toMove === 0) this.turn++;
    }
 
    get originalMoves() {
@@ -279,7 +294,6 @@ class Game {
       this.visualStart();
 
       this.moveHistory = [];
-      this.gameStates = [new GameState(this)]; // starts with the original position
    }
 
    // These static methods must be gotten from the class Game
@@ -338,8 +352,7 @@ class Game {
       let moveFinish = this.checkGameEnd(x, y);
       if (moveFinish !== false) this.updateGameEnd(moveFinish, x, y);
 
-      this.gameStates.push(new GameState(this));
-      this.moveHistory.push(new Move(oldPosition, {x, y}, this));
+      this.moveHistory.push(new Move(oldPosition, {x, y}, players[this.toMove], this));
       players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1];
 
       // updateVisual must go after setting lastMove but before setting toMove
@@ -466,6 +479,16 @@ Turns: ${this.turn}`;
          notice(`*gasp*! Draw!\n${result[1]}`, result);
       } else
          throw ERRORS.INVALID_MOVE_FINISH;
+   }
+
+   // Gets the game state *before* a move is played
+   // So if moveIndex was 0, it would get the starting position
+   getGameStateAt(moveIndex) {
+      let gameCopy = new GameState();
+      for (let i = 0; i < moveIndex; i++)
+         gameCopy.doMove(this.moveHistory[i]);
+      
+      return gameCopy;
    }
 
    checkGameEnd(x, y) {
@@ -949,7 +972,7 @@ const bot_mechanics = {
          bot_mechanics.random_move.apply(this);
       else {
          let indexOfLastMove = (
-            this.gameStates[this.gameStates.length - 2]
+            lastMove.gameState
                .originalMoves
                .findIndex(
                   position => position.x === positionOfLastMove.x
