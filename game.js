@@ -492,8 +492,13 @@ Turns: ${this.turn}`;
    }
 
    checkGameEnd(x, y) {
-      let win = this.checkWin(x, y);
-      if (win) return ["win", win];
+      if (this instanceof GameState) {
+         let win = Game.prototype.checkWin.call(this, x, y)
+         if (win) return ["win", win];
+      } else { // this instanceof Game
+         let win = this.checkWin(x, y);
+         if (win) return ["win", win];
+      }
 
       if (this.board.width > 7 * this.board.height)
          return ["draw", "width is 7 times the height"];
