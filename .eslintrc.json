@@ -1,7 +1,7 @@
 {
    "plugins": [
       "@babel",
-      "@babel/plugin-syntax-class-properties"
+      "@babel/syntax-class-properties"
    ],
    "parser": "@babel/eslint-parser",
    "parserOptions": {
