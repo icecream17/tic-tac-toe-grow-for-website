@@ -37,7 +37,7 @@ jobs:
         run: html-validator --file=game.html --verbose
         
       - name: Install babel eslint
-        run: yarn add eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env --dev
+        run: yarn add eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env @babel/eslint-plugin-plugin-syntax-class-properties --dev
       
       - name: Check game.js
         run: yarn run eslint --format codeframe --color game.js
