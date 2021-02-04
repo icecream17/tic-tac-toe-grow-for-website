@@ -37,13 +37,13 @@ jobs:
         run: html-validator --file=game.html --verbose
         
       - name: Install babel eslint
-        run: yarn add eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env @babel/plugin-syntax-class-properties --dev
+        run: npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env @babel/plugin-syntax-class-properties
       
       - name: Check game.js
-        run: yarn run eslint --format codeframe --color game.js
+        run: eslint --format codeframe --color game.js
 
       - name: Check tournament.js
-        run: yarn run eslint --format codeframe --color tournament.js
+        run: eslint --format codeframe --color tournament.js
       
       - name: HTML Preview
         id: html_preview
