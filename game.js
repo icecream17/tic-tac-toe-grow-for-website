@@ -206,78 +206,12 @@ class Move extends Position {
    }
 }
 
-class GameState {
-   constructor (game) {
-      this.turn = 0; /** Starts at 0 */
-      this.ply = 0;
-      this.toMove = 0; // index in player array
-      this.result = null;
-      this.winners = [];
-      this.game = game;
+class GameBase {
+   #MAX_LENGTH = 511;
+   #MAX_TURNS = 314;
+   static INITIAL_MAX_LENGTH = 511;
+   static INITIAL_MAX_TURNS = 314;
 
-      this.board = [
-         [new Cell(' ', 0, 0), new Cell(' ', 0, 1), new Cell(' ', 0, 2)],
-         [new Cell(' ', 1, 0), new Cell(' ', 1, 1), new Cell(' ', 1, 2)],
-         [new Cell(' ', 2, 0), new Cell(' ', 2, 1), new Cell(' ', 2, 2)]
-      ]; // WARNING: this.board[y][x]
-      this.board.width = 3;
-      this.board.height = 3; // same as this.board.length
-
-      this.moveHistory = [];
-   }
-
-   doMove (move) {
-      let {x, y} = move.originalPosition;
-      if (this.board[y][x].value !== ' ')
-         throw ERRORS.SQUARE_NOT_UPDATED;
-
-      // ; To prevent any function calls
-      // () To prevent parsing as a block
-      ;({x, y} = Game.prototype.updateBoard.call(this, x, y));
-
-      let moveFinish = Game.prototype.checkGameEnd.call(this, x, y);
-      if (moveFinish !== false) Game.prototype.updateGameEnd.call(this, moveFinish, x, y);
-
-      this.moveHistory.push(move);
-      this.ply++;
-      this.toMove = (this.toMove + 1) % players.length;
-      if (this.toMove === 0) this.turn++;
-   }
-
-   get originalMoves() {
-      const moves = [];
-      for (let y = 0; y < this.board.height; y++)
-         for (let x = 0; x < this.board.width; x++)
-            if (this.board[y][x].value === ' ')
-               moves.push(new Position(x, y));
-      return moves;
-   }
-
-   get correspondingMoves() {
-      let moves = this.originalMoves;
-      for (let move of moves)
-         for (
-            let index = this.moveHistory.length;
-            index < this.game.moveHistory.length;
-            index++
-         ) {
-            const nextMove = this.game.moveHistory[index].originalPosition;
-            if (nextMove.x === 0) move.x++;
-            if (nextMove.y === 0) move.y++;
-         }
-      return moves;
-   }
-
-   getAscii() {
-      return Game.prototype.getAscii.call(this);
-   }
-
-   logAscii() {
-      Game.prototype.logAscii.call(this);
-   }
-}
-
-class Game {
    constructor () {
       this.turn = 0; /** Starts at 0 */
       this.ply = 0;
@@ -293,89 +227,25 @@ class Game {
       this.board.width = 3;
       this.board.height = 3; // same as this.board.length
 
-      this.visual = [];
-      this.visual.offset = new Position(0, 0);
-      this.visualStart();
-
       this.moveHistory = [];
    }
 
-   // These static methods must be gotten from the class Game
-   // i.e.: Game.MAX_LENGTH instead of this.MAX_LENGTH
-
-   // TODO: Add a way to change this.
-   static set MAX_LENGTH(value) { throw ERRORS.CONST_MAX_LENGTH }
-   static get MAX_LENGTH() { return 511 }
-   static set MAX_TURNS(value) { throw ERRORS.CONST_MAX_TURNS }
-   static get MAX_TURNS() { return 314 }
+   // NOTE: No value validation.
+   set MAX_LENGTH(value) { this.#MAX_LENGTH = value }
+   get MAX_LENGTH() { return this.#MAX_LENGTH }
+   set MAX_TURNS(value) { this.#MAX_TURNS = value }
+   get MAX_TURNS() { return this.#MAX_TURNS }
 
    setCell(x, y, value) {
       this.board[y][x] = new Cell(value, x, y);
    }
 
-   visualStart() {
-      // the top-left of the board is 0, 0
-      // second row is 1, 0
-      // third row, seventh column is 3, 7
-
-      for (let y = 0; y < this.board.length; y++)
-         for (let x = 0; x < this.board.width; x++)
-            if (this.board[y][x].value !== '')
-               ELEMENTS.getSquare(
-                  this.visual.offset.x + x,
-                  this.visual.offset.y + y
-               ).className = 'board';
-   }
-
-   play(x, y) {
-      this.update(x, y);
-      this.playBots();
-      this.logAscii(true);
-   }
-
-   async playBots() {
-      if (players[this.toMove].type === "bot") {
-         await pause(200);
-         this.doBotMove();
-      }
-
-      this.logAscii(true);
-   }
-
-   update(x, y) {
-      console.debug(`(update) move: ${x} ${y}`);
-
-      if (this.board[y][x].value !== ' ')
-         throw ERRORS.SQUARE_NOT_UPDATED;
-
-      const oldPosition = {x, y};
-      let newXY = this.updateBoard(x, y);
-      x = newXY.x;
-      y = newXY.y;
-
-      let moveFinish = this.checkGameEnd(x, y);
-      if (moveFinish !== false) this.updateGameEnd(moveFinish, x, y);
-
-      this.moveHistory.push(new Move(oldPosition, {x, y}, players[this.toMove], this));
-      players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1];
-
-      // updateVisual must go after setting lastMove but before setting toMove
-      if (this === currentGame) this.updateVisual();
-
-      this.ply++;
-      this.toMove = (this.toMove + 1) % players.length;
-      if (this.toMove === 0) this.turn++;
-
-      // But this must go after setting turn
-      if (this === currentGame) this.updateVisualStats();
-
-      console.debug(`(update) move: ${x} ${y}, moveFinish: ${moveFinish}`);
-   }
+   // No update function provided!
 
    updateBoard(x, y) {
       // Possible bug in the future, the else ifs assume that the
       // first cell is not the same as the last cell, which would be untrue if
-      // the width or height was 1
+      // the board was somehow one cell big.
 
       // Since we grow the board down at the 4 ifs,
       // the (i === x ? ' ' : '') is redundant
@@ -427,47 +297,6 @@ class Game {
       return this.board[y][x];
    }
 
-   updateVisualStats() {
-      ELEMENTS.statsParagraph.innerText =
-`Width: ${this.board.width}
-Height: ${this.board.height}
-Turns: ${this.turn}`;
-   }
-
-   // Same as visualStart really
-   updateVisual() {
-      for (let y = 0; y < 20; y++)
-         for (let x = 0; x < 20; x++) {
-            let button = ELEMENTS.getSquare(x, y);
-            let cell = this.board?.[y - this.visual.offset.y]?.[x - this.visual.offset.x];
-
-            // undefined or empty string
-            button.classList.remove("board", "win");
-            button.style.removeProperty("border-color");
-            button.style.removeProperty("background-color");
-            button.style.removeProperty("background-image");
-
-            // Assumes (cell === undefined || cell.value !== undefined)
-            if (cell === undefined || cell.value === '') continue;
-            else button.classList.add('board');
-
-            if (cell.value !== ' ') {
-               let playerIndex = PLAYER_CHARS.indexOf(cell.value);
-               if (playerIndex === -1 && !cell.win)
-                  button.style.backgroundColor = "red";
-               else
-                  button.style.backgroundImage = `url("${player_assets[playerIndex]}")`;
-
-
-               button.classList.add("board");
-               if (cell.win)
-                  button.classList.add("win");
-               else if (players?.[playerIndex].lastMove?.index === cell.moveIndex)
-                  button.style.borderColor = PLAYER_BORDERS[playerIndex];
-            }
-         }
-      // Outer for doesn't need brackets
-   }
 
    updateGameEnd(result, lastX, lastY) {
       this.result ??= result[0];
@@ -485,24 +314,9 @@ Turns: ${this.turn}`;
          throw ERRORS.INVALID_MOVE_FINISH;
    }
 
-   // Gets the game state *before* a move is played
-   // So if moveIndex was 0, it would get the starting position
-   getGameStateAt(moveIndex) {
-      let gameCopy = new GameState(this);
-      for (let i = 0; i < moveIndex; i++)
-         gameCopy.doMove(this.moveHistory[i]);
-      
-      return gameCopy;
-   }
-
    checkGameEnd(x, y) {
-      if (this instanceof GameState) {
-         let win = Game.prototype.checkWin.call(this, x, y)
-         if (win) return ["win", win];
-      } else { // this instanceof Game
-         let win = this.checkWin(x, y);
-         if (win) return ["win", win];
-      }
+      let win = this.checkWin(x, y);
+      if (win) return ["win", win];
 
       if (this.board.width > 7 * this.board.height)
          return ["draw", "width is 7 times the height"];
@@ -647,12 +461,6 @@ Turns: ${this.turn}`;
       return wins.length ? wins : false; // If there is a win return wins
    }
 
-   doBotMove() {
-      if (players[this.toMove].player.type === "bot")
-         players[this.toMove].player.play();
-      else
-         console.info("Player must've changed into a human");
-   }
 
    getMoves() {
       let moves = [];
@@ -722,6 +530,183 @@ Turns: ${this.turn}`;
       else console.log(ascii, ...css);
    }
 
+
+}
+
+class GameState extends GameBase {
+   constructor (game) {
+      super();
+      this.game = game;
+   }
+
+   doMove (move) {
+      let {x, y} = move.originalPosition;
+      if (this.board[y][x].value !== ' ')
+         throw ERRORS.SQUARE_NOT_UPDATED;
+
+      // ; To prevent any function calls
+      // () To prevent parsing as a block
+      ;({x, y} = Game.prototype.updateBoard.call(this, x, y));
+
+      let moveFinish = Game.prototype.checkGameEnd.call(this, x, y);
+      if (moveFinish !== false) Game.prototype.updateGameEnd.call(this, moveFinish, x, y);
+
+      this.moveHistory.push(move);
+      this.ply++;
+      this.toMove = (this.toMove + 1) % players.length;
+      if (this.toMove === 0) this.turn++;
+   }
+
+   get originalMoves() {
+      const moves = [];
+      for (let y = 0; y < this.board.height; y++)
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value === ' ')
+               moves.push(new Position(x, y));
+      return moves;
+   }
+
+   get correspondingMoves() {
+      let moves = this.originalMoves;
+      for (let move of moves)
+         for (
+            let index = this.moveHistory.length;
+            index < this.game.moveHistory.length;
+            index++
+         ) {
+            const nextMove = this.game.moveHistory[index].originalPosition;
+            if (nextMove.x === 0) move.x++;
+            if (nextMove.y === 0) move.y++;
+         }
+      return moves;
+   }
+
+}
+
+class Game extends GameBase {
+   constructor () {
+      super();
+
+      this.visual = [];
+      this.visual.offset = new Position(0, 0);
+      this.visualStart();
+   }
+
+   visualStart() {
+      // the top-left of the board is 0, 0
+      // second row is 1, 0
+      // third row, seventh column is 3, 7
+
+      for (let y = 0; y < this.board.length; y++)
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value !== '')
+               ELEMENTS.getSquare(
+                  this.visual.offset.x + x,
+                  this.visual.offset.y + y
+               ).className = 'board';
+   }
+
+   play(x, y) {
+      this.update(x, y);
+      this.playBots();
+      this.logAscii(true);
+   }
+
+   async playBots() {
+      if (players[this.toMove].type === "bot") {
+         await pause(200);
+         this.doBotMove();
+      }
+
+      this.logAscii(true);
+   }
+
+   update(x, y) {
+      console.debug(`(update) move: ${x} ${y}`);
+
+      if (this.board[y][x].value !== ' ')
+         throw ERRORS.SQUARE_NOT_UPDATED;
+
+      const oldPosition = {x, y};
+      ({x, y} = this.updateBoard(x, y));
+
+      let moveFinish = this.checkGameEnd(x, y);
+      if (moveFinish !== false) this.updateGameEnd(moveFinish, x, y);
+
+      this.moveHistory.push(new Move(oldPosition, {x, y}, players[this.toMove], this));
+      players[this.toMove].lastMove = this.moveHistory[this.moveHistory.length - 1];
+
+      // updateVisual must go after setting lastMove but before setting toMove
+      if (this === currentGame) this.updateVisual();
+
+      this.ply++;
+      this.toMove = (this.toMove + 1) % players.length;
+      if (this.toMove === 0) this.turn++;
+
+      // But this must go after setting turn
+      if (this === currentGame) this.updateVisualStats();
+
+      console.debug(`(update) move: ${x} ${y}, moveFinish: ${moveFinish}`);
+   }
+
+   updateVisualStats() {
+      ELEMENTS.statsParagraph.innerText =
+`Width: ${this.board.width}
+Height: ${this.board.height}
+Turns: ${this.turn}`;
+   }
+
+   // Same as visualStart really
+   updateVisual() {
+      for (let y = 0; y < 20; y++)
+         for (let x = 0; x < 20; x++) {
+            let button = ELEMENTS.getSquare(x, y);
+            let cell = this.board?.[y - this.visual.offset.y]?.[x - this.visual.offset.x];
+
+            // undefined or empty string
+            button.classList.remove("board", "win");
+            button.style.removeProperty("border-color");
+            button.style.removeProperty("background-color");
+            button.style.removeProperty("background-image");
+
+            // Assumes (cell === undefined || cell.value !== undefined)
+            if (cell === undefined || cell.value === '') continue;
+            else button.classList.add('board');
+
+            if (cell.value !== ' ') {
+               let playerIndex = PLAYER_CHARS.indexOf(cell.value);
+               if (playerIndex === -1 && !cell.win)
+                  button.style.backgroundColor = "red";
+               else
+                  button.style.backgroundImage = `url("${player_assets[playerIndex]}")`;
+
+
+               button.classList.add("board");
+               if (cell.win)
+                  button.classList.add("win");
+               else if (players?.[playerIndex].lastMove?.index === cell.moveIndex)
+                  button.style.borderColor = PLAYER_BORDERS[playerIndex];
+            }
+         }
+      // Outer for doesn't need brackets
+   }
+
+   // Gets the game state *before* a move is played
+   // So if moveIndex was 0, it would get the starting position
+   getGameStateAt(moveIndex) {
+      let gameCopy = new GameState(this);
+      for (let i = 0; i < moveIndex; i++)
+         gameCopy.doMove(this.moveHistory[i]);
+      
+      return gameCopy;
+   }
+
+   doBotMove() {
+      if (players[this.toMove].player.type === "bot")
+         players[this.toMove].player.play();
+      else
+         console.info("Player must've changed into a human");
+   }
 
 }
 
