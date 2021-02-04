@@ -306,14 +306,15 @@ class GameBase {
       // Converted from an "if, else if, else" statement.
       switch (result[0]) {
          case "win":
-            notice("WINNNN", result);
-            for (let cell of result[1].flat().concat(this.board[lastY][lastX]))
-               cell.win = true;
+            {
+               notice("WINNNN", result);
+               for (let cell of result[1].flat().concat(this.board[lastY][lastX]))
+                  cell.win = true;
 
-            let winArray = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
-            if (this.winners.every(array => !array.valuesEqual(winArray)))
-               this.winners.push(winArray);
-
+               let winArray = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
+               if (this.winners.every(array => !array.valuesEqual(winArray)))
+                  this.winners.push(winArray);
+            }
             break;
          case "draw":
             notice(`*gasp*! Draw!\n${result[1]}`, result);
