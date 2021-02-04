@@ -237,6 +237,7 @@
          }
       ],
       "no-array-constructor": "warn",
+      "no-extra-semi": "warn",
       "no-lonely-if": "warn",
       "no-mixed-operators": "off",
       "no-negated-condition": "warn",
