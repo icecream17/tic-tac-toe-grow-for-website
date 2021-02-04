@@ -75,11 +75,13 @@ class Tournament {
       this.currentRound = 0;
       this.interval = interval;
       this.intervalID = null;
-      this.games = new TournamentGameList();
+      this.games = new TournamentGameList(this);
       this.finished = false;
    }
 
    start () {
+      console.info('Tournament started');
+      console.info('Round 0 started');
       Game.prototype.doBotMove = Tournament.botMoveFunc;
       this.intervalID = setInterval(this.playGame.bind(this), this.interval);
    }
@@ -88,6 +90,7 @@ class Tournament {
       this.finished = this.waitForLastGame();
 
       if (this.finished) {
+         console.info('Tournament finished');
          clearInterval(this.intervalID);
          this.previousID = this.intervalID;
          this.intervalID = null;
@@ -106,10 +109,12 @@ class Tournament {
 
    playGame () {
       if (this.currentBots[0] === bots.length) {
+         console.info(`Round ${this.currentRound} finished.`);
          this.currentRound++;
          if (this.currentRound >= this.rounds)
             this.finish();
          else {
+            console.info(`Round ${this.currentRound} started.`);
             this.currentBots = [0, 0];
             ELEMENTS.resetGameButton.click(); // Because of the if statement below
          }
