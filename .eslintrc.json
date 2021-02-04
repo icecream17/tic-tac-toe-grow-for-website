@@ -148,7 +148,7 @@
                "player_assets",
                "bot_mechanics",
                "random_move",
-               "middle_index"
+               "middle_index",
                "best_move"
             ]
          }
