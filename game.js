@@ -207,12 +207,13 @@ class Move extends Position {
 }
 
 class GameState {
-   constructor () {
+   constructor (game) {
       this.turn = 0; /** Starts at 0 */
       this.ply = 0;
       this.toMove = 0; // index in player array
       this.result = null;
       this.winners = [];
+      this.game = game;
 
       this.board = [
          [new Cell(' ', 0, 0), new Cell(' ', 0, 1), new Cell(' ', 0, 2)],
@@ -226,10 +227,11 @@ class GameState {
    }
 
    doMove (move) {
-      if (this.board[move.y][move.x].value !== ' ')
+      let {x, y} = move.originalPosition;
+      if (this.board[y][x].value !== ' ')
          throw ERRORS.SQUARE_NOT_UPDATED;
 
-      let {x, y} = Game.prototype.updateBoard.call(this, move.x, move.y);
+      {x, y} = Game.prototype.updateBoard.call(this, x, y);
 
       let moveFinish = Game.prototype.checkGameEnd.call(this, x, y);
       if (moveFinish !== false) Game.prototype.updateGameEnd.call(this, moveFinish, x, y);
@@ -484,7 +486,7 @@ Turns: ${this.turn}`;
    // Gets the game state *before* a move is played
    // So if moveIndex was 0, it would get the starting position
    getGameStateAt(moveIndex) {
-      let gameCopy = new GameState();
+      let gameCopy = new GameState(this);
       for (let i = 0; i < moveIndex; i++)
          gameCopy.doMove(this.moveHistory[i]);
       
