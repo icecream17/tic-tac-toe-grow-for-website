@@ -231,7 +231,9 @@ class GameState {
       if (this.board[y][x].value !== ' ')
          throw ERRORS.SQUARE_NOT_UPDATED;
 
-      {x, y} = Game.prototype.updateBoard.call(this, x, y);
+      // ; To prevent any function calls
+      // () To prevent parsing as a block
+      ;({x, y} = Game.prototype.updateBoard.call(this, x, y));
 
       let moveFinish = Game.prototype.checkGameEnd.call(this, x, y);
       if (moveFinish !== false) Game.prototype.updateGameEnd.call(this, moveFinish, x, y);
