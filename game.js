@@ -26,21 +26,21 @@ class CustomError extends Error {
 }
 
 class ElementError extends CustomError {
-   constructor (element = document.createElement('HTMLUnknownElement'), message) {
+   constructor (message, element = document.createElement('HTMLUnknownElement')) {
       super(message);
       this.element = element;
    }
 }
 
 class NothingDisabledError extends CustomError {
-   constructor (noun = "Nothing", plural, message) {
-      super(message ?? `Cannot enable ${noun} since all ${plural ?? `${noun}s`} are already enabled.`);
+   constructor (noun = "Nothing", plural = `${noun}s`, message = `Cannot enable ${noun} since all ${plural} are already enabled.`) {
+      super(message);
    }
 }
 
 class NothingEnabledError extends CustomError {
-   constructor (noun = "Nothing", plural, message) {
-      super(message ?? `Cannot disable ${noun} since all ${plural ?? `${noun}s`} are already disabled.`);
+   constructor (noun = "Nothing", plural = `${noun}s`, message = `Cannot disable ${noun} since all ${plural} are already disabled.`) {
+      super(message);
    }
 }
 
@@ -70,7 +70,7 @@ class ElementIsDisabledError extends DisabledError {
 
 class ElementAlreadyError extends ElementError {
    constructor (element, isAlreadyWhat) {
-      super(element, `${element.tagName} element is already ${isAlreadyWhat}`);
+      super(`${element.tagName} element is already ${isAlreadyWhat}`, element);
    }
 }
 
@@ -167,16 +167,16 @@ class Cell extends Position {
 }
 
 class Move extends Position {
-   // Due to the unique position of the constructor in Game.update:
-      // x, y: updated
-      // game.moveHistory: latest move is the one before this move
+   // "Move" is highly bound to the class "Game".
+   // super(newXY.x, newXY.y);
+   // this.index = game.moveHistory.length
    constructor (oldXY, newXY, player, game = currentGame) {
       super(newXY.x, newXY.y);
       this.game = game;
       this.index = game.moveHistory.length; // must be true
       this.player = player;
       this.positionAtLastUpdate = new Position(this.x, this.y);
-      this.lastUpdateIndex = this.index;  
+      this.lastUpdateIndex = this.index;
 
       this.originalPosition = oldXY; // No board update
    }
@@ -201,8 +201,8 @@ class Move extends Position {
 
    updatedDistance(position) {
       let updatedPosition = this.correspondingPosition;
-      return Math.abs(updatedPosition.x - position.x) +
-             Math.abs(updatedPosition.y - position.y);
+      return Math.abs(updatedPosition.x - position.x)
+           + Math.abs(updatedPosition.y - position.y);
    }
 }
 
@@ -299,35 +299,45 @@ class GameBase {
 
 
    updateGameEnd(result, lastX, lastY) {
+      // Even if a win happens after a draw, or a draw happens after a win,
+      // or even a win happens after a win, *only the first result counts*.
       this.result ??= result[0];
-      if (result[0] === "win") {
-         notice("WINNNN", result);
-         for (let cell of result[1].flat().concat(this.board[lastY][lastX]))
-            cell.win = true;
 
-         let winArray = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
-         if (this.winners.every(array => !array.valuesEqual(winArray)))
-            this.winners.push(winArray);
-      } else if (result[0] === "draw") {
-         notice(`*gasp*! Draw!\n${result[1]}`, result);
-      } else
-         throw ERRORS.INVALID_MOVE_FINISH;
+      // Converted from an "if, else if, else" statement.
+      switch (result[0]) {
+         case "win":
+            notice("WINNNN", result);
+            for (let cell of result[1].flat().concat(this.board[lastY][lastX]))
+               cell.win = true;
+
+            let winArray = [this.toMove, PLAYER_NAMES[this.toMove], players[this.toMove].player];
+            if (this.winners.every(array => !array.valuesEqual(winArray)))
+               this.winners.push(winArray);
+
+            break;
+         case "draw":
+            notice(`*gasp*! Draw!\n${result[1]}`, result);
+            break;
+         default:
+            throw ERRORS.INVALID_MOVE_FINISH;
+      }
    }
 
    checkGameEnd(x, y) {
       let win = this.checkWin(x, y);
       if (win) return ["win", win];
 
+      // In this case, a switch statement would be worse.
       if (this.board.width > 7 * this.board.height)
          return ["draw", "width is 7 times the height"];
       else if (this.board.height > 7 * this.board.width)
          return ["draw", "height is 7 times the width"];
       else if (this.turn >= this.MAX_TURNS)
-         return ["draw", `max turns reached (${Game.MAX_TURNS})`]
+         return ["draw", `max turns reached (${Game.MAX_TURNS})`];
       else if (this.board.width >= this.MAX_LENGTH)
-         return ["draw", `max length reached by width (${Game.MAX_LENGTH})`]
+         return ["draw", `max length reached by width (${Game.MAX_LENGTH})`];
       else if (this.board.height >= this.MAX_LENGTH)
-         return ["draw", `max length reached by height (${Game.MAX_LENGTH})`]
+         return ["draw", `max length reached by height (${Game.MAX_LENGTH})`];
       else
          return false;
    }
@@ -352,6 +362,7 @@ class GameBase {
             if (square?.value !== playerValue) break;
             diag.push(square);
          }
+
          return diag;
       }
 
@@ -406,7 +417,7 @@ class GameBase {
       ];
 
       for (let sevenNArowCheck of sevenChecks)
-         if (sevenNArowCheck) wins.push(sevenNArowCheck)
+         if (sevenNArowCheck) wins.push(sevenNArowCheck);
 
       const rightAngleMarkChecks = [
          checkMark(diagonal[0], diagonal[1]),
@@ -416,7 +427,7 @@ class GameBase {
       ];
 
       for (let markCheck of rightAngleMarkChecks)
-         if (markCheck) wins.push(markCheck)
+         if (markCheck) wins.push(markCheck);
 
 
       // arrow function in order to access "this"
@@ -430,26 +441,26 @@ class GameBase {
          // The checkmarks are made of the opposite diagonal,
          // plus this diagonal (minus the shared cell), which make one big side,
          // then the other perpendicular sides.
-         let currBase = [...(oppDiag.slice(1)), diag[0]]; // Reordering cells
+         let currBase = [...oppDiag.slice(1), diag[0]]; // Reordering cells
          for (let square of diag.slice(1)) {
             currBase.push(square);
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...(perpDiag.slice(1))]);
+               newWins.push([...currBase, ...perpDiag.slice(1)]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
+               newWins.push([...currBase, ...oppPerpDiag.slice(1)]);
          }
 
-         currBase = [...(diag.slice(1)), diag[0]];
+         currBase = [...diag.slice(1), diag[0]];
          for (let square of oppDiag.slice(1)) {
             currBase.push(square);
             let perpDiag = goDiagonal(square.x, square.y, perpStep);
             let oppPerpDiag = goDiagonal(square.x, square.y, oppPerpStep);
             if (isValidCheckmark(currBase, perpDiag))
-               newWins.push([...currBase, ...(perpDiag.slice(1))]);
+               newWins.push([...currBase, ...perpDiag.slice(1)]);
             if (isValidCheckmark(currBase, oppPerpDiag))
-               newWins.push([...currBase, ...(oppPerpDiag.slice(1))]);
+               newWins.push([...currBase, ...oppPerpDiag.slice(1)]);
          }
 
          return newWins;
@@ -486,7 +497,7 @@ class GameBase {
    }
 
    logAscii(verbose) {
-      let ascii = `%c+%c-${'-'.repeat(this.board.width)}-%c+\n`
+      let ascii = `%c+%c-${'-'.repeat(this.board.width)}-%c+\n`;
       let css = [
          'color:white',
          'background-color:gray;color:gray',
@@ -526,7 +537,7 @@ class GameBase {
          'color:white'
       )
 
-      if (verbose) console.debug(ascii, ...css)
+      if (verbose) console.debug(ascii, ...css);
       else console.log(ascii, ...css);
    }
 
@@ -544,9 +555,8 @@ class GameState extends GameBase {
       if (this.board[y][x].value !== ' ')
          throw ERRORS.SQUARE_NOT_UPDATED;
 
-      // ; To prevent any function calls
       // () To prevent parsing as a block
-      ;({x, y} = Game.prototype.updateBoard.call(this, x, y));
+      ({x, y} = Game.prototype.updateBoard.call(this, x, y));
 
       let moveFinish = Game.prototype.checkGameEnd.call(this, x, y);
       if (moveFinish !== false) Game.prototype.updateGameEnd.call(this, moveFinish, x, y);
@@ -998,7 +1008,7 @@ const bot_mechanics = {
    /** Makes the previous moves uncomfortable */
    closer() {
       let moves = this.getMoves();
-      let best_moves = [-Infinity, []]
+      let best_moves = [-Infinity, []];
       for (let move of moves) {
          let score = 100_000; // Positive number --> Easier score tracking
          for (let historicalMove of this.moveHistory) {
