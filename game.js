@@ -88,8 +88,8 @@ class ElementIsAlreadyEnabledError extends ElementAlreadyError {
 
 // When an internal value is wrong
 class InvalidValueError extends CustomError {
-   constructor (valueName, message) {
-      super(message ?? `${valueName ? "Some" : "The"} internal value (${valueName ?? "name not provided"}) was invalid`);
+   constructor (valueName = "value identifier unprovided", message = `Invalid internal value! (${valueName})`) {
+      super(message);
    }
 }
 
