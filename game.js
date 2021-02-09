@@ -152,8 +152,6 @@ class EvilPlayerError extends CustomError {
 
 // Only for constant non-default errors
 const ERRORS = {
-   CONST_MAX_LENGTH: new TypeError("Assignment to constant property {MAX_LENGTH}"),
-   CONST_MAX_TURNS: new TypeError("Assignment to constant property {MAX_TURNS}"),
    SQUARE_NOT_UPDATED: new InvalidValueError("square", "AAA WHAT!????"),
    INVALID_MOVE_FINISH: new InvalidValueError("moveFinish"),
    IMPOSSIBLE_LAST_MOVE: new ReferenceError("Last move was not an option...?"),
