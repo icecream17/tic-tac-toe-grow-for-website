@@ -1,13 +1,38 @@
-"use strict";
-// let verbose = false;
-// console.debug --> verbose
-// console.info / console.log --> info
+// This is licensed under the Apache Licesne 2.0,
+// see https://github.com/icecream17/tic-tac-toe-grow-for-website/blob/main/LICENSE
 
-// for async functions
+"use strict";
+
+// The log levels used are:
+// verbose, by console.debug
+// info, by console.info or console.log
+
+/**
+ * Used by async functions to "wait" for some time.
+ *
+ * @param {number} ms - How many milliseconds to wait.
+ * @return {Promise<"Done!">}
+ * @example
+ *
+ *    pause(1000); // Wait 1000ms, or 1 second.
+ */
 async function pause(ms) {
    return await new Promise(resolve => setTimeout(resolve, ms, "Done!"));
 }
 
+/**
+ * This is not a [native code] function yet.
+ * Checks if two arrays' values are equal.
+ *
+ * @param {*[]} arr - An array to check
+ * @return {boolean} - Whether the two arrays' values are equal
+ * @example
+ *
+ *    [2, 3].valuesEqual([2, 3]) // true
+ *    [2, 3].valuesEqual([2, 4]) // false
+ *    [2, 4, [5]].valuesEqual([2, 4, [5]]) // true
+ *    [2, 4, [5]].valuesEqual([2, 4, 5]) // false
+ */
 Array.prototype.valuesEqual = function valuesEqual(arr) {
    if (!Array.isArray(arr) || this.length !== arr.length)
       return false;
