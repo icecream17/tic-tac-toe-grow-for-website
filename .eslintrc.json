@@ -12,7 +12,6 @@
       "es2021": true
    },
    "extends": "eslint:recommended",
-   "eslintIgnore": ["minified.js"],
    "reportUnusedDisableDirectives": false,
    "rules": {
       "new-cap": "off",
