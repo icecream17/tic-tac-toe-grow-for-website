@@ -38,8 +38,9 @@ Array.prototype.valuesEqual = function valuesEqual(arr) {
       return false;
    
    for (let i = 0; i < this.length; i++)
-      if (Array.isArray(this[i]) && Array.isArray(arr[i]) && !this[i].valuesEqual(arr[i]))
-         return false;
+      if (Array.isArray(this[i]) && Array.isArray(arr[i]))
+         if (!this[i].valuesEqual(arr[i]))
+            return false;
       else if (this[i] !== arr[i])
          return false;
    return true;
