@@ -1,4 +1,4 @@
-// This is licensed under the Apache Licesne 2.0,
+// This is licensed under the Apache License 2.0,
 // see https://github.com/icecream17/tic-tac-toe-grow-for-website/blob/main/LICENSE
 
 "use strict";
@@ -21,8 +21,8 @@ async function pause(ms) {
 }
 
 /**
- * This is not a [native code] function yet.
- * Checks if two arrays' values are equal.
+ * This is not a [native code] function.
+ * Checks if the value of <code>this</code> array is equal to the values of <code>arr</code>. 
  *
  * @param {*[]} arr - An array to check
  * @return {boolean} - Whether the two arrays' values are equal
@@ -45,12 +45,18 @@ Array.prototype.valuesEqual = function valuesEqual(arr) {
    return true;
 }
 
-
+/** Represents an explicit and somewhat anticipated error */
 class CustomError extends Error {
+   /** @returns {string} - The error constructor name. */
    get name() { return this.constructor.name } // For ease of maintenance
 }
 
+/** Represents an error involving an element. */
 class ElementError extends CustomError {
+   /**
+    * @param {string} [message] - The error message to display in the console when thrown
+    * @param {HTMLElement} [element=HTMLUnknownElement] - The element that was involved in the error
+    */
    constructor (message, element = document.createElement('HTMLUnknownElement')) {
       super(message);
       this.element = element;
