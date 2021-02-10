@@ -809,28 +809,16 @@ const ELEMENTS = {
 
    // {b} is unneccesary in {a b c}, the space selects all children
    // TODO: Only have a getter for non-constant elements
-   getUsernameInputs() {
-      return document.querySelectorAll('#nameFields fieldset input');
-   },
-   getEnablePersonButtons() {
-      return document.querySelectorAll('#nameFields fieldset button.enable');
-   },
-   getDisablePersonButtons() {
-      return document.querySelectorAll('#nameFields fieldset button.disable');
-   },
+   usernameInputs: document.querySelectorAll('#nameFields fieldset input'),
+   enablePersonButtons: document.querySelectorAll('#nameFields fieldset button.enable'),
+   disablePersonButtons: document.querySelectorAll('#nameFields fieldset button.disable'),
+   enablePlayerButtons: document.querySelectorAll('#choosePlayerFields button.enable'),
+   disablePlayerButtons: document.querySelectorAll('#choosePlayerFields button.disable'),
 
-   getPlayerSelects() {
-      return document.querySelectorAll('#choosePlayerFields label select');
-   },
+   playerSelects: document.querySelectorAll('#choosePlayerFields label select'),
    getEnabledPlayerSelects() {
       return document.querySelectorAll('#choosePlayerFields label select:enabled');
    },
-   getEnablePlayerButtons() {
-      return document.querySelectorAll('#choosePlayerFields button.enable');
-   },
-   getDisablePlayerButtons() {
-      return document.querySelectorAll('#choosePlayerFields button.disable');
-   }
 };
 
 // up down left right
@@ -887,32 +875,32 @@ ELEMENTS.numPeopleSelect.onchange = function (event) {
 ELEMENTS.numPlayersSelect.onchange = function (event) {
    console.debug(EnableOrDisablePeople.call(event.target));
 };
-for (let input of ELEMENTS.getUsernameInputs())
+for (let input of ELEMENTS.usernameInputs)
    input.onchange = function usernameChange(event) {
       if (event.target.disabled) throw new ElementIsDisabledError(event.target);
       console.debug(changeName.call(event.target));
    };
-for (let button of ELEMENTS.getEnablePersonButtons())
+for (let button of ELEMENTS.enablePersonButtons)
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyEnabledError(event.target);
       console.debug(enablePerson.call(event.target.parentElement.children[0].children[1]));
    };
-for (let button of ELEMENTS.getDisablePersonButtons())
+for (let button of ELEMENTS.disablePersonButtons)
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyDisabledError(event.target);
       console.debug(disablePerson.call(event.target.parentElement.children[0].children[1]));
    };
-for (let select of ELEMENTS.getPlayerSelects())
+for (let select of ELEMENTS.playerSelects)
    select.onchange = function playerChange(event) {
       if (event.target.disabled) throw new ElementIsDisabledError(event.target);
       console.debug(changePlayer.call(event.target));
    };
-for (let button of ELEMENTS.getEnablePlayerButtons())
+for (let button of ELEMENTS.enablePlayerButtons)
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyEnabledError(event.target);
       console.debug(enablePlayer.call(event.target.parentElement.children[0].children[1]));
    };
-for (let button of ELEMENTS.getDisablePlayerButtons())
+for (let button of ELEMENTS.disablePlayerButtons)
    button.onclick = function (event) {
       if (event.target.disabled) throw new ElementIsAlreadyDisabledError(event.target);
       console.debug(disablePlayer.call(event.target.parentElement.children[0].children[1]));
@@ -1113,8 +1101,8 @@ let players = [
  * disablePerson           #nameFields <input>           #nameFields <button.disable>
  * enablePeople            undefined                     used in EnableOrDisablePeople
  * disablePeople           undefined                     used in EnableOrDisablePeople
- * enablePlayer            #choosePlayerFields <option>? #choosePlayerFields <button.enable>
- * disablePlayer           #choosePlayerFields <option>? #choosePlayerFields <button.disable>
+ * enablePlayer            #choosePlayerFields <select>  #choosePlayerFields <button.enable>
+ * disablePlayer           #choosePlayerFields <select>  #choosePlayerFields <button.disable>
  * enablePlayers           undefined                     used in EnableOrDisablePlayers
  * disablePlayers          undefined                     used in EnableOrDisablePlayers
  * 
@@ -1178,7 +1166,7 @@ async function changeName() {
    let name = this.value.length ? this.value : this.placeholder;
    people[correctIndex].name = name;
 
-   for (let select of ELEMENTS.getPlayerSelects())
+   for (let select of ELEMENTS.playerSelects)
       select.firstElementChild.children[correctIndex].text = name;
    return `Done: Name changed to ${name}`;
 }
@@ -1192,7 +1180,7 @@ async function enablePerson() {
    const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = false;
 
-   for (let select of ELEMENTS.getPlayerSelects())
+   for (let select of ELEMENTS.playerSelects)
       select.firstElementChild.children[personIndex].disabled = false;
 
    this.disabled = false;
@@ -1210,7 +1198,7 @@ async function disablePerson() {
    const personIndex = this.parentElement.id[13] - 1;
    people[personIndex].disabled = true;
 
-   for (let select of ELEMENTS.getPlayerSelects())
+   for (let select of ELEMENTS.playerSelects)
       select.firstElementChild.children[personIndex].disabled = true;
 
    this.disabled = true;
@@ -1224,7 +1212,7 @@ async function disablePerson() {
 async function enablePeople(num) {
    let clickPromises = [];
    let counter = activePeople;
-   for (let button of ELEMENTS.getEnablePersonButtons()) {
+   for (let button of ELEMENTS.enablePersonButtons) {
       if (button.disabled) continue;
       clickPromises.push(button.click());
       
@@ -1245,7 +1233,7 @@ async function enablePeople(num) {
 async function disablePeople(num) {
    let clickPromises = [];
    let counter = activePeople;
-   for (let button of ELEMENTS.getDisablePersonButtons()) {
+   for (let button of ELEMENTS.disablePersonButtons) {
       if (button.disabled) continue;
       clickPromises.push(button.click());
       if (--counter === num) break;
@@ -1265,6 +1253,11 @@ async function disablePeople(num) {
 // this = <select disabled>
 async function enablePlayer() {
    if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
+
+   let playerIndexPlusOne = this.parentElement.id[8]
+   if (playerIndexPlusOne !== players.length)
+      return await ELEMENTS.disablePlayerButtons[playerIndexPlusOne].click();
+
    activePlayers++; ELEMENTS.numPeopleSelect.selectedIndex++;
    activeBots++;
 
@@ -1272,32 +1265,63 @@ async function enablePlayer() {
    this.parentElement.nextElementSibling.disabled = true;
    this.parentElement.nextElementSibling.nextElementSibling.disabled = false;
 
+   // Dummy player
+   // Should always be right after the enabled players.
    this.selectedIndex = 4;
-   
-   // Add a dummy player before dispatchEvent
    players.push(new PlayerReference("bot", 0));
    this.dispatchEvent(new Event("change")); // triggers changePlayer; *changes* new player
    
-   // if (currentGame.toMove === 0) currentGame.toMove = players.length - 1
-   // doesn't make sense here because player added is a bot
+   if (currentGame.toMove === 0) {
+      currentGame.toMove = players.length - 1;
+      currentGame.turn--;
+   }
 
    return "Done! Enabled player (random_move for safety)";
 }
 
 // Min players: 1
+// this = <input (not:disabled)>
 async function disablePlayer() {
-   // if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
-   // activePlayers--;
-   
-   console.warn(NOT_DONE_YET);
-   // this.disabled = true;
+   if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
+
+   let option = this.selectedOptions[0];
+
+   let playerIndexPlusOne = this.parentElement.id[8]; // The next player is more useful
+   if (playerIndexPlusOne < players.length) {
+      let previousIndex = this.selectedIndex;
+      this.selectedIndex = ELEMENTS.playerSelects[playerIndexPlusOne].selectedIndex;
+      ELEMENTS.playerSelects[playerIndexPlusOne].selectedIndex = previousIndex;
+
+      this.dispatchEvent(new Event("change"));
+      ELEMENTS.playerSelects[playerIndexPlusOne].dispatchEvent(new Event("change"));
+
+      return await ELEMENTS.disablePlayerButtons[playerIndex + 1].click();
+   } else {
+      activePlayers--;
+      this.disabled = true;
+      this.parentElement.nextElementSibling.disabled = false;
+      this.parentElement.nextElementSibling.nextElementSibling.disabled = true;
+      players.pop();
+
+      // <optgroup> label
+      if (option.parentElement.label === "Bots") activeBots--;
+      else activePeople--;
+
+      if (currentGame.toMove === playerIndexPlusOne - 1) {
+         currentGame.toMove = 0;
+         currentGame.turn++;
+      }
+
+      currentGame.playBots();
+      return ["Done! Player disabled"];
+   }
 }
 
 // Number!
 async function enablePlayers(num) {
    let clickPromises = [];
    let counter = activePlayers;
-   for (let button of ELEMENTS.getEnablePlayerButtons()) {
+   for (let button of ELEMENTS.enablePlayerButtons) {
       if (button.disabled) continue;
       clickPromises.push(button.click());
       if (++counter === num) break;
@@ -1319,7 +1343,7 @@ async function enablePlayers(num) {
 async function disablePlayers(num) {
    let clickPromises = [];
    let counter = activePlayers;
-   for (let button of ELEMENTS.getDisablePlayerButtons()) {
+   for (let button of ELEMENTS.disablePlayerButtons) {
       if (button.disabled) continue;
       clickPromises.push(button.click());
       if (--counter === num) break;
