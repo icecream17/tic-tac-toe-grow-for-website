@@ -24,11 +24,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.15'
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: log
-          path: .github/logs/log.txt
     
       - name: Install HTMLValidator
         run: npm install html-validator-cli -g
@@ -44,12 +39,4 @@ jobs:
 
       - name: Check tournament.js
         run: ./node_modules/.bin/eslint --format codeframe --color tournament.js
-      
-      - name: HTML Preview
-        id: html_preview
-        uses: pavi2410/html-preview-action@v2
-        with:
-          html_file: game.html
 
-      - run: echo "${{ format('[Click here to preview HTML page in browser] {0}', steps.html_preview.outputs.url) }}"
-        
