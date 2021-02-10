@@ -1173,10 +1173,12 @@ async function changeName() {
 }
 
 // this = <input>
-async function enablePerson() {
+async function enablePerson(fromEnablePeople=false) {
    // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fit...
    if (activePeople === 4) throw ERRORS.EVERYONEs_ENABLED;
-   activePeople++; ELEMENTS.numPeopleSelect.selectedIndex++;
+   activePeople++;
+
+   if (!fromEnablePeople) ELEMENTS.numPeopleSelect.selectedIndex++;
 
    const personIndex = this.parentElement.innerText[10] - 1;
    people[personIndex].disabled = false;
@@ -1192,9 +1194,11 @@ async function enablePerson() {
 
 
 // Bug, probably feature: Player not changed when disabled
-async function disablePerson() {
+async function disablePerson(fromDisablePeople=false) {
    if (activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
-   activePeople--; ELEMENTS.numPeopleSelect.selectedIndex--;
+   activePeople--;
+
+   if (!fromDisablePeople) ELEMENTS.numPeopleSelect.selectedIndex--;
 
    const personIndex = this.parentElement.id[13] - 1;
    people[personIndex].disabled = true;
@@ -1215,7 +1219,9 @@ async function enablePeople(num) {
    let counter = activePeople;
    for (let button of ELEMENTS.enablePersonButtons) {
       if (button.disabled) continue;
-      clickPromises.push(enablePerson.call(button.parentElement.children[0].children[1]));
+      clickPromises.push(
+         enablePerson.call(button.parentElement.children[0].children[1], true)
+      );
       
       if (++counter === num) break;
    }
@@ -1236,7 +1242,10 @@ async function disablePeople(num) {
    let counter = activePeople;
    for (let button of ELEMENTS.disablePersonButtons) {
       if (button.disabled) continue;
-      clickPromises.push(disablePerson.call(button.parentElement.children[0].children[1]));
+      clickPromises.push(
+         disablePerson.call(button.parentElement.children[0].children[1], true)
+      );
+
       if (--counter === num) break;
    }
 
@@ -1252,14 +1261,15 @@ async function disablePeople(num) {
 }
 
 // this = <select disabled>
-async function enablePlayer() {
+async function enablePlayer(fromEnablePlayers=false) {
    if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
 
    let playerIndex = this.parentElement.id[8] - 1;
    if (playerIndex !== players.length)
       return await ELEMENTS.enablePlayerButtons[playerIndex].click();
 
-   activePlayers++; ELEMENTS.numPlayersSelect.selectedIndex++;
+   if (!fromEnablePlayers) ELEMENTS.numPlayersSelect.selectedIndex++;
+   activePlayers++;
    activeBots++;
 
    this.disabled = false;
@@ -1282,7 +1292,7 @@ async function enablePlayer() {
 
 // Min players: !1 (apparently it's 0)
 // this = <input (not:disabled)>
-async function disablePlayer() {
+async function disablePlayer(fromDisablePlayers=false) {
    if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
 
    let option = this.selectedOptions[0];
@@ -1297,7 +1307,7 @@ async function disablePlayer() {
       this.dispatchEvent(new Event("change"));
       ELEMENTS.playerSelects[playerIndexPlusOne].dispatchEvent(new Event("change"));
 
-      return await ELEMENTS.disablePlayerButtons[playerIndexPlusOne].click();
+      return await disablePlayer.call(ELEMENTS.playerSelects[playerIndexPlusOne], true)
    } else {
       this.disabled = true;
       this.parentElement.nextElementSibling.disabled = false;
@@ -1326,7 +1336,10 @@ async function enablePlayers(num) {
    let counter = activePlayers;
    for (let button of ELEMENTS.enablePlayerButtons) {
       if (button.disabled) continue;
-      clickPromises.push(enablePlayer.call(button.parentElement.children[0].children[1]));
+      clickPromises.push(
+         enablePlayer.call(button.parentElement.children[0].children[1], true)
+      );
+
       if (++counter === num) break;
    }
 
@@ -1334,9 +1347,6 @@ async function enablePlayers(num) {
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
-   // eslint-disable-next-line require-atomic-updates
-   // Doesn't apply in this case
-   activePlayers = counter;
    if (counter !== num)
       console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
    
@@ -1348,7 +1358,10 @@ async function disablePlayers(num) {
    let counter = activePlayers;
    for (let button of ELEMENTS.disablePlayerButtons) {
       if (button.disabled) continue;
-      clickPromises.push(disablePlayer.call(button.parentElement.children[0].children[1]));
+      clickPromises.push(
+         disablePlayer.call(button.parentElement.children[0].children[1], true)
+      );
+
       if (--counter === num) break;
    }
 
@@ -1356,7 +1369,6 @@ async function disablePlayers(num) {
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
-   activePlayers = counter;
    if (counter !== num)
       console.warn(`Failed to disable the correct amount: ${counter} !== ${num}`);
    
