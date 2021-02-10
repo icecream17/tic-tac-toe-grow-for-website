@@ -1114,6 +1114,7 @@ let players = [
 
 // Some of these functions access the ID of an element, like this.parentElement.id[8]
 // which corresponds to the last character in the IDs, in this case "whoPlaysN"
+// The IDs are 1-based index, so subtract one a lot of the time.
 
 // this = #playerAmountLabel <select>
 async function EnableOrDisablePlayers() {
@@ -1254,9 +1255,9 @@ async function disablePeople(num) {
 async function enablePlayer() {
    if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
 
-   let playerIndex = this.parentElement.id[8]
+   let playerIndex = this.parentElement.id[8] - 1;
    if (playerIndex !== players.length)
-      return await ELEMENTS.enablePlayerButtons[playerIndex - 1].click();
+      return await ELEMENTS.enablePlayerButtons[playerIndex].click();
 
    activePlayers++; ELEMENTS.numPeopleSelect.selectedIndex++;
    activeBots++;
@@ -1286,7 +1287,8 @@ async function disablePlayer() {
 
    let option = this.selectedOptions[0];
 
-   let playerIndexPlusOne = this.parentElement.id[8]; // The next player is more useful
+   // The next player is more useful - so no index correction here.
+   let playerIndexPlusOne = this.parentElement.id[8];
    if (playerIndexPlusOne < players.length) {
       let previousIndex = this.selectedIndex;
       this.selectedIndex = ELEMENTS.playerSelects[playerIndexPlusOne].selectedIndex;
