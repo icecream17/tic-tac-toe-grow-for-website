@@ -72,7 +72,7 @@ class Tournament {
    constructor (rounds, interval=4000) {
       if (typeof rounds !== "number") throw TypeError("Rounds must be a number")
       if (Number.isNaN(rounds)) throw TypeError("NaN Rounds?? Not a number.")
-      if (!Number.isInteger(rounds)) throw TyeError("Integer amount of rounds required")
+      if (!Number.isInteger(rounds)) throw TypeError("Integer amount of rounds required")
       if (rounds <= 0) throw RangeError("Tournament must be at least 1 round")
       
       this.currentBots = [0, 0];
