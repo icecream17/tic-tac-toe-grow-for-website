@@ -99,6 +99,15 @@ class Tournament {
       }
    }
    
+   forceStop () {
+      console.info('Tournament force finished');
+      clearInterval(this.intervalID);
+      this.previousID = this.intervalID;
+      this.intervalID = null;
+      Game.prototype.doBotMove = NON_TOURNAMENT_BOT_MOVE_FUNC;
+      tournaments.push(this);
+   }
+   
    /* Returns true when last game is finished */
    waitForLastGame () {
       if (!currentGame.result) return false;
