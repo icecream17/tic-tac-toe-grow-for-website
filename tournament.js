@@ -70,11 +70,17 @@ class TournamentGameList extends Array {
 
 class Tournament {
    constructor (rounds, interval=4000) {
+      if (typeof rounds !== "number") throw TypeError("Rounds must be a number")
+      if (Number.isNaN(rounds)) throw TypeError("NaN Rounds?? Not a number.")
+      if (!Number.isInteger(rounds)) throw TyeError("Integer amount of rounds required")
+      if (rounds <= 0) throw RangeError("Tournament must be at least 1 round")
+      
       this.currentBots = [0, 0];
       this.rounds = rounds;
       this.currentRound = 0;
       this.interval = interval;
       this.intervalID = null;
+      this.previousIntervals = [];
       this.games = new TournamentGameList(this);
       this.finished = false;
    }
@@ -92,7 +98,7 @@ class Tournament {
       if (this.finished) {
          console.info('Tournament finished');
          clearInterval(this.intervalID);
-         this.previousID = this.intervalID;
+         this.previousIntervals.push(this.intervalID);
          this.intervalID = null;
          Game.prototype.doBotMove = NON_TOURNAMENT_BOT_MOVE_FUNC;
          tournaments.push(this);
@@ -102,10 +108,20 @@ class Tournament {
    forceStop () {
       console.info('Tournament force finished');
       clearInterval(this.intervalID);
-      this.previousID = this.intervalID;
+      this.previousIntervals.push(this.intervalID);
       this.intervalID = null;
       Game.prototype.doBotMove = NON_TOURNAMENT_BOT_MOVE_FUNC;
       tournaments.push(this);
+   }
+   
+   pause () {
+      clearInterval(this.intervalID);
+      this.previousIntervals.push(this.intervalID);
+      this.intervalID = null;
+   }
+   
+   unpause () {
+      this.intervalID = setInterval(this.playGame.bind(this), this.interval);
    }
    
    /* Returns true when last game is finished */
