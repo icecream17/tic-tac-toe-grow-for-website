@@ -1259,7 +1259,7 @@ async function enablePlayer() {
    if (playerIndex !== players.length)
       return await ELEMENTS.enablePlayerButtons[playerIndex].click();
 
-   activePlayers++; ELEMENTS.numPeopleSelect.selectedIndex++;
+   activePlayers++; ELEMENTS.numPlayersSelect.selectedIndex++;
    activeBots++;
 
    this.disabled = false;
@@ -1280,7 +1280,7 @@ async function enablePlayer() {
    return "Done! Enabled player (random_move for safety)";
 }
 
-// Min players: 1
+// Min players: !1 (apparently it's 0)
 // this = <input (not:disabled)>
 async function disablePlayer() {
    if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
@@ -1299,11 +1299,12 @@ async function disablePlayer() {
 
       return await ELEMENTS.disablePlayerButtons[playerIndexPlusOne].click();
    } else {
-      activePlayers--;
       this.disabled = true;
       this.parentElement.nextElementSibling.disabled = false;
       this.parentElement.nextElementSibling.nextElementSibling.disabled = true;
       players.pop();
+
+      activePlayers--; ELEMENTS.numPlayersSelect.selectedIndex--;
 
       // <optgroup> label
       if (option.parentElement.label === "Bots") activeBots--;
