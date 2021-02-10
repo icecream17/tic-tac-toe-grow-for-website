@@ -1363,7 +1363,6 @@ async function disablePlayers(num) {
 
 /*
 Types: human, bot
-Throws an error when doing bot move but player is changed to human
 
 
 */
