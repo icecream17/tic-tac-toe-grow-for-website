@@ -1214,7 +1214,7 @@ async function enablePeople(num) {
    let counter = activePeople;
    for (let button of ELEMENTS.enablePersonButtons) {
       if (button.disabled) continue;
-      clickPromises.push(button.onclick());
+      clickPromises.push(enablePerson.call(button.parentElement.children[0].children[1]));
       
       if (++counter === num) break;
    }
@@ -1235,7 +1235,7 @@ async function disablePeople(num) {
    let counter = activePeople;
    for (let button of ELEMENTS.disablePersonButtons) {
       if (button.disabled) continue;
-      clickPromises.push(button.onclick());
+      clickPromises.push(disablePerson.call(button.parentElement.children[0].children[1]));
       if (--counter === num) break;
    }
 
@@ -1323,7 +1323,7 @@ async function enablePlayers(num) {
    let counter = activePlayers;
    for (let button of ELEMENTS.enablePlayerButtons) {
       if (button.disabled) continue;
-      clickPromises.push(button.onclick());
+      clickPromises.push(enablePlayer.call(button.parentElement.children[0].children[1]));
       if (++counter === num) break;
    }
 
@@ -1345,7 +1345,7 @@ async function disablePlayers(num) {
    let counter = activePlayers;
    for (let button of ELEMENTS.disablePlayerButtons) {
       if (button.disabled) continue;
-      clickPromises.push(button.onclick());
+      clickPromises.push(disablePlayer.call(button.parentElement.children[0].children[1]));
       if (--counter === num) break;
    }
 
