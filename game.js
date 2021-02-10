@@ -1214,12 +1214,12 @@ async function enablePeople(num) {
    let counter = activePeople;
    for (let button of ELEMENTS.enablePersonButtons) {
       if (button.disabled) continue;
-      clickPromises.push(button.click());
+      clickPromises.push(await button.onclick());
       
       if (++counter === num) break;
    }
 
-   let promiseGroup = Promise.allSettled(clickPromises);
+   let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
@@ -1235,11 +1235,11 @@ async function disablePeople(num) {
    let counter = activePeople;
    for (let button of ELEMENTS.disablePersonButtons) {
       if (button.disabled) continue;
-      clickPromises.push(button.click());
+      clickPromises.push(await button.onclick());
       if (--counter === num) break;
    }
 
-   let promiseGroup = Promise.allSettled(clickPromises);
+   let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw promiseGroup;
 
