@@ -19,13 +19,13 @@
       "url": "https://github.com/icecream17/tic-tac-toe-grow-for-website/issues"
    },
    "devDependencies": {
-      "html-validator-cli": "7.0.1",
-      "eslint": "7.19.0",
-      "@babel/core": "7.12.13",
-      "@babel/eslint-parser": "7.12.13",
-      "@babel/eslint-plugin": "7.12.13",
-      "@babel/preset-env": "7.12.13",
-      "@babel/plugin-syntax-class-properties": "7.12.13"
+      "html-validator-cli": "^7.0.1",
+      "eslint": "^7.19.0",
+      "@babel/core": "^7.12.13",
+      "@babel/eslint-parser": "^7.12.13",
+      "@babel/eslint-plugin": "^7.12.13",
+      "@babel/preset-env": "^7.12.13",
+      "@babel/plugin-syntax-class-properties": "^7.12.13"
    },
    "engines": {
       "node": ">= 14.15",
