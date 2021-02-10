@@ -38,11 +38,11 @@ Array.prototype.valuesEqual = function valuesEqual(arr) {
       return false;
    
    for (let i = 0; i < this.length; i++)
-      if (Array.isArray(this[i]) && Array.isArray(arr[i]))
-         if (!this[i].valuesEqual(arr[i]))
+      if (this[i] !== arr[i])
+         if (!Array.isArray(this[i]) || !Array.isArray(arr[i]))
+            return false
+         else if (!this[i].valuesEqual(arr[i]))
             return false;
-      else if (this[i] !== arr[i])
-         return false;
    return true;
 }
 
