@@ -1254,9 +1254,9 @@ async function disablePeople(num) {
 async function enablePlayer() {
    if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
 
-   let playerIndexPlusOne = this.parentElement.id[8]
-   if (playerIndexPlusOne !== players.length)
-      return await ELEMENTS.disablePlayerButtons[playerIndexPlusOne].click();
+   let playerIndex = this.parentElement.id[8]
+   if (playerIndex !== players.length)
+      return await ELEMENTS.enablePlayerButtons[playerIndex - 1].click();
 
    activePlayers++; ELEMENTS.numPeopleSelect.selectedIndex++;
    activeBots++;
