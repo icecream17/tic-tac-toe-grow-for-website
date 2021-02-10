@@ -1295,7 +1295,7 @@ async function disablePlayer() {
       this.dispatchEvent(new Event("change"));
       ELEMENTS.playerSelects[playerIndexPlusOne].dispatchEvent(new Event("change"));
 
-      return await ELEMENTS.disablePlayerButtons[playerIndex + 1].click();
+      return await ELEMENTS.disablePlayerButtons[playerIndexPlusOne].click();
    } else {
       activePlayers--;
       this.disabled = true;
