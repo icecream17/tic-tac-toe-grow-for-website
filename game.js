@@ -1217,7 +1217,7 @@ async function changePlayer() {
       }
 
    let localIndex = Array.prototype.indexOf.call(option.parentElement.children, option);
-   if (localIndex === -1) throw ReferenceError("No player is selected!??");
+   if (localIndex === -1) throw new ReferenceError("No player is selected!??");
 
    players[playerIndex] = new PlayerReference(type, localIndex);
    currentGame.playBots();
