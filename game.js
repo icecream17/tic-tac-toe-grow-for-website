@@ -43,7 +43,7 @@ Array.prototype.valuesEqual = function valuesEqual(arr) {
    for (let i = 0; i < this.length; i++)
       if (this[i] !== arr[i])
          if (!Array.isArray(this[i]) || !Array.isArray(arr[i]))
-            return false
+            return false;
          else if (!this[i].valuesEqual(arr[i]))
             return false;
    return true;
@@ -76,11 +76,10 @@ class CustomError extends Error {
 
       // Maintains proper stack trace for where our error was thrown (only available on V8)
       // You must be pretty sure, and have a really good reason to pass this if statement
-      if (String(Error?.captureStackTrace).includes("native code")) {
+      if (String(Error?.captureStackTrace).includes("native code"))
          Error.captureStackTrace(this, CustomError);
-      } else {
+      else
          this.stack = (new Error(...args)).stack;
-      }
    }
 
    /**
@@ -95,15 +94,15 @@ class CustomError extends Error {
     * A method to rethrow an error. Stacktraces are from when the error was currently initialized
     * Derived from https://stackoverflow.com/a/42755876 by Matt
     */
-   rethrow (message=this.message, ...args) {
-      if (message !== this.message) {
-         let newError = new (this.constructor)(message, ...args);
+   rethrow (message = this.message, ...args) {
+      if (message === this.message) {
+         this.stack = new this.constructor(message, ...args);
+         throw this;
+      } else {
+         let newError = new this.constructor(message, ...args);
          newError.originalError = this;
          newError.stack = `${newError.stack}\n${this.stack}`;
          throw newError;
-      } else {
-         this.stack = new (this.constructor)(message, ...args);
-         throw this;
       }
    }
 }
@@ -112,7 +111,7 @@ class CustomError extends Error {
 class ElementError extends CustomError {
    /**
     * @param {string} [message] - The error message to display in the console when thrown
-    * @param {HTMLElement} [element=HTMLUnknownElement] - The element that was involved in the error
+    * @param {HTMLElement} [element = HTMLUnknownElement] - The element that was involved in the error
     */
    constructor (message, element = document.createElement('HTMLUnknownElement')) {
       super(message);
@@ -597,7 +596,7 @@ class GameBase {
 
          for (let x = 0; x < this.board.width; x++) {
             let char = this.board[y][x].value;
-            ascii += '%c'
+            ascii += '%c';
             if (char === '') {
                ascii += ' ';
                css.push('background-color:gray');
@@ -622,7 +621,7 @@ class GameBase {
          'color:white',
          'background-color:gray;color:gray',
          'color:white'
-      )
+      );
 
       if (verbose) console.debug(ascii, ...css);
       else console.log(ascii, ...css);
@@ -1050,14 +1049,12 @@ const bot_mechanics = {
       if (lastMove === undefined)
          bot_mechanics.random_move.apply(this);
       else {
-         let indexOfLastMove = (
-            lastMove.gameState
-               .originalMoves
-               .findIndex(
-                  position => position.x === positionOfLastMove.x
-                     && position.y === positionOfLastMove.y
-               )
-         );
+         let indexOfLastMove = lastMove.gameState
+                                       .originalMoves
+                                       .findIndex(
+                                          position => position.x === positionOfLastMove.x
+                                                   && position.y === positionOfLastMove.y
+                                       );
 
          if (indexOfLastMove === -1)
             ERRORS.IMPOSSIBLE_LAST_MOVE.rethrow();
@@ -1068,7 +1065,7 @@ const bot_mechanics = {
    /** Tries to avoid the previous moves */
    avoider() {
       let moves = this.getMoves();
-      let best_moves = [-Infinity, []]
+      let best_moves = [-Infinity, []];
       for (let move of moves) {
          let score = 0;
          for (let historicalMove of this.moveHistory)
@@ -1105,11 +1102,13 @@ const bot_mechanics = {
          positionOnDiagonal = move.correspondingPosition;
 
          if ((move.x + move.y) % 2 === 1) positionOnDiagonal.x++;
-      } else positionOnDiagonal = new Position(0, 0);
+      } else {
+         positionOnDiagonal = new Position(0, 0);
+      }
 
-      let moves = this.getMoves().filter(move => (
-         (positionOnDiagonal.x + positionOnDiagonal.y + move.x + move.y) % 2 === 0
-      ));
+      let moves = this.getMoves().filter(
+         move => positionOnDiagonal.x + positionOnDiagonal.y + move.x + move.y) % 2 === 0
+      );
       if (moves.length === 0)
          bot_mechanics.random_move.apply(this);
       else {
@@ -1236,7 +1235,7 @@ async function changeName() {
 }
 
 // this = <input>
-async function enablePerson(fromEnablePeople=false) {
+async function enablePerson(fromEnablePeople = false) {
    // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fit...
    if (activePeople === 4) ERRORS.EVERYONEs_ENABLED.rethrow();
    activePeople++;
@@ -1257,7 +1256,7 @@ async function enablePerson(fromEnablePeople=false) {
 
 
 // Bug, probably feature: Player not changed when disabled
-async function disablePerson(fromDisablePeople=false) {
+async function disablePerson(fromDisablePeople = false) {
    if (activePeople === 0) ERRORS.NO_ONEs_ENABLED.rethrow();
    activePeople--;
 
@@ -1294,7 +1293,11 @@ async function enablePeople(num) {
       if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    if (counter !== num)
-      console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
+      console.warn(`Counter or num isn't correct: ${counter} !== ${num}`);
+   if (activePeople !== num)
+      console.warn(`activePeople or num isn't correct: ${activePeople} !== ${num}`);
+   if (activePeople !== counter)
+      console.warn(`activePeople or counter isn't correct: ${activePeople} !== ${counter}`);
 
    return promiseGroup;
 }
@@ -1316,15 +1319,18 @@ async function disablePeople(num) {
    for (let promise of promiseGroup)
       if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
-   activePeople = counter;
    if (counter !== num)
-      console.warn(`Failed to disable the correct amount: ${counter} !== ${num}`);
+      console.warn(`Counter or num isn't correct: ${counter} !== ${num}`);
+   if (activePeople !== num)
+      console.warn(`activePeople or num isn't correct: ${activePeople} !== ${num}`);
+   if (activePeople !== counter)
+      console.warn(`activePeople or counter isn't correct: ${activePeople} !== ${counter}`);
 
    return promiseGroup;
 }
 
 // this = <select disabled>
-async function enablePlayer(fromEnablePlayers=false) {
+async function enablePlayer(fromEnablePlayers = false) {
    if (activePlayers === 4) ERRORS.MAX_PLAYERS_REACHED.rethrow();
 
    let playerIndex = this.parentElement.id[8] - 1;
@@ -1355,7 +1361,7 @@ async function enablePlayer(fromEnablePlayers=false) {
 
 // Min players: !1 (apparently it's 0)
 // this = <input (not:disabled)>
-async function disablePlayer(fromDisablePlayers=false) {
+async function disablePlayer(fromDisablePlayers = false) {
    if (activePlayers === 0) ERRORS.NO_ONEs_ENABLED.rethrow();
 
    let option = this.selectedOptions[0];
@@ -1411,7 +1417,12 @@ async function enablePlayers(num) {
       if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    if (counter !== num)
-      console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
+      console.warn(`Counter or num isn't correct: ${counter} !== ${num}`);
+   if (activePlayers !== num)
+      console.warn(`activePlayers or num isn't correct: ${activePlayers} !== ${num}`);
+   if (activePlayers !== counter)
+      console.warn(`activePlayers or counter isn't correct: ${activePlayers} !== ${counter}`);
+
    
    return promiseGroup;
 }
@@ -1433,7 +1444,11 @@ async function disablePlayers(num) {
       if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    if (counter !== num)
-      console.warn(`Failed to disable the correct amount: ${counter} !== ${num}`);
+      console.warn(`Counter or num isn't correct: ${counter} !== ${num}`);
+   if (activePlayers !== num)
+      console.warn(`activePlayers or num isn't correct: ${activePlayers} !== ${num}`);
+   if (activePlayers !== counter)
+      console.warn(`activePlayers or counter isn't correct: ${activePlayers} !== ${counter}`);
    
    return promiseGroup;
 }
