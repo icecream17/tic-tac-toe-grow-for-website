@@ -38,5 +38,5 @@ jobs:
         run: ./node_modules/.bin/eslint --format codeframe --color game.js
 
       - name: Check tournament.js
-        run: ./node_modules/.bin/eslint --format codeframe --color tournament.js --env-info
+        run: ./node_modules/.bin/eslint --format codeframe --color tournament.js
 
