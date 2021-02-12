@@ -1,6 +1,9 @@
 // This is licensed under the Apache License 2.0,
 // see https://github.com/icecream17/tic-tac-toe-grow-for-website/blob/main/LICENSE
 
+// Note: The CustomError class is not licensed under the Apache License 2.0
+// Note: The comments are in the public domain.
+
 "use strict";
 
 // The log levels used are:
@@ -46,10 +49,63 @@ Array.prototype.valuesEqual = function valuesEqual(arr) {
    return true;
 }
 
-/** Represents an explicit and somewhat anticipated error */
+/**
+ * Represents an explicit and somewhat anticipated error
+ * The class name is self explanatory.
+ *
+ * This is derived from MDN and stackoverflow, see
+ * 1. The question: https://stackoverflow.com/q/1382107
+ * 2. Tero's (edited by RoboCat) answer: https://stackoverflow.com/a/5251506
+ * 3. Mohsen's (edited by Kostanos) answer: https://stackoverflow.com/a/32750746
+ * 4. The MDN page: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+ *
+ * Because of that, the CustomError class is under the CC BY-SA 3.0 License
+ * (excluding most of the constructor and the comments which are in the public domain).
+ */
 class CustomError extends Error {
-   /** @returns {string} - The error constructor name. */
-   get name() { return this.constructor.name } // For ease of maintenance
+   /**
+    * The constructor is derived from a code snippet from MDN, which in the public domain
+    * The constructor is also mostly in the public domain, except for the else statement which is from
+    * Wait though, https://stackoverflow.com/a/42755876 by Matt also has this constructor. And it's more full.
+    * I'll just say it's not under the Apache License.
+    *
+    * @param {...*} [args] - The args to the Error constructor. The only guaranteed argument is a string for the error message.
+    */
+   constructor (...args) {
+      super(...args);
+
+      // Maintains proper stack trace for where our error was thrown (only available on V8)
+      // You must be pretty sure, and have a really good reason to pass this if statement
+      if (String(Error?.captureStackTrace).includes("native code")) {
+         Error.captureStackTrace(this, CustomError);
+      } else {
+         this.stack = (new Error(...args)).stack;
+      }
+   }
+
+   /**
+    * The name of the error's constructor, for example ElementError.
+    * This getter is inspired by https://stackoverflow.com/questions/1382107/whats-a-good-way-to-extend-error-in-javascript#comment84156899_32750746
+    * 
+    * @returns {string} - The error constructor name, either CustomError or some class extending CustomError
+    */
+   get name() { return this.constructor.name }
+
+   /**
+    * A method to rethrow an error. Stacktraces are from when the error was currently initialized
+    * Derived from https://stackoverflow.com/a/42755876 by Matt
+    */
+   rethrow (message=this.message, ...args) {
+      if (message !== this.message) {
+         let newError = new (this.constructor)(message, ...args);
+         newError.originalError = this;
+         newError.stack = `${newError.stack}\n${this.stack}`;
+         throw newError;
+      } else {
+         this.stack = new (this.constructor)(message, ...args);
+         throw this;
+      }
+   }
 }
 
 /** Represents an error involving an element. */
@@ -350,7 +406,7 @@ class GameBase {
             notice(`*gasp*! Draw!\n${result[1]}`, result);
             break;
          default:
-            throw ERRORS.INVALID_MOVE_FINISH;
+            ERRORS.INVALID_MOVE_FINISH.rethrow();
       }
    }
 
@@ -584,7 +640,7 @@ class GameState extends GameBase {
    doMove (move) {
       let {x, y} = move.originalPosition;
       if (this.board[y][x].value !== ' ')
-         throw ERRORS.SQUARE_NOT_UPDATED;
+         ERRORS.SQUARE_NOT_UPDATED.rethrow();
 
       // () To prevent parsing as a block
       ({x, y} = Game.prototype.updateBoard.call(this, x, y));
@@ -666,7 +722,7 @@ class Game extends GameBase {
       console.debug(`(update) move: ${x} ${y}`);
 
       if (this.board[y][x].value !== ' ')
-         throw ERRORS.SQUARE_NOT_UPDATED;
+         throw ERRORS.SQUARE_NOT_UPDATED.rethrow();
 
       const oldPosition = {x, y};
       ({x, y} = this.updateBoard(x, y));
@@ -758,7 +814,7 @@ function handleClick(x, y) {
 
    let square = currentGame.board?.[y]?.[x];
    if (square === undefined)
-      throw ERRORS.EVIL_CLICK;
+      ERRORS.EVIL_CLICK.rethrow();
 
    if (players[currentGame.toMove].type === "human" && square.value === ' ')
       currentGame.play(x, y);
@@ -1004,7 +1060,7 @@ const bot_mechanics = {
          );
 
          if (indexOfLastMove === -1)
-            throw ERRORS.IMPOSSIBLE_LAST_MOVE;
+            ERRORS.IMPOSSIBLE_LAST_MOVE.rethrow();
          const chosen = moves[indexOfLastMove];
          this.play(chosen.x, chosen.y);
       }
@@ -1116,6 +1172,13 @@ let players = [
 // which corresponds to the last character in the IDs, in this case "whoPlaysN"
 // The IDs are 1-based index, so subtract one a lot of the time.
 
+// Much of the code is repeated, for example
+/*
+   let promiseGroup = await Promise.allSettled(clickPromises);
+   for (let promise of promiseGroup)
+      if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
+*/
+
 // this = #playerAmountLabel <select>
 async function EnableOrDisablePlayers() {
    if (this.value < activePlayers)
@@ -1175,7 +1238,7 @@ async function changeName() {
 // this = <input>
 async function enablePerson(fromEnablePeople=false) {
    // MAX_PLAYERS_REACHED and EVERYONEs_ENABLED both fit...
-   if (activePeople === 4) throw ERRORS.EVERYONEs_ENABLED;
+   if (activePeople === 4) ERRORS.EVERYONEs_ENABLED.rethrow();
    activePeople++;
 
    if (!fromEnablePeople) ELEMENTS.numPeopleSelect.selectedIndex++;
@@ -1195,7 +1258,7 @@ async function enablePerson(fromEnablePeople=false) {
 
 // Bug, probably feature: Player not changed when disabled
 async function disablePerson(fromDisablePeople=false) {
-   if (activePeople === 0) throw ERRORS.NO_ONEs_ENABLED;
+   if (activePeople === 0) ERRORS.NO_ONEs_ENABLED.rethrow();
    activePeople--;
 
    if (!fromDisablePeople) ELEMENTS.numPeopleSelect.selectedIndex--;
@@ -1228,7 +1291,7 @@ async function enablePeople(num) {
 
    let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
-      if (promise.status === 'rejected') throw promiseGroup;
+      if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    if (counter !== num)
       console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
@@ -1251,7 +1314,7 @@ async function disablePeople(num) {
 
    let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
-      if (promise.status === 'rejected') throw promiseGroup;
+      if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    activePeople = counter;
    if (counter !== num)
@@ -1262,7 +1325,7 @@ async function disablePeople(num) {
 
 // this = <select disabled>
 async function enablePlayer(fromEnablePlayers=false) {
-   if (activePlayers === 4) throw ERRORS.MAX_PLAYERS_REACHED;
+   if (activePlayers === 4) ERRORS.MAX_PLAYERS_REACHED.rethrow();
 
    let playerIndex = this.parentElement.id[8] - 1;
    if (playerIndex !== players.length)
@@ -1293,7 +1356,7 @@ async function enablePlayer(fromEnablePlayers=false) {
 // Min players: !1 (apparently it's 0)
 // this = <input (not:disabled)>
 async function disablePlayer(fromDisablePlayers=false) {
-   if (activePlayers === 0) throw ERRORS.NO_ONEs_ENABLED;
+   if (activePlayers === 0) ERRORS.NO_ONEs_ENABLED.rethrow();
 
    let option = this.selectedOptions[0];
 
@@ -1345,7 +1408,7 @@ async function enablePlayers(num) {
 
    let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
-      if (promise.status === 'rejected') throw promiseGroup;
+      if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    if (counter !== num)
       console.warn(`Failed to enable the correct amount: ${counter} !== ${num}`);
@@ -1367,7 +1430,7 @@ async function disablePlayers(num) {
 
    let promiseGroup = await Promise.allSettled(clickPromises);
    for (let promise of promiseGroup)
-      if (promise.status === 'rejected') throw promiseGroup;
+      if (promise.status === 'rejected') throw new AggregateError(promiseGroup);
 
    if (counter !== num)
       console.warn(`Failed to disable the correct amount: ${counter} !== ${num}`);
