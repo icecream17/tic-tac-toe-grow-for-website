@@ -12,6 +12,9 @@
       "es2021": true
    },
    "extends": "eslint:recommended",
+   "globals": {
+      "AggregateError": "readonly"
+   },
    "reportUnusedDisableDirectives": false,
    "rules": {
       "new-cap": "off",
