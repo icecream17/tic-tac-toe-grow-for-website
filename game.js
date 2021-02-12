@@ -1107,7 +1107,7 @@ const bot_mechanics = {
       }
 
       let moves = this.getMoves().filter(
-         move => positionOnDiagonal.x + positionOnDiagonal.y + move.x + move.y) % 2 === 0
+         move => (positionOnDiagonal.x + positionOnDiagonal.y + move.x + move.y) % 2 === 0
       );
       if (moves.length === 0)
          bot_mechanics.random_move.apply(this);
