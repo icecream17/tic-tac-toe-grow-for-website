@@ -20,6 +20,27 @@
       <aside>
          <h1>Tic tac toe grow!</h1>
          <!-- Make this section a flexbox or grid -->
+         <label>
+            <p>Choose tab</p>
+            <!-- I'm not going to set autocomplete=off yet. -->
+            <select>
+               <option selected>Tab info</option>
+               <option>Game controls</option>
+               <option>Game data</option>
+               <option>Player settings</option>
+            </select>
+         </label>
+         <section id="tabInfo" class="selectedTab">
+            <h2>What is this?</h2>
+            <p>
+               This is a tab. Or, rather, the spot below the dropdown.
+               I was too lazy to put actual tabs, and there's too many to put anyways.<br>
+               So instead I put a dropdown. Use the dropdown to switch between "tabs".
+            </p>
+            <p>
+               <a href="#HowToPlay">The instructions for how to play are down there ↓</a>
+            </p>
+         </section>
          <section id="gameControls">
             <h2>Game controls</h2>
             <fieldset id="mapControls">
@@ -39,6 +60,7 @@
                Height:&nbsp;3<br>
                Turns:&nbsp;0
             </p>
+         </section>
             <!-- Somehow add the winners. Or result.
                  I could use a list. But what element to label it with?
                  I don't know what to do with an empty list either. -->
@@ -54,8 +76,8 @@
                   </datalist>
                  but it suggests only "3" when 3 is the number which doesn't help.
             -->
-            
-            <h2>Player data</h2>
+         <section id="playerSettings">
+            <h2>Player settings</h2>
             <fieldset id="countFields">
                <label id="playerAmountLabel">
                   <var>Number of players: </var>
@@ -212,7 +234,7 @@
    </div>
    <aside>
       <h1>About</h1>
-      <h2>How to play</h2>
+      <h2 id="HowToPlay">How to play</h2>
       <p>To play, simply click on an empty square (a button)</p>
       <p>Every square where a move is played,<br>
          all squares 1 step vertically or horizontally away<br>
