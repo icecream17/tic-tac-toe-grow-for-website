@@ -49,6 +49,13 @@ aside {
 }
 
 #container > aside > section:not(.selectedTab) {
+   display: none;
+   visibility: hidden;
+}
+
+/* Any children of hidden tabs */
+#container > aside > section:not(.selectedTab) * {
+   display: none;
    visibility: hidden;
 }
 
