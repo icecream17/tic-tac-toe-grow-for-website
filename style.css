@@ -43,10 +43,16 @@ aside {
    padding: 1%;
 }
 
-#container aside {
+#container > aside {
    grid-column: 21;
    grid-row: 1 / 21;
 }
+
+#container > aside > section:not(.selectedTab) {
+   visibility: hidden;
+}
+
+
 
 button {
    visibility: hidden;
