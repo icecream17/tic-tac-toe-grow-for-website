@@ -1,4 +1,5 @@
-// global ELEMENTS
+"use strict";
+/* global ELEMENTS */
 
 ELEMENTS.TabElements = [
    document.getElementById("tabInfo"),
