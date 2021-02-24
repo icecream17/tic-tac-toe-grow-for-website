@@ -12,6 +12,7 @@
    <link rel="stylesheet" href="normalize.css">
    <link rel="stylesheet" href="style.css">
    <script defer src="game.js"></script>
+   <script defer src="tab.js"></script>
    <script defer src="tournament.js"></script>
 </head>
 
@@ -23,7 +24,7 @@
          <label>
             Choose tab:
             <!-- I'm not going to set autocomplete=off yet. -->
-            <select>
+            <select id="tabSelect">
                <option selected>Tab info</option>
                <option>Game controls</option>
                <option>Game data</option>
