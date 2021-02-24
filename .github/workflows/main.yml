@@ -40,3 +40,6 @@ jobs:
       - name: Check tournament.js
         run: ./node_modules/.bin/eslint --format codeframe --color tournament.js
 
+      - name: Check tabs.js
+        run: ./node_modules/.bin/eslint --format codeframe --color tabs.js
+
