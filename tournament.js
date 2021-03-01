@@ -135,14 +135,15 @@ class Tournament {
    playGame () {
       if (this.currentBots[0] === bots.length) {
          console.info(`Round ${this.currentRound} finished.`);
-         this.currentRound++;
-         if (this.currentRound >= this.rounds)
+         if (this.currentRound >= this.rounds) {
             this.finish();
-         else {
+            this.currentRound++;
+         } else if (currentGame.result) {
             console.info(`Round ${this.currentRound} started.`);
             this.currentBots = [0, 0];
+            this.currentRound++;
             ELEMENTS.resetGameButton.click(); // Because of the if statement below
-         }
+         } // else wait until currentGame is finished
 
          return;
       }
