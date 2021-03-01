@@ -60,7 +60,7 @@
             a[0],
             Object.fromEntries(
                a[1].map(
-                  b => [b[0], `${b[1].wins}/${b[1].draws}/${b[1].losses}`]
+                  b => [b[0], `\`${b[1].wins}w-${b[1].draws}d-${b[1].losses}l\``]
                )
             )
          ]
@@ -79,14 +79,14 @@ Total rounds: 5
 
 ### Table
 
-| Strategy      | random_move | middle_index |  copy | avoider | closer | firstDiagonal |
-|---------------|:-----------:|:------------:|:-----:|:-------:|:------:|:-------------:|
-| random_move   |    5/0/5    |     1/0/9    | 7/0/3 |  4/0/6  |  2/0/8 |     3/0/7     |
-| middle_index  |    9/0/1    |    0/10/0    | 4/0/6 |  7/1/2  | 10/0/0 |     10/0/0    |
-| copy          |    3/0/7    |     6/0/4    | 4/2/4 |  3/0/7  |  2/0/8 |     1/0/9     |
-| avoider       |    6/0/4    |     2/1/7    | 7/0/3 |  3/4/3  |  1/0/9 |     3/0/7     |
-| closer        |    8/0/2    |    0/0/10    | 8/0/2 |  9/0/1  |  5/0/5 |     0/0/10    |
-| firstDiagonal |    7/0/3    |    0/0/10    | 9/0/1 |  7/0/3  | 10/0/0 |     5/0/5     |
+| Strategy      | middle_index | firstDiagonal |    closer   |   avoider  | random_move |    copy    |
+|---------------|:------------:|:-------------:|:-----------:|:----------:|:-----------:|:----------:|
+| middle_index  |  `0w-10d-0l` |  `10w-0d-0l`  | `10w-0d-0l` | `7w-1d-2l` |  `9w-0d-1l` | `4w-0d-6l` |
+| firstDiagonal |  `0w-0d-10l` |   `5w-0d-5l`  | `10w-0d-0l` | `7w-0d-3l` |  `7w-0d-3l` | `9w-0d-1l` |
+| closer        |  `0w-0d-10l` |  `0w-0d-10l`  |  `5w-0d-5l` | `9w-0d-1l` |  `8w-0d-2l` | `8w-0d-2l` |
+| avoider       |  `2w-1d-7l`  |   `3w-0d-7l`  |  `1w-0d-9l` | `3w-4d-3l` |  `6w-0d-4l` | `7w-0d-3l` |
+| random_move   |  `1w-0d-9l`  |   `3w-0d-7l`  |  `2w-0d-8l` | `4w-0d-6l` |  `5w-0d-5l` | `7w-0d-3l` |
+| copy          |  `6w-0d-4l`  |   `1w-0d-9l`  |  `2w-0d-8l` | `3w-0d-7l` |  `3w-0d-7l` | `4w-2d-4l` |
 
 ### Ranking
 
