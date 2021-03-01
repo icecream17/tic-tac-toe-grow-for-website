@@ -66,8 +66,10 @@ There's a more detailed explanation if you scroll down in the website itself.
 [ ] lastBackwards~
 [ ] orthgonalToOpponent
 [ ] diagonalToOpponent
+[ ] adjacentToOpponent
 [ ] orthogonalToSelf
 [ ] diagonalToSelf
+[x] adjacentToSelf (next2self) DONE
 [ ] closeToCenter
 [ ] middleAlpha
 [ ] middleRot13
