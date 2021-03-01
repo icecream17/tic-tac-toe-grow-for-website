@@ -1117,6 +1117,28 @@ const bot_mechanics = {
          this.play(chosen.x, chosen.y);
       }
    },
+   /** Makes any move that's next to itself */
+   next2self() {
+      let self = [];
+      for (let y = 0; y < this.board.height; y++)
+         for (let x = 0; x < this.board.width; x++)
+            if (this.board[y][x].value === PLAYER_CHARS[this.toMove])
+               self.push(new Position(x, y));
+
+      const nextSelfMoves = this.getMoves().filter(
+         move => self.some(
+            selfTile =>
+               Math.abs(selfTile.x - move.x) < 2 &&
+               Math.abs(selfTile.y - move.y) < 2
+         ) 
+      );
+      if (nextSelfMoves.length === 0) {
+         bot_mechanics.random_move.apply(this)
+      } else {
+         const chosen = nextSelfMoves[Math.floor(Math.random() * nextSelfMoves.length)];
+         this.play(chosen.x, chosen.y);
+      }
+   }
 };
 
 
