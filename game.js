@@ -296,6 +296,7 @@ class GameBase {
    #MAX_TURNS = 314;
    static INITIAL_MAX_LENGTH = 511;
    static INITIAL_MAX_TURNS = 314;
+   static MIN_PLAYERS = 2;
 
    constructor () {
       this.turn = 0; /** Starts at 0 */
@@ -1363,6 +1364,7 @@ async function enablePlayer(fromEnablePlayers = false) {
 // this = <input (not:disabled)>
 async function disablePlayer(fromDisablePlayers = false) {
    if (activePlayers === 0) ERRORS.NO_ONEs_ENABLED.rethrow();
+   else if (activePlayers < GameBase.MIN_PLAYERS) return notice("Minimum players reached - can't disable more players");
 
    let option = this.selectedOptions[0];
 
