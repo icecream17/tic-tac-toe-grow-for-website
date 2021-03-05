@@ -39,7 +39,9 @@
                So instead I put a dropdown. Use the dropdown to switch between "tabs".
             </p>
             <p>
-               <a href="#HowToPlay">The instructions for how to play are down there ↓</a>
+               <a href="#HowToPlay">The instructions for how to play are down there ↓</a><br>
+               To switch tabs press <kbd>Shift</kbd>+<kbd>Arrow keys</kbd>,<br>
+               and to move around the board press <kbd>Ctrl</kbd>+<kbd>Arrow keys</kbd>.
             </p>
          </section>
          <section id="gameControls">
@@ -265,17 +267,11 @@
          since when you click on "up", you move the board up,<br>
          but you (e.g. your mouse) moves down in comparison.<br>
          It's kinda like scrolling.</p>
-      <p>You win if you get 7 in a row, or a checkmark.</p>
-      <p>A <dfn>checkmark</dfn> is defined as a region of squares that:</p>
+      <p>You win by either making <em>7 in a row</em> or a <em>checkmark</em>.</p>
+      <p>A <dfn>checkmark</dfn> is made of two diagonal sides, where</p>
       <ul>
-         <li>are all <em>diagonally</em> adjacent to each other</li>
-         <li>form a right angle, where
-            <ol>
-               <li>both sides share a square
-               <li>one side is 2 squares long</li>
-               <li>the other side is 4 squares long</li>
-            </ol>
-         </li>
+          <li>one side is at least 2 squares long,</li>
+          <li>and the other side is at least 4 squares long</li>
       </ul>
       <details>
          <summary>Example checkmarks:</summary>
@@ -289,6 +285,33 @@
             but that just makes it more awesome, <br>
             and the rest of the "checkmark" will turn green anyways.
          </p>
+         <p>Here's some actual screenshots of bots winning:</p>
+         <figure>
+            <img src="./assets/tutorial/Example win 1.png"
+                 alt="">
+            <figcaption>
+               <h4>random_move vs firstDiagonal vs copy</h4>
+               <p>
+                  Here the third player 'copy' wins, making 3 checkmarks at the same time!
+                  (Note that the checkmarks overlap a bunch - my code detects all of them).<br>
+                  The first player; random_move, isn't really doing anything, but firstDiagonal
+                  seems to be on the verge of winning. Since copy is right after firstDiagonal, I think that
+                  firstDiagonal made copy play on diagonals too, helping it win.
+               </p>
+            </figcaption>
+         </figure>
+         <figure>
+            <img src="./assets/tutorial/Example win 1.png"
+                 alt="">
+            <figcaption>
+               <h4>random_move vs next2self vs next2self</h4>
+               <p>
+                  The third player wins again, here with the dictionary definition of a checkmark.
+                  Unfortunately for the second player, random_move just happened to block it more than the third player.
+                  Even though the second player and the third player were the same bots, the third player got an advantage and won. 
+               </p>
+            </figcaption>
+         </figure>
       </details>
       <h3>Another note</h3>
       <p>
@@ -307,40 +330,43 @@
       <p>The game will tell you if it's a win or a draw,<br>
          so you don't have to worry about that</p>
       <p>You can see the width and height in the game info,<br>
-         where, eventually (not done yet), you can also...</p>
-      <ul>
-         <li>See the height of the board</li>
-         <li>See the width of the board</li>
-         <li>Add to the total number of people</li>
-         <li>Also delete some people</li>
-         <li>And also name the people</li>
-         <li>My code doesn't really care about the names</li>
-         <li>And you can also change whose turn it is</li>
-         <li>Wow! Just have a bot play</li>
-         <li>Or even multiple bots</li>
-         <li>Or even the same bot, but multiple times</li>
-         <li>Or even the same person multiple times</li>
-         <li>Or a different person multiple times</li>
-         <li>And you can add a player (different from "person")</li>
-         <li>Or delete players</li>
-         <li>You can even have humans and bots at the same time</li>
-         <li>You can admire the amount of bots there are</li>
-         <li>AND MORE</li>
-         <li>Free limit: Only 4 players max</li>
-         <li>Free limit: Only 2 players... min</li>
-         <li>You can breathe easily. It's really easy to breathe.</li>
-         <li>Did I mention: Names can be the same?</li>
-         <li>Imagine... holding the down arrow key on a dropdown =O</li>
-         <li>You can click the words "Player 1" instead of the box!</li>
-         <li>You can change the number of players directly</li>
-         <li>Or just one by one I guess</li>
-         <li>And same thing for the number of humans!</li>
-         <li>That's right, changing the number of humans directly</li>
-         <li>Or just one by one</li>
-         <li>There's so much you could theoretically do</li>
-         <li>Imagine... the possibilities XDDDD</li>
-         <li>BWAHAHAHAHA sorry I really had fun making this</li>
-      </ul>
+         where, eventually (not done yet) you can also...</p>
+      <details>
+         <summary>A list of random things</summary>
+         <ul>
+            <li>See the height of the board</li>
+            <li>See the width of the board</li>
+            <li>Add to the total number of people</li>
+            <li>Also delete some people</li>
+            <li>And also name the people</li>
+            <li>My code doesn't really care about the names</li>
+            <li>And you can also change whose turn it is</li>
+            <li>Wow! Just have a bot play</li>
+            <li>Or even multiple bots</li>
+            <li>Or even the same bot, but multiple times</li>
+            <li>Or even the same person multiple times</li>
+            <li>Or a different person multiple times</li>
+            <li>And you can add a player (different from "person")</li>
+            <li>Or delete players</li>
+            <li>You can even have humans and bots at the same time</li>
+            <li>You can admire the amount of bots there are</li>
+            <li>AND MORE</li>
+            <li>Free limit: Only 4 players max</li>
+            <li>Free limit: Only 2 players... min</li>
+            <li>You can breathe easily. It's really easy to breathe.</li>
+            <li>Did I mention: Names can be the same?</li>
+            <li>Imagine... holding the down arrow key on a dropdown =O</li>
+            <li>You can click the words "Player 1" instead of the box!</li>
+            <li>You can change the number of players directly</li>
+            <li>Or just one by one I guess</li>
+            <li>And same thing for the number of humans!</li>
+            <li>That's right, changing the number of humans directly</li>
+            <li>Or just one by one</li>
+            <li>There's so much you could theoretically do</li>
+            <li>Imagine... the possibilities XDDDD</li>
+            <li>BWAHAHAHAHA sorry I really had fun making this</li>
+         </ul>
+      </details>
       <p>By default, it's 1 player against a bot named "random_move"</p>
    </aside>
 </body>
