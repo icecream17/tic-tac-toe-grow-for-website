@@ -879,11 +879,11 @@ const ELEMENTS = {
 
 // up down left right
 ELEMENTS.shifts[0].onclick = () => {
-   currentGame.visual.offset.y--;
+   currentGame.visual.offset.y++;
    currentGame.updateVisual();
 };
 ELEMENTS.shifts[1].onclick = () => {
-   currentGame.visual.offset.y++;
+   currentGame.visual.offset.y--;
    currentGame.updateVisual();
 };
 ELEMENTS.shifts[2].onclick = () => {
