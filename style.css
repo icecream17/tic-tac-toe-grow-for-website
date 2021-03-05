@@ -217,16 +217,23 @@ aside p {
 kbd {
    background-color: #f9f9f9;
    background-image: linear-gradient(to bottom, #eee, #f9f9f9, #eee);
-   border: 1px solid #aaa;
+   border: 1px solid #bbb;
    border-radius: 0.2em;
-   box-shadow: 0.1em 0.1em 0.2em #0007, 0 0.4em 0 0 #FFF inset;
+   box-shadow: 0.1em 0.1em 0.2em #0007, 0 0.2em 0 0 #fff inset;
    color: #333;
    font-family: Arial, Helvetica, sans-serif;
-   font-size: 0.85em;
+   font-size: 0.7em;
    font-weight: 700;
    line-height: 1;
    padding: 0.1em 0.3em;
    white-space: nowrap;
+
+   position: relative;
+   bottom: 0.025em;
+
+   /* This element stays in the same place, but elements after it move 0.2em to the right */
+   right: 0.2em;
+   margin-right: 0.2em;
 }
 
 #countFields {
