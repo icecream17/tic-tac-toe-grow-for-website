@@ -21,24 +21,16 @@ const KeyCodes = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 const ForwardKeyCodes = [KeyCodes[0], KeyCodes[3]];
 const BackwardKeyCodes = [KeyCodes[1], KeyCodes[2]];
 
-// with statement! *gasp*
-
-// 100% of the time:
-// variable --> ELEMENTS.TabSelect.variable
 document.addEventListener(
    "keydown",
    function TabChange (event) {
       if (event.shiftKey) {
          if (ForwardKeyCodes.includes(event.key)) {
-            with (ELEMENTS.TabSelect) {
-               selectedIndex = (selectedIndex + 1) % options.length
-            }
+            // I wish I could use the with statement
+            ELEMENTS.TabSelect.selectedIndex = (ELEMENTS.TabSelect.selectedIndex + 1) % ELEMENTS.TabSelect.options.length;
          } else if (BackwardKeyCodes.includes(event.key)) {
-            with (ELEMENTS.TabSelect) {
-               selectedIndex = (selectedIndex - 1) % options.length
-            }
+            ELEMENTS.TabSelect.selectedIndex = (ELEMENTS.TabSelect.selectedIndex - 1) % ELEMENTS.TabSelect.options.length;
          }
       }
-   },
-   true
+   }
 );
