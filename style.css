@@ -221,7 +221,7 @@ kbd {
    border-radius: 0.2em;
    box-shadow: 0.1em 0.1em 0.2em #0007, 0 0.4em 0 0 #FFF inset;
    color: #333;
-   font-family: inherit;
+   font-family: Consolas, monospace;
    font-size: 0.85em;
    font-weight: 700;
    line-height: 1;
