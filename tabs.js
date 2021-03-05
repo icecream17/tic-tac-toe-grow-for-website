@@ -28,8 +28,10 @@ document.addEventListener(
          if (ForwardKeyCodes.includes(event.key)) {
             // I wish I could use the with statement
             ELEMENTS.TabSelect.selectedIndex = (ELEMENTS.TabSelect.selectedIndex + 1) % ELEMENTS.TabSelect.options.length;
+            ELEMENTS.TabSelect.dispatchEvent(new Event("change"));
          } else if (BackwardKeyCodes.includes(event.key)) {
             ELEMENTS.TabSelect.selectedIndex = (ELEMENTS.TabSelect.selectedIndex - 1) % ELEMENTS.TabSelect.options.length;
+            ELEMENTS.TabSelect.dispatchEvent(new Event("change"));
          }
       }
    }
