@@ -3,9 +3,15 @@
    "description": "A variant of Tic tac toe where the board grows.",
    "version": "0.331.0",
    "license": "Apache-2.0",
-   "keywords": ["tic tac toe"],
+   "keywords": [
+      "tic tac toe"
+   ],
    "browser": "./game.html",
-   "browserslist": ["> 5%", "last 2 versions", "not ie <= 10"],
+   "browserslist": [
+      "> 5%",
+      "last 2 versions",
+      "not ie <= 10"
+   ],
    "author": {
       "name": "Steven Nguyen",
       "email": "58114641+icecream17@users.noreply.github.com",
@@ -19,16 +25,16 @@
       "url": "https://github.com/icecream17/tic-tac-toe-grow-for-website/issues"
    },
    "devDependencies": {
-      "html-validator-cli": "^7.0.1",
-      "eslint": "^7.21.0",
       "@babel/core": "^7.13.8",
       "@babel/eslint-parser": "^7.13.8",
       "@babel/eslint-plugin": "^7.13.0",
+      "@babel/plugin-syntax-class-properties": "^7.12.13",
       "@babel/preset-env": "^7.13.8",
-      "@babel/plugin-syntax-class-properties": "^7.12.13"
+      "eslint": "^7.21.0",
+      "html-validator-cli": "^7.0.1"
    },
    "engines": {
-      "node": ">= 14.16",
-      "npm": ">= 7.6"
+      "node": "^15.10",
+      "npm": "^7.6"
    }
 }
