@@ -35,11 +35,11 @@ jobs:
         run: npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env @babel/plugin-syntax-class-properties
       
       - name: Check game.js
-        run: ./node_modules/.bin/eslint --format codeframe --color game.js
+        run: ./node_modules/.bin/eslint --format codeframe --color js/game.js
 
       - name: Check tournament.js
-        run: ./node_modules/.bin/eslint --format codeframe --color tournament.js
+        run: ./node_modules/.bin/eslint --format codeframe --color js/tournament.js
 
       - name: Check tabs.js
-        run: ./node_modules/.bin/eslint --format codeframe --color tabs.js
+        run: ./node_modules/.bin/eslint --format codeframe --color js/tabs.js
 
