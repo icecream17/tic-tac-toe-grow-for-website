@@ -1,3 +1,6 @@
+/* fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
+
 #container {
    position: relative;
    min-height: 75vh;   /* Width is 100 by default */
@@ -231,13 +234,41 @@ kbd {
    position: relative;
    bottom: 0.025em;
 
-   /* This element stays in the same place, but elements after it move 0.2em to the right */
+   /* Creates a 0.1 space to the left */
    right: 0.2em;
-   margin-right: 0.2em;
+   margin-left: 0.3em;
 }
 
 #countFields {
    padding: 0.35em 0.75em;
+}
+
+@keyframes activenavigation {
+   0% {
+      background-color: initial;
+   }
+   50% {
+      background-color: #CFC;
+   }
+   100% {
+      background-color: initial;
+   }
+}
+
+.active.navigation-target {
+   animation: 3s ease-in-out 0.25s activenavigation
+}
+
+#version {
+   text-align: center;
+   color: gray;
+   font-family: 'Fira Sans', Helvetica, sans-serif;
+   
+   margin-bottom: 0.5em;
+}
+
+#version + h1 {
+   margin-top: 0;
 }
 
 :-webkit-any(article, aside, nav, section) h1 {

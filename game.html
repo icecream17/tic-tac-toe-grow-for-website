@@ -9,16 +9,26 @@
    <meta name="theme-color" content="#f5f9ff">
    <meta name="color-scheme" content="normal">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
    <link rel="stylesheet" href="normalize.css">
    <link rel="stylesheet" href="style.css">
-   <script defer src="js/game.js"></script>
-   <script defer src="js/tabs.js"></script>
-   <script defer src="js/tournament.js"></script>
+
+   <!-- Module scripts automatically defer!!! -->
+   <script type="module" src="js/utils.js"></script>
+   <script type="module" src="js/errors.js"></script>
+   <script type="module" src="js/game.js"></script>
+   <script type="module" src="js/tabs.js"></script>
+   <script type="module" src="js/tournament.js"></script>
+   <script type="module" src="js/debug.js"></script>
+
+   <script defer src="js/navigation.js"></script>
 </head>
 
 <body>
    <div id="container">
       <aside>
+         <!-- https://stackoverflow.com/q/3910419 -->
+         <p id="version">v0.362.0-alpha</p>
          <h1>Tic tac toe grow!</h1>
          <!-- Make this section a flexbox or grid -->
          <label>
@@ -39,12 +49,11 @@
                So instead I put a dropdown. Use the dropdown to switch between "tabs".
             </p>
             <p>
-               <a href="#HowToPlay">The instructions for how to play are down there ↓</a><br>
-               To switch tabs press <kbd>Shift</kbd>+<kbd>Arrow keys</kbd>,<br>
-               and to move around the board press <kbd>Ctrl</kbd>+<kbd>Arrow keys</kbd>.
+               <a href="#HowToPlay" class="navigation-actor">The instructions for how to play are down there ⬇️</a><br>
+               To switch tabs use <kbd>Shift</kbd>+<kbd>Arrow keys</kbd>.
             </p>
          </section>
-         <section id="gameControls">
+         <section id="gameControls" role="toolbar">
             <h2>Game controls</h2>
             <fieldset id="mapControls">
                <legend>Map controls</legend>
@@ -79,7 +88,7 @@
                   </datalist>
                  but it suggests only "3" when 3 is the number which doesn't help.
             -->
-         <section id="playerSettings">
+         <section id="playerSettings" role="toolbar">
             <h2>Player settings</h2>
             <fieldset id="countFields">
                <label id="playerAmountLabel">
@@ -138,7 +147,7 @@
                   <button type="button" id="disableName4" class="disable" disabled>× remove</button>
                </fieldset>
             </fieldset>
-            <fieldset id="choosePlayerFields">
+            <fieldset id="choosePlayerFields" role="toolbar">
                <fieldset id="playerField1">
                   <label id="whoPlays1">
                      <var>Player #1: </var>
@@ -241,7 +250,7 @@
    </div>
    <aside>
       <h1>About</h1>
-      <h2 id="HowToPlay">How to play</h2>
+      <h2 id="HowToPlay" class="navigation-target">How to play</h2>
       <p>To play, simply click on an empty square (a button)</p>
       <p>Every square where a move is played,<br>
          all squares 1 step vertically or horizontally away<br>

@@ -1,11 +1,17 @@
 {
    "name": "tic-tac-toe-grow",
    "description": "A variant of Tic tac toe where the board grows.",
-   "version": "0.331.0",
+   "version": "0.362.0-alpha",
    "license": "Apache-2.0",
    "keywords": [
       "tic tac toe"
    ],
+   "scripts": {
+      "test": "npm run test-syntax",
+      "test-syntax": "npm run test-html && npm run test-js",
+      "test-html": "npx html-validator-cli --file=game.html --verbose",
+      "test-js": "npx standardx --verbose"
+   },
    "browser": "./game.html",
    "browserslist": [
       "> 5%",
@@ -25,16 +31,20 @@
       "url": "https://github.com/icecream17/tic-tac-toe-grow-for-website/issues"
    },
    "devDependencies": {
-      "@babel/core": "^7.13.8",
-      "@babel/eslint-parser": "^7.13.8",
-      "@babel/eslint-plugin": "^7.13.0",
+      "@babel/core": "^7.13.10",
+      "@babel/eslint-parser": "^7.13.10",
+      "@babel/eslint-plugin": "^7.13.10",
       "@babel/plugin-syntax-class-properties": "^7.12.13",
-      "@babel/preset-env": "^7.13.8",
+      "@babel/preset-env": "^7.13.10",
       "eslint": "^7.21.0",
-      "html-validator-cli": "^7.0.1"
+      "html-validator-cli": "^7.0.1",
+      "serve": "^11.3.2",
+      "standardx": "^7.0.0"
    },
    "engines": {
-      "node": "^15.10",
       "npm": "^7.6"
+   },
+   "standardx": {
+      "parser": "@babel/eslint-parser"
    }
 }

@@ -1,4 +1,4 @@
-name: CI
+name: node CI
 
 on:
   push:
@@ -24,22 +24,10 @@ jobs:
       - uses: actions/setup-node@v2.1.5
         with:
           node-version: '14.15'
-    
-      - name: Install HTMLValidator
-        run: npm install html-validator-cli -g
 
-      - name: Check html
-        run: html-validator --file=game.html --verbose
-        
-      - name: Install babel eslint
-        run: npm install --save-dev eslint @babel/core @babel/eslint-parser @babel/eslint-plugin @babel/preset-env @babel/plugin-syntax-class-properties
+      - name: Install everything
+        run: npm install --include=dev
       
-      - name: Check game.js
-        run: ./node_modules/.bin/eslint --format codeframe --color js/game.js
-
-      - name: Check tournament.js
-        run: ./node_modules/.bin/eslint --format codeframe --color js/tournament.js
-
-      - name: Check tabs.js
-        run: ./node_modules/.bin/eslint --format codeframe --color js/tabs.js
+      - name: npm test
+        run: npm test
 
