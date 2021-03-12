@@ -307,7 +307,7 @@ export class Tournament {
       }
    }
 
-   stopLastGame() {
+   stopLastGame () {
       if (this.isDisplayed) {
          PlayerFields[0].selectedIndex = 0
          PlayerFields[0].dispatchEvent(new Event('change'))
@@ -317,7 +317,7 @@ export class Tournament {
          }
       } else {
          if (this.games.length !== 0) {
-            this.currentGame.play = function dontPlayAnymoreMoves() { }
+            this.currentGame.play = function dontPlayAnymoreMoves () { }
          }
       }
    }
