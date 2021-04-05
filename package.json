@@ -7,10 +7,11 @@
       "tic tac toe"
    ],
    "scripts": {
-      "test": "npm run test-syntax",
-      "test-syntax": "npm run test-html && npm run test-js",
-      "test-html": "npx html-validator-cli --file=game.html --verbose",
-      "test-js": "npx standardx --verbose"
+      "test": "npm run check-syntax && npm run test-js",
+      "check-syntax": "npm run check-html-syntax && npm run check-js-syntax",
+      "check-html-syntax": "npx html-validator-cli --file=game.html --verbose",
+      "check-js-syntax": "npx standardx --verbose",
+      "test-js": "jest"
    },
    "browser": "./game.html",
    "browserslist": [
@@ -38,6 +39,7 @@
       "@babel/preset-env": "^7.13.10",
       "eslint": "^7.21.0",
       "html-validator-cli": "^7.0.1",
+      "jest": "^26.6.3",
       "serve": "^11.3.2",
       "standardx": "^7.0.0"
    },
