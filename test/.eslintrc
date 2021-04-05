@@ -1,0 +1,51 @@
+{
+   "plugins": [
+      "@babel"
+   ],
+   "parser": "@babel/eslint-parser",
+   "parserOptions": {
+      "ecmaVersion": 2021
+   },
+   "reportUnusedDisableDirectives": true,
+   "env": {
+      "browser": true,
+      "es2021": true,
+      "jest": true
+   },
+   "globals": {
+      "AggregateError": "readonly", // It's not actually readonly but whatever
+
+      // players.js
+      "activeBots": "writable",
+      "activePeople": "writable",
+      "activePlayers": "writable",
+      "bots": "writable",
+      "people": "writable",
+      "players": "writable",
+
+      // game.js
+      "currentGame": "writable"
+   },
+   "rules": {
+      // Using @babel and standard
+      "new-cap": "off",
+      "no-invalid-this": "off",
+      "no-unused-expressions": "off",
+      "object-curly-spacing": "off",
+      "semi": "off",
+      "@babel/new-cap": "error",
+      "@babel/no-invalid-this": "off",
+      "@babel/no-unused-expressions": "off",
+      "@babel/object-curly-spacing": "off",
+      "@babel/semi": [
+         "error",
+         "never"
+      ],
+
+      // Actual changes
+      "indent": [
+         "error",
+         3
+      ]
+   }
+}
