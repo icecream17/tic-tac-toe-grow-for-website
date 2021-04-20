@@ -1,6 +1,7 @@
 {
    "plugins": [
-      "@babel"
+      "@babel",
+      "jest"
    ],
    "parser": "@babel/eslint-parser",
    "parserOptions": {
@@ -12,6 +13,9 @@
       "es2021": true,
       "jest": true
    },
+   "extends": [
+      "plugin:jest/recommended"
+   ],
    "globals": {
       "AggregateError": "readonly", // It's not actually readonly but whatever
 
@@ -27,7 +31,7 @@
       "currentGame": "writable"
    },
    "rules": {
-      // Using @babel and standard
+      // Using @babel and standard and jest
       "new-cap": "off",
       "no-invalid-this": "off",
       "no-unused-expressions": "off",
@@ -41,6 +45,13 @@
          "error",
          "never"
       ],
+      "jest/prefer-spy-on": "warn",
+      "jest/prefer-strict-equal": "warn",
+      "jest/prefer-to-be-null": "error",
+      "jest/prefer-to-be-undefined": "error",
+      "jest/prefer-to-contain": "error",
+      "jest/prefer-to-have-length": "error",
+      "jest/prefer-todo": "error",
 
       // Actual changes
       "indent": [
