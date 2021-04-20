@@ -1,6 +1,7 @@
 {
    "plugins": [
-      "@babel"
+      "@babel",
+      "import"
    ],
    "parser": "@babel/eslint-parser",
    "parserOptions": {
@@ -10,6 +11,10 @@
    "env": {
       "browser": true,
       "es2021": true
+   },
+   "extends": {
+      "plugin:import/errors",
+      "plugin:import/warnings"
    },
    "globals": {
       "AggregateError": "readonly", // It's not actually readonly but whatever
