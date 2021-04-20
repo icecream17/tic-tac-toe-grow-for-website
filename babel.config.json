@@ -3,12 +3,7 @@
     [
       "@babel/preset-env",
       {
-        "targets": {
-          "edge": "88",
-          "firefox": "85",
-          "chrome": "86",
-          "safari": "14",
-        },
+        "targets": "> 0.5%, last 7 versions, Firefox ESR, not dead",
         "useBuiltIns": "usage",
         "corejs": "3.10.2",
       }
