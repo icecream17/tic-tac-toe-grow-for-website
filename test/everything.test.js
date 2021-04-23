@@ -13,9 +13,8 @@ const repoRootDir =
 // Setup html
 {
    const htmlPath = path.join(repoRootDir, 'game.html')
-   document.write(fs.readFileSync(htmlPath))
-   document.close() // "Tells the browser to finish loading the page"
-   // https://developer.mozilla.org/en-US/docs/Web/API/Document/write
+   const htmlCode = fs.readFileSync(htmlPath)
+   document.innerHTML = htmlCode // document is the parentNode of documentElement
 }
 
 // Setup imports
@@ -40,7 +39,7 @@ describe('check that setup worked', () => {
 
    test('imports', () => {
       const importKeys = ['utils', 'errors', 'game', 'tournmanet', 'debug']
-      expect(Object.keys(imports)).toBeEqual(importKeys)
+      expect(Object.keys(imports)).toEqual(importKeys)
       for (const key of importKeys) {
          expect(imports[key]).toBeInstanceOf(Object)
       }
