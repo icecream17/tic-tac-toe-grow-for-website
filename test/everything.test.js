@@ -1,6 +1,6 @@
 const imports = {}
 
-(function setupHtml () {
+;(function setupHtml () {
    const fs = require('fs')
    document.write(fs.readFileSync('../game.html'))
    document.close() // "Tells the browser to finish loading the page"
