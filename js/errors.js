@@ -82,8 +82,10 @@ class NothingEnabledError extends CustomError {
    }
 }
 
-// params = (string, string)
-// do not pass "null" into condition
+/**
+ * @param {string} noun
+ * @param {string} [condition] - Don't pass null
+ */
 class DisabledError extends CustomError {
    constructor (noun, condition = '') {
       if (condition.length !== 0) { condition = ` and ${condition}` }
@@ -106,6 +108,7 @@ export class ElementIsDisabledError extends DisabledError {
    }
 }
 
+/** Abstract utility class */
 class ElementAlreadyError extends ElementError {
    constructor (element, isAlreadyWhat) {
       super(`${element.tagName} element is already ${isAlreadyWhat}`, element)
