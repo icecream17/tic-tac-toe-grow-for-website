@@ -35,7 +35,7 @@ export function valuesEqual (arr1, arr2) {
 
    if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
       console.error("One of the arguments don't pass Array.isArray: %o %o", arr1, arr2)
-      throw TypeError("One of the arguments don't pass Array.isArray")
+      throw new TypeError("One of the arguments don't pass Array.isArray")
    } else if (arr1.length !== arr2.length) {
       return false
    }
