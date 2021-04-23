@@ -2,7 +2,8 @@ const imports = {}
 
 ;(function setupHtml () {
    const fs = require('fs')
-   document.write(fs.readFileSync('../game.html'))
+   const htmlPath = require('path').join('..', 'game.html')
+   document.write(fs.readFileSync(htmlPath))
    document.close() // "Tells the browser to finish loading the page"
    // https://developer.mozilla.org/en-US/docs/Web/API/Document/write
 })()
