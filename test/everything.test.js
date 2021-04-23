@@ -4,20 +4,14 @@ const imports = {}
    const fs = require('fs')
    const path = require('path')
 
+   // The current directory is assumed to be either of:
+   // <root repo dir>
+   // <root repo dir>/tests
    const currentDir = path.resolve()
-   const parentDir = path.join(currentDir, '..')
-   const htmlPath = path.join(parentDir, 'game.html')
-
-   console.log(currentDir)
-   console.log(parentDir)
-
-   fs.readdirSync(currentDir).forEach(file => {
-      console.log(file)
-   })
-
-   fs.readdirSync(parentDir).forEach(file => {
-      console.log(file)
-   })
+   const htmlPath =
+      currentDir.includes('tests')
+         ? path.join(currentDir, '..', 'game.html')
+         : path.join(currentDir, 'game.html')
 
    document.write(fs.readFileSync(htmlPath))
    document.close() // "Tells the browser to finish loading the page"
