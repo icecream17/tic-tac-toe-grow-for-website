@@ -3,9 +3,19 @@ const imports = {}
 ;(function setupHtml () {
    const fs = require('fs')
    const path = require('path')
-   const htmlPath = path.join('..', 'game.html')
 
-   fs.readdirSync('..').forEach(file => {
+   const currentDir = path.resolve()
+   const parentDir = path.join(currentDir, '..')
+   const htmlPath = path.join(parentDir, 'game.html')
+
+   console.log(currentDir)
+   console.log(parentDir)
+
+   fs.readdirSync(currentDir).forEach(file => {
+      console.log(file)
+   })
+
+   fs.readdirSync(parentDir).forEach(file => {
       console.log(file)
    })
 
