@@ -5,7 +5,7 @@ const path = require('path')
 // <root repo dir>
 // <root repo dir>/tests
 const currentDir = path.resolve()
-const repoRootDir = 
+const repoRootDir =
    currentDir.includes('tests')
       ? path.join(currentDir, '..')
       : currentDir
@@ -17,7 +17,6 @@ const repoRootDir =
    document.close() // "Tells the browser to finish loading the page"
    // https://developer.mozilla.org/en-US/docs/Web/API/Document/write
 }
-
 
 // Setup imports
 const imports = {}
@@ -34,22 +33,19 @@ const imports = {}
    imports.debug = importModule('../js/debug.js')
 }
 
-
 describe('check that setup worked', () => {
    test('html', () => {
-      expect(document.body.innerText.includes('Tic tac toe grow')).toBe(true)
+      expect(document.body.innerText).toContain('Tic tac toe grow')
    })
 
    test('imports', () => {
       const importKeys = ['utils', 'errors', 'game', 'tournmanet', 'debug']
-      expect(Objects.keys(imports)).toBeEqual(importKeys)
+      expect(Object.keys(imports)).toBeEqual(importKeys)
       for (const key of importKeys) {
          expect(imports[key]).toBeInstanceOf(Object)
       }
    })
 })
 
-
 // Main code
 test.todo('add tests')
-
