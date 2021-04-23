@@ -4,11 +4,11 @@ const imports = {}
    const fs = require('fs')
    const path = require('path')
    const htmlPath = path.join('..', 'game.html')
-   
+
    fs.readdirSync('..').forEach(file => {
       console.log(file)
    })
-   
+
    document.write(fs.readFileSync(htmlPath))
    document.close() // "Tells the browser to finish loading the page"
    // https://developer.mozilla.org/en-US/docs/Web/API/Document/write
