@@ -32,7 +32,7 @@
       "url": "https://github.com/icecream17/tic-tac-toe-grow-for-website/issues"
    },
    "devDependencies": {
-      "@babel/core": "^7.13.15",
+      "@babel/core": "^7.13.16",
       "@babel/eslint-parser": "^7.13.14",
       "@babel/eslint-plugin": "^7.13.16",
       "@babel/plugin-syntax-class-properties": "^7.12.13",
