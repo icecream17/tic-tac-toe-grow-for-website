@@ -54,5 +54,10 @@
    },
    "standardx": {
       "parser": "@babel/eslint-parser"
+   },
+   "jest": {
+      "transform": {
+         "\\.[jt]sx?$": "babel-jest"
+      }
    }
 }
