@@ -1,35 +1,40 @@
-const fs = require('fs')
-const path = require('path')
-
-// The current directory is assumed to be either of:
-// <root repo dir>
-// <root repo dir>/tests
-const currentDir = path.resolve()
-const repoRootDir =
-   currentDir.includes('tests')
-      ? path.join(currentDir, '..')
-      : currentDir
-
-// Setup html
-{
-   const htmlPath = path.join(repoRootDir, 'game.html')
-   const htmlCode = fs.readFileSync(htmlPath)
-   document.innerHTML = htmlCode // document is the parentNode of documentElement
-}
-
-// Setup imports
 const imports = {}
-{
-   const jsDirPath = path.join(repoRootDir, 'js')
-   function importModule (modulePath) {
-      return require(path.join(jsDirPath, modulePath))
+
+// Setup block
+// eslint-disable-next-line no-useless-label
+setup: {
+   const fs = require('fs')
+   const path = require('path')
+
+   // The current directory is assumed to be either of:
+   // <root repo dir>
+   // <root repo dir>/tests
+   const currentDir = path.resolve()
+   const repoRootDir =
+      currentDir.includes('tests')
+         ? path.join(currentDir, '..')
+         : currentDir
+
+   // Setup html
+   {
+      const htmlPath = path.join(repoRootDir, 'game.html')
+      const htmlCode = fs.readFileSync(htmlPath)
+      document.innerHTML = htmlCode // document is the parentNode of documentElement
    }
 
-   imports.utils = importModule('../js/utils.js')
-   imports.errors = importModule('../js/errors.js')
-   imports.game = importModule('../js/game.js')
-   imports.tournament = importModule('../js/tournament.js')
-   imports.debug = importModule('../js/debug.js')
+   // Setup imports
+   {
+      const jsDirPath = path.join(repoRootDir, 'js')
+      function importModule (modulePath) {
+         return require(path.join(jsDirPath, modulePath))
+      }
+
+      imports.utils = importModule('../js/utils.js')
+      imports.errors = importModule('../js/errors.js')
+      imports.game = importModule('../js/game.js')
+      imports.tournament = importModule('../js/tournament.js')
+      imports.debug = importModule('../js/debug.js')
+   }
 }
 
 describe('check that setup worked', () => {
