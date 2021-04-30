@@ -1,7 +1,9 @@
 {
    "plugins": [
       "@babel",
-      "jest"
+      "import",
+      "jest",
+      "node"
    ],
    "parser": "@babel-eslint/eslint-parser",
    "parserOptions": {
@@ -16,7 +18,8 @@
    "extends": [
       "plugin:import/errors",
       "plugin:import/warnings",
-      "plugin:jest/recommended"
+      "plugin:jest/recommended",
+      "plugin:node/recommended"
    ],
    "globals": {
       "AggregateError": "readonly", // It's not actually readonly but whatever
