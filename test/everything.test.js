@@ -5,6 +5,7 @@ const imports = {}
 setup: {
    const fs = require('fs')
    const path = require('path')
+   const process = require('process')
 
    // The current directory is assumed to be either of:
    // <root repo dir>
@@ -14,6 +15,8 @@ setup: {
       currentDir.includes('tests')
          ? path.join(currentDir, '..')
          : currentDir
+   
+   process.chdir(repoRootDir)
 
    // Setup html
    {
@@ -21,33 +24,21 @@ setup: {
       const htmlCode = fs.readFileSync(htmlPath)
       document.innerHTML = htmlCode // document is the parentNode of documentElement
    }
-
-   // Setup imports
-   {
-      const jsDirPath = path.join(repoRootDir, 'js')
-      function importModule (modulePath) {
-         return require(path.join(jsDirPath, modulePath))
-      }
-
-      imports.utils = importModule('../js/utils.js')
-      imports.errors = importModule('../js/errors.js')
-      imports.game = importModule('../js/game.js')
-      imports.tournament = importModule('../js/tournament.js')
-      imports.debug = importModule('../js/debug.js')
-   }
+   
+   // Note that the script tags in the html will automatically run
 }
 
-describe('check that setup worked', () => {
+describe('setup', () => {
    test('html', () => {
       expect(document.body.innerText).toContain('Tic tac toe grow')
    })
 
-   test('imports', () => {
-      const importKeys = ['utils', 'errors', 'game', 'tournmanet', 'debug']
-      expect(Object.keys(imports)).toEqual(importKeys)
-      for (const key of importKeys) {
-         expect(imports[key]).toBeInstanceOf(Object)
-      }
+   describe('js', () => {
+      test('globalThis.imports from debug.js', () => {
+         test('it exists', () => {
+            expect(globalThis).toHaveProperty('imports')
+         })
+      })
    })
 })
 
