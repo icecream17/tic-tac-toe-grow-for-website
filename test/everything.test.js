@@ -22,7 +22,7 @@ setup: {
       const htmlPath = path.join(repoRootDir, 'game.html')
       const htmlCode = fs.readFileSync(htmlPath)
       console.debug('htmlCode chars: ', htmlCode.length)
-      document.innerHTML = htmlCode // document is the parentNode of documentElement
+      document.write(htmlCode) // document is the parentNode of documentElement
    }
 
    // Note that the script tags in the html will automatically run
