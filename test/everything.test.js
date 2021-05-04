@@ -22,7 +22,10 @@ setup: {
       const htmlPath = path.join(repoRootDir, 'game.html')
       const htmlCode = fs.readFileSync(htmlPath)
       console.debug('htmlCode chars: ', htmlCode.length)
+
+      document.open()
       document.write(htmlCode) // document is the parentNode of documentElement
+      document.close()
    }
 
    // Note that the script tags in the html will automatically run
@@ -30,6 +33,7 @@ setup: {
 
 describe('setup', () => {
    test('html', () => {
+      console.debug('document innerHtml: ', document.innerHtml.length)
       expect(document.body.innerText).toContain('Tic tac toe grow')
    })
 
