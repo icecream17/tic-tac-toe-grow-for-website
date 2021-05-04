@@ -1,7 +1,7 @@
 const imports = {}
 
 // Setup block
-// eslint-disable-next-line no-useless-label
+// eslint-disable-next-line no-labels no-unused-labels
 setup: {
    const fs = require('fs')
    const path = require('path')
