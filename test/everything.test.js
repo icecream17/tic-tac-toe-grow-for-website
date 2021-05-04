@@ -21,9 +21,13 @@ setup: {
    {
       const htmlPath = path.join(repoRootDir, 'game.html')
       const htmlCode = fs.readFileSync(htmlPath).toString()
-      document.open()
-      document.write(htmlCode)
-      document.close()
+//       document.open()
+//       document.write(htmlCode)
+//       document.close()
+
+      console.debug(htmlCode.slice(0, 100))
+      document.documentElement.innerHTML = htmlCode
+      console.debug(document.documentElement.innerHTML.length)
    }
 
    // Note that the script tags in the html will automatically run
