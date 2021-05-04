@@ -1,6 +1,6 @@
 
 // Setup block
-// eslint-disable-next-line no-labels, no-unused-labels
+// eslint-disable-next-line no-labels
 setup: {
    const fs = require('fs')
    const path = require('path')
@@ -21,6 +21,7 @@ setup: {
    {
       const htmlPath = path.join(repoRootDir, 'game.html')
       const htmlCode = fs.readFileSync(htmlPath)
+      console.debug('htmlCode chars: ', htmlCode.length)
       document.innerHTML = htmlCode // document is the parentNode of documentElement
    }
 
@@ -33,7 +34,7 @@ describe('setup', () => {
    })
 
    describe('js', () => {
-      test('globalThis.imports from debug.js', () => {
+      describe('globalThis.imports from debug.js', () => {
          test('it exists', () => {
             expect(globalThis).toHaveProperty('imports')
          })
