@@ -5,9 +5,10 @@ import * as tabs from './tabs.js'
 import * as tournament from './tournament.js'
 import * as utils from './utils.js'
 
-export const imports = {
+globalThis.imports = {
    errors, game, players, tabs, tournament, utils
 }
 
-// So that module globals can be used in the console
-Object.assign(globalThis, imports)
+export default {
+   imports: globalThis.imports
+}
