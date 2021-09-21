@@ -1,3 +1,7 @@
+import { JSDOM } from 'jsdom'
+
+let dom
+let doc
 
 // Setup block
 // eslint-disable-next-line no-labels
@@ -25,9 +29,10 @@ setup: {
       // document.write(htmlCode)
       // document.close()
 
-      console.debug(htmlCode.slice(0, 100))
-      document.documentElement.innerHTML = htmlCode
-      console.debug(document.documentElement.innerHTML.length)
+      
+      dom = new JSDOM(html, { runScripts: 'dangerously' })
+      doc = dom.window.document
+      console.debug(doc.documentElement.innerHTML.length)
    }
 
    // Note that the script tags in the html will automatically run
@@ -35,7 +40,7 @@ setup: {
 
 describe('setup', () => {
    test('html', () => {
-      expect(document.body.innerText).toContain('Tic tac toe grow')
+      expect(doc.body.innerText).toContain('Tic tac toe grow')
    })
 
    describe('js', () => {
