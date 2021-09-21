@@ -1,3 +1,4 @@
+// eslint-disable-next-line standardx is ridiculous
 import { JSDOM } from 'jsdom'
 
 let dom
@@ -29,8 +30,7 @@ setup: {
       // document.write(htmlCode)
       // document.close()
 
-      
-      dom = new JSDOM(html, { runScripts: 'dangerously' })
+      dom = new JSDOM(htmlCode, { runScripts: 'dangerously' })
       doc = dom.window.document
       console.debug(doc.documentElement.innerHTML.length)
    }
