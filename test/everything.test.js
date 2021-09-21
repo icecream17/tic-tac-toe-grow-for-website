@@ -1,4 +1,4 @@
-// eslint-disable-next-line standardx is ridiculous
+// eslint-disable-next-line
 import { JSDOM } from 'jsdom'
 
 let dom
