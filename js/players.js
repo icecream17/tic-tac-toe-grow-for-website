@@ -14,7 +14,7 @@ export const PLAYER_CHARS = 'xovnp'
 export const PLAYER_BORDERS = [
    'red',
    'dodgerblue',
-   'green',
+   '#00d400', // Such that the dark side of the border is green
    '#ffd74a',
    'purple'
 ]
