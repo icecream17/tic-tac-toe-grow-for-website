@@ -55,8 +55,12 @@
       "npm": "^7.6",
       "node": ">=12.0.0"
    },
+   "sourceType": "module",
    "standardx": {
-      "parser": "@babel/eslint-parser"
+      "parser": "@babel/eslint-parser",
+      "parserOptions": {
+        "sourceType": "module"
+      }
    },
    "jest": {
       "transform": {
