@@ -32,7 +32,7 @@ beforeEach(() => {
 
       dom = new JSDOM(htmlCode, { runScripts: 'dangerously' })
       doc = dom.window.document
-      console.debug(doc.documentElement.innerHTML.length)
+      // console.debug(doc.documentElement.innerHTML.length)
    }
 
    // Note that the script tags in the html will automatically run
@@ -44,9 +44,9 @@ describe('setup', () => {
    })
 
    describe('js', () => {
-      describe('globalThis.imports from debug.js', () => {
+      describe('imports from debug.js', () => {
          test('it exists', () => {
-            expect(globalThis.imports).not.toBeUndefined()
+            expect(dom.window.imports).not.toBeUndefined()
          })
       })
    })
