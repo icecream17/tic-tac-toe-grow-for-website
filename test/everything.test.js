@@ -6,7 +6,7 @@ let doc
 
 // Setup block
 // eslint-disable-next-line no-labels
-setup: {
+beforeEach(() => {
    const fs = require('fs')
    const path = require('path')
    const process = require('process')
@@ -36,17 +36,17 @@ setup: {
    }
 
    // Note that the script tags in the html will automatically run
-}
+})
 
 describe('setup', () => {
    test('html', () => {
-      expect(doc.body.innerText).toContain('Tic tac toe grow')
+      expect(doc.documentElement.innerHTML).toContain('Tic tac toe grow')
    })
 
    describe('js', () => {
       describe('globalThis.imports from debug.js', () => {
          test('it exists', () => {
-            expect(globalThis).toHaveProperty('imports')
+            expect(globalThis.imports).not.toBeUndefined()
          })
       })
    })
