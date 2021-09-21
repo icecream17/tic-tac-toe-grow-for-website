@@ -7,10 +7,10 @@
    ],
    "parser": "@babel-eslint/eslint-parser",
    "parserOptions": {
-      "ecmaVersion": 2021
+      "ecmaVersion": 2021,
+      "sourceType": "module"
    },
    "reportUnusedDisableDirectives": true,
-   "sourceType": "module",
    "env": {
       "browser": true,
       "es2021": true,
