@@ -43,7 +43,7 @@
       "core-js": "^3.11.0",
       "eslint": "^7.24.0",
       "eslint-plugin-import": "^2.22.1",
-      "eslint-plugin-jest": "^24.3.6",
+      "eslint-plugin-jest": "^25.0.3",
       "eslint-plugin-jest-dom": "^3.8.1",
       "eslint-plugin-node": "^11.1.0",
       "html-validator-cli": "^7.0.1",
