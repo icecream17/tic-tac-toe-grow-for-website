@@ -5,7 +5,6 @@ let dom
 let doc
 
 // Setup block
-// eslint-disable-next-line no-labels
 beforeEach(() => {
    const fs = require('fs')
    const path = require('path')
@@ -46,7 +45,7 @@ describe('setup', () => {
    describe('js', () => {
       describe('imports from debug.js', () => {
          test('it exists', () => {
-            expect(dom.window.imports).not.toBeUndefined()
+            expect(dom.window.imports).not.toBe(undefined)
          })
       })
    })
