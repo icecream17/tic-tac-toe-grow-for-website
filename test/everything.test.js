@@ -29,7 +29,10 @@ beforeEach(() => {
       // document.write(htmlCode)
       // document.close()
 
-      dom = new JSDOM(htmlCode, { runScripts: 'dangerously' })
+      dom = new JSDOM(htmlCode, {
+         resources: 'usable',
+         runScripts: 'dangerously',
+      })
       doc = dom.window.document
       // console.debug(doc.documentElement.innerHTML.length)
    }
