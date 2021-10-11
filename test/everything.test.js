@@ -31,7 +31,7 @@ beforeEach(() => {
 
       dom = new JSDOM(htmlCode, {
          resources: 'usable',
-         runScripts: 'dangerously',
+         runScripts: 'dangerously'
       })
       doc = dom.window.document
       // console.debug(doc.documentElement.innerHTML.length)
