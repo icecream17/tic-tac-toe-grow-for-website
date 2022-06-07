@@ -47,7 +47,7 @@
       "eslint-plugin-jest-dom": "^4.0.0",
       "eslint-plugin-node": "^11.1.0",
       "html-validator-cli": "^7.0.1",
-      "jest": "^27.1.1",
+      "jest": "^28.1.1",
       "serve": "^13.0.2",
       "standardx": "^7.0.0"
    },
