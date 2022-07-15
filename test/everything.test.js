@@ -37,7 +37,7 @@ beforeEach(() => {
       // console.debug(doc.documentElement.innerHTML.length)
    }
 
-   // Note that the script tags in the html will automatically run
+   // Note that the script tags in the html should automatically run
 })
 
 describe('setup', () => {
