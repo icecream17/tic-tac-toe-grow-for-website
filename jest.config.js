@@ -7,9 +7,9 @@ module.exports = Object.assign(newConfig, {
   setupFilesAfterEnv: ['<rootDir>/jest-setup.js'],
   testEnvironment: 'jsdom',
   transform: {
-    "\\.[jt]sx?$": "babel-jest"
+    '\\.[jt]sx?$': 'babel-jest'
   },
   parserOptions: {
-    sourceType: "module"
+    sourceType: 'module'
   }
 })
