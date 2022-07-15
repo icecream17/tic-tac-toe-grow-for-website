@@ -61,13 +61,5 @@
       "parserOptions": {
         "sourceType": "module"
       }
-   },
-   "jest": {
-      "transform": {
-         "\\.[jt]sx?$": "babel-jest"
-      },
-      "parserOptions": {
-        "sourceType": "module"
-      }
    }
 }
